@@ -1,0 +1,71 @@
+{
+  "activityLists": [
+    {
+      "id": 1,
+      "name": "Activities",
+      "activities": [
+        {
+          "id": 1768439524411,
+          "name": "corregir automatizaciones en home assistant"
+        },
+        {
+          "id": 1768439559439,
+          "name": "obtener una escalera y bajar una de las camaras para conectar el sistema de vigilancia"
+        },
+        {
+          "id": 1768439650605,
+          "name": "flashear servidor web en stm32 y explorar a fondo como funciona un servidor"
+        },
+        {
+          "id": 1768439677581,
+          "name": "preparar sesion para el padrino"
+        }
+      ]
+    },
+    {
+      "id": 1768439588366,
+      "name": "work",
+      "activities": [
+        {
+          "id": 1768439596412,
+          "name": "cambiar los filtros de la abuela"
+        }
+      ]
+    }
+  ],
+  "schedules": [
+    {
+      "id": 1768439723912,
+      "name": "today",
+      "startTime": 1170,
+      "endTime": 1290,
+      "interval": 30,
+      "slots": [
+        {
+          "id": 1768439725082,
+          "startTime": 1170,
+          "endTime": 1200,
+          "activity": "\n                        preparar sesion para el padrino\n                        ✏️\n                        ❌\n                    "
+        },
+        {
+          "id": 1768439725112,
+          "startTime": 1200,
+          "endTime": 1230,
+          "activity": "\n                        preparar sesion para el padrino\n                        ✏️\n                        ❌\n                    "
+        },
+        {
+          "id": 1768439725142,
+          "startTime": 1230,
+          "endTime": 1260,
+          "activity": "\n                        corregir automatizaciones en home assistant\n                        ✏️\n                        ❌\n                    "
+        },
+        {
+          "id": 1768439725172,
+          "startTime": 1260,
+          "endTime": 1290,
+          "activity": "\n                        corregir automatizaciones en home assistant\n                        ✏️\n                        ❌\n                    "
+        }
+      ]
+    }
+  ]
+}
