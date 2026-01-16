@@ -45,6 +45,19 @@ try {
   checklistState = {};
 }
 
+// Maintenance data handling
+function loadMaintenanceData() {
+    try {
+        return JSON.parse(fs.readFileSync('maintenance-data.json', 'utf8'));
+    } catch {
+        return [];
+    }
+}
+
+function saveMaintenanceData(data) {
+    fs.writeFileSync('maintenance-data.json', JSON.stringify(data, null, 2));
+}
+
 // Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -56,6 +69,10 @@ app.get('/schedule', (req, res) => {
 
 app.get('/checklist', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'checklist.html'));
+});
+
+app.get('/maintenance', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'maintenance.html'));
 });
 
 // Schedule API
@@ -80,6 +97,30 @@ app.post('/api/state', (req, res) => {
   }
   checklistState[id] = checked;
   fs.writeFileSync('checklist-state.json', JSON.stringify(checklistState));
+  res.json({ success: true });
+});
+
+// Maintenance API
+app.get('/api/maintenance', (req, res) => {
+  res.json(loadMaintenanceData());
+});
+
+app.post('/api/maintenance', (req, res) => {
+  const record = req.body;
+  if (!record || !record.itemType || !record.itemName || !record.date || !record.time || !record.description) {
+    return res.status(400).json({ error: 'Invalid data' });
+  }
+  const records = loadMaintenanceData();
+  records.push(record);
+  saveMaintenanceData(records);
+  res.json({ success: true });
+});
+
+app.delete('/api/maintenance/:id', (req, res) => {
+  const { id } = req.params;
+  let records = loadMaintenanceData();
+  records = records.filter(r => r.id !== id);
+  saveMaintenanceData(records);
   res.json({ success: true });
 });
 
