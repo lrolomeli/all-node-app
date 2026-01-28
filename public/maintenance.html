@@ -32,6 +32,32 @@
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
+        }
+        
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .btn-home {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .btn-home:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
         }
         
         .header h1 {
@@ -256,6 +282,9 @@
 <body>
     <div class="container">
         <div class="header">
+            <div class="back-home">
+                <a href="/" class="btn-home">← Home</a>
+            </div>
             <h1>🔧 Maintenance Tracker</h1>
             <p>Keep track of all your maintenance activities</p>
         </div>

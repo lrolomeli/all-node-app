@@ -9,7 +9,37 @@
       margin: 20px;
       line-height: 1.6;
       background: #f7f7f7;
+      position: relative;
     }
+    
+    .back-home {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+
+    .btn-home {
+      display: inline-block;
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 20px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .btn-home:hover {
+      background: #0056b3;
+      color: white;
+      text-decoration: none;
+    }
+    
+    h1 {
+      margin-top: 60px;
+    }
+    
     h2 {
       margin-top: 30px;
       border-bottom: 2px solid #444;
@@ -22,6 +52,10 @@
   </style>
 </head>
 <body>
+
+<div class="back-home">
+  <a href="/" class="btn-home">← Home</a>
+</div>
 
 <h1>✅ Checklist – Firmware Engineer</h1>
 
