@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rutina de Gym</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 20px;
+        }
+        .card {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-center mb-3">
+            <a href="/" class="btn btn-secondary">← Volver al Inicio</a>
+        </div>
+        <h2 class="text-center mb-4">Mi Rutina de Gym</h2>
+        <div class="accordion" id="gymRoutine">
+            <script>
+
+                const exerciseLinks = {
+                    "Triceps": "https://musclewiki.com/exercises/male/triceps",
+                    "Pecho": "https://musclewiki.com/machine/male/chest",
+                    "Cuadriceps": "https://musclewiki.com/machine/male/quads",
+                    "Pantorrilla": "https://musclewiki.com/machine/male/calves",
+                    "Abdomen Lateral": "https://musclewiki.com/machine/male/obliques",
+                    "Espalda Central": "https://musclewiki.com/machine/male/traps-middle",
+                    "Espalda Lateral": "https://musclewiki.com/machine/male/lats",
+                    "Espalda Baja": "https://musclewiki.com/machine/male/lowerback",
+                    "Biceps": "https://musclewiki.com/machine/male/biceps",
+                    "Antebrazo": "https://musclewiki.com/exercises/male/forearms",
+                    "Hombro": "https://musclewiki.com/exercises/male/front-shoulders",
+                    "Trapecio": "https://musclewiki.com/exercises/male/traps",
+                    "Ingle": "https://www.surreyphysio.co.uk/top-5/best-5-exercises-for-a-groin-strain/",
+                    "Abdomen Central": "https://musclewiki.com/exercises/male/abdominals",
+                    "Femoral": "https://musclewiki.com/exercises/male/hamstrings",
+                    "Gluteos": "https://musclewiki.com/exercises/male/glutes"
+                };
+
+
+                const routine = {
+                    "Lunes": ["Pecho", "Hombro"],
+                    "Martes": ["Pantorrilla", "Cuadriceps", "Femoral"], 
+                    "Miercoles": ["Biceps", "Antebrazo", "Triceps"],
+                    "Jueves": ["Espalda Central", "Espalda Lateral", "Espalda Baja"],
+                    "Viernes": ["Gluteos", "Ingle"],
+                    "Sabado": ["Abdomen Central", "Abdomen Lateral"]
+                };
+                
+                let index = 0;
+                for (let day in routine) {
+                    document.write(`
+                        <div class="card">
+                            <div class="card-header" id="heading${index}">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="true" aria-controls="collapse${index}">
+                                        ${day}
+                                    </button>
+                                </h5>
+                            </div>
+                            <div id="collapse${index}" class="collapse" aria-labelledby="heading${index}" data-bs-parent="#gymRoutine">
+                                <div class="card-body">
+                                    <ul>
+                                        ${routine[day].map(muscle => `<li><a href="${exerciseLinks[muscle] || '#'}">${muscle}</a></li>`).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                    index++;
+                }
+            </script>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

@@ -6,6 +6,17 @@
     <title>Node Apps Menu</title>
     <style>
         body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .back-home { text-align: center; margin-bottom: 20px; }
+        .btn-home { 
+            display: inline-block; 
+            padding: 10px 20px; 
+            background: #007bff; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            font-size: 14px;
+        }
+        .btn-home:hover { background: #0056b3; color: white; }
         .app-card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 15px 0; text-decoration: none; display: block; color: #333; }
         .app-card:hover { background: #f5f5f5; }
         h1 { text-align: center; color: #333; }
@@ -13,17 +24,45 @@
 </head>
 <body>
     <h1>Node Applications</h1>
+    
+    <!-- Original Apps -->
     <a href="/schedule" class="app-card">
-        <h3>Schedule App</h3>
+        <h3>📅 Schedule App</h3>
         <p>Manage your schedules and appointments</p>
     </a>
     <a href="/checklist" class="app-card">
-        <h3>Checklist App</h3>
-        <p>Create and manage your task checklists</p>
+        <h3>✅ Checklist App</h3>
+        <p>Firmware engineer interview checklist</p>
     </a>
     <a href="/maintenance" class="app-card">
-        <h3>Maintenance Tracker</h3>
+        <h3>🔧 Maintenance Tracker</h3>
         <p>Track maintenance dates for filters and equipment</p>
+    </a>
+    
+    <!-- New Portfolio & CV Apps -->
+    <a href="/portfolio" class="app-card">
+        <h3>👨‍💻 Luis Lomeli's Portfolio</h3>
+        <p>Personal portfolio with games, projects, and experience</p>
+    </a>
+    <a href="/cv" class="app-card">
+        <h3>📄 Professional CV</h3>
+        <p>Professional resume and work experience</p>
+    </a>
+    
+    <!-- Health & Fitness Apps -->
+    <a href="/diet" class="app-card">
+        <h3>🥗 Diet Tracker</h3>
+        <p>Track your daily diet plan and nutrition</p>
+    </a>
+    <a href="/gym" class="app-card">
+        <h3>💪 Gym Routine</h3>
+        <p>Weekly workout routine with muscle group exercises</p>
+    </a>
+    
+    <!-- Fun Apps -->
+    <a href="/catify" class="app-card">
+        <h3>🐱 Catify</h3>
+        <p>Cat-themed fun page with images and links</p>
     </a>
 </body>
 </html>

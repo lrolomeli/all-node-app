@@ -1,23 +1,43 @@
 # all-node-app
 
-A unified Node.js application with multiple mini-apps for productivity and tracking.
+A unified Node.js application with multiple mini-apps for productivity, portfolio, health tracking, and entertainment.
 
 ## Features
 
-### 1. Schedule App (`/schedule`)
-Manage your schedules and appointments with customizable time slots.
+### Original Apps
+1. **Schedule App** (`/schedule`) - Manage your schedules and appointments with customizable time slots
+2. **Checklist App** (`/checklist`) - Firmware engineer interview checklist with persistent state  
+3. **Maintenance Tracker** (`/maintenance`) - Track maintenance dates for filters, equipment, and other items
 
-### 2. Checklist App (`/checklist`)
-Create and manage task checklists with persistent state.
+### Portfolio & Professional Apps
+4. **Luis Lomeli's Portfolio** (`/portfolio`) - Personal portfolio with games, projects, work experience, and skills
+5. **Professional CV** (`/cv`) - Bootstrap-styled professional resume with navigation
 
-### 3. Maintenance Tracker (`/maintenance`)
-Track maintenance dates for filters, equipment, and other items. Features include:
-- Log maintenance with date and time
-- Categorize by item type (Water Filter, Air Filter, HVAC, etc.)
-- Add descriptions and notes
-- Filter records by type
-- Delete old records
-- Data persists in JSON file
+### Health & Fitness Apps  
+6. **Diet Tracker** (`/diet`) - Spanish diet plan tracker with checkboxes and local storage persistence
+7. **Gym Routine** (`/gym`) - Weekly workout routine with muscle group exercises and external links
+
+### Fun Apps
+8. **Catify** (`/catify`) - Cat-themed page with images and links
+
+## Project Structure
+
+```
+├── server.js              # Main Express server
+├── public/                # Static files served by Express
+│   ├── index.html         # Main homepage with navigation
+│   ├── schedule.html      # Schedule app
+│   ├── checklist.html     # Checklist app  
+│   ├── maintenance.html   # Maintenance tracker
+│   ├── allp/             # Portfolio files
+│   ├── cv/               # CV/Resume files
+│   ├── diet/             # Diet tracker files
+│   ├── gym/              # Gym routine files
+│   └── other/            # Catify files
+├── schedule-data.json     # Schedule persistence
+├── checklist-state.json  # Checklist persistence
+└── maintenance-data.json  # Maintenance persistence
+```
 
 ## Getting Started
 

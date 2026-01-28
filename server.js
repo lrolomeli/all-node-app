@@ -75,6 +75,27 @@ app.get('/maintenance', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'maintenance.html'));
 });
 
+// New page routes
+app.get('/portfolio', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'allp', 'index.html'));
+});
+
+app.get('/cv', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'cv', 'index.html'));
+});
+
+app.get('/diet', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'diet', 'index.html'));
+});
+
+app.get('/gym', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'gym', 'index.html'));
+});
+
+app.get('/catify', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'other', 'index.html'));
+});
+
 // Schedule API
 app.get('/api/data', (req, res) => res.json(loadScheduleData()));
 app.post('/api/data', (req, res) => {
