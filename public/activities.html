@@ -96,6 +96,20 @@
             font-size: 0.9em;
         }
 
+        label:has(+ input[required])::after,
+        label:has(+ select[required])::after,
+        label:has(+ textarea[required])::after {
+            content: " *";
+            color: #dc3545;
+        }
+
+        .required-note {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
         input, select, textarea {
             padding: 12px;
             border: 2px solid #e0e0e0;
@@ -304,16 +318,17 @@
         
         <div class="form-section">
             <form id="activityForm">
+                <p class="required-note">* Required field. All other fields are optional and will use default values if left empty.</p>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="activityName">Activity Name</label>
-                        <input type="text" id="activityName" placeholder="e.g., Visit Paris">
+                        <label for="activityName">Activity Name *</label>
+                        <input type="text" id="activityName" placeholder="e.g., Visit Paris" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="category">Category</label>
+                        <label for="category">Category (optional)</label>
                         <select id="category">
-                            <option value="">Select category...</option>
+                            <option value="">Select category (defaults to Other)...</option>
                             <option value="Travel">🌍 Travel</option>
                             <option value="Food">🍽️ Food & Dining</option>
                             <option value="Adventure">🏔️ Adventure</option>
@@ -326,9 +341,9 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="priority">Priority</label>
+                        <label for="priority">Priority (optional)</label>
                         <select id="priority">
-                            <option value="">Select priority...</option>
+                            <option value="">Select priority (defaults to Medium)...</option>
                             <option value="High">🔥 High</option>
                             <option value="Medium">⭐ Medium</option>
                             <option value="Low">💭 Low</option>
@@ -336,17 +351,17 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="addedBy">Added by</label>
+                        <label for="addedBy">Added by (optional)</label>
                         <select id="addedBy">
-                            <option value="">Who added this?</option>
+                            <option value="">Who added this (optional)?</option>
                             <option value="Zuzu">💕 Zuzu</option>
                             <option value="Cici">💖 Cici</option>
                         </select>
                     </div>
                     
                     <div class="form-group full-width">
-                        <label for="description">Description</label>
-                        <textarea id="description" placeholder="Tell us more about this activity..."></textarea>
+                        <label for="description">Description (optional)</label>
+                        <textarea id="description" placeholder="Tell us more about this activity (optional)..."></textarea>
                     </div>
                     
                     <div class="form-group full-width">
@@ -405,15 +420,28 @@
         // Save activity to server
         async function saveActivity(activity) {
             try {
+                console.log('Attempting to save activity:', activity);
+                
                 const response = await pinAuth.authenticatedFetch('/api/activities', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(activity)
                 });
-                return await response.json();
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Server error:', errorText);
+                    throw new Error(`Server error: ${response.status} - ${errorText}`);
+                }
+                
+                const result = await response.json();
+                console.log('Server response:', result);
+                return result;
             } catch (error) {
                 console.error('Error saving activity:', error);
-                alert('Failed to save activity');
+                throw error;
             }
         }
         
@@ -455,9 +483,10 @@
             
             const activityName = document.getElementById('activityName').value.trim();
             
-            // Only require activity name
+            // Only require activity name - all other fields are optional
             if (!activityName) {
-                alert('Please enter an activity name');
+                alert('Please enter an activity name (this is the only required field)');
+                document.getElementById('activityName').focus();
                 return;
             }
             
@@ -473,11 +502,24 @@
                 createdAt: new Date().toISOString()
             };
             
-            const result = await saveActivity(activity);
-            if (result && result.success) {
-                activities.push(activity);
-                renderActivities();
-                e.target.reset();
+            console.log('Submitting activity:', activity);
+            
+            try {
+                const result = await saveActivity(activity);
+                console.log('Save result:', result);
+                
+                if (result && result.success) {
+                    activities.push(activity);
+                    renderActivities();
+                    e.target.reset();
+                    alert('Activity added successfully! 🎉');
+                } else {
+                    console.error('Save failed:', result);
+                    alert('Failed to save activity. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error submitting activity:', error);
+                alert('Error saving activity: ' + error.message);
             }
         });
         

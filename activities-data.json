@@ -86,5 +86,28 @@
     "notes": "",
     "completed": false,
     "createdAt": "2026-01-28T03:25:54.712Z"
+  },
+  {
+    "id": "1769571104365",
+    "name": "Ir a un karaoke",
+    "category": "Other",
+    "priority": "Low",
+    "addedBy": "Cici",
+    "description": "Ir a cantar canciones de viejitos a un karaoke ",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-01-28T03:31:44.365Z"
+  },
+  {
+    "id": "1769571213377",
+    "name": "Ir a la vía recreativa",
+    "category": "Sports",
+    "priority": "Medium",
+    "addedBy": "Cici",
+    "description": "Ir en bicicleta a la vía recreativa ",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-01-28T03:33:33.377Z"
   }
+
 ]
