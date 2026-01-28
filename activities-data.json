@@ -1,0 +1,90 @@
+[
+  {
+    "id": "1769567543217",
+    "name": "Cocinar Juntos",
+    "category": "Food",
+    "priority": "Medium",
+    "addedBy": "Pelon",
+    "description": "Cocinar Enchiladas verdes",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-01-28T02:32:23.217Z"
+  },
+  {
+    "id": "1769569785877",
+    "name": "patinar",
+    "category": "Sports",
+    "priority": "High",
+    "addedBy": "Zuzu",
+    "description": "patinar en hielo",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-01-28T03:09:45.877Z"
+  },
+  {
+    "id": "1769569847532",
+    "name": "Maplestory",
+    "category": "Other",
+    "priority": "Low",
+    "addedBy": "Zuzu",
+    "description": "jugar Maplestory",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-01-28T03:10:47.532Z"
+  },
+  {
+    "id": "1769569912424",
+    "name": "Practicar Japones",
+    "category": "Learning",
+    "priority": "High",
+    "addedBy": "Zuzu",
+    "description": "practicar japones aprendiendo de canciones, traduce y trata de hacer oraciones para comunicarse",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-01-28T03:11:52.426Z"
+  },
+  {
+    "id": "1769569977310",
+    "name": "Debatir sobre temas",
+    "category": "Culture",
+    "priority": "Medium",
+    "addedBy": "Zuzu",
+    "description": "debate",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-01-28T03:12:57.310Z"
+  },
+  {
+    "id": "1769570113981",
+    "name": "Acampar",
+    "category": "Adventure",
+    "priority": "Medium",
+    "addedBy": "Zuzu",
+    "description": "nevado primavera santa maria",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-01-28T03:15:13.982Z"
+  },
+  {
+    "id": "1769570406394",
+    "name": "Visitar el museo JoVEM (Akron)",
+    "category": "Culture",
+    "priority": "Medium",
+    "addedBy": "Cici",
+    "description": "Visitar el museo y tomar fotitos juntos ",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-01-28T03:20:06.394Z"
+  },
+  {
+    "id": "1769570754712",
+    "name": "Ir al cine en Cinery",
+    "category": "Relaxation",
+    "priority": "Low",
+    "addedBy": "Cici",
+    "description": "Ir a ver una película en el cine de Cinery en plaza Punto Sao Paulo",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-01-28T03:25:54.712Z"
+  }
+]
