@@ -58,6 +58,19 @@ function saveMaintenanceData(data) {
     fs.writeFileSync('maintenance-data.json', JSON.stringify(data, null, 2));
 }
 
+// Activities data handling
+function loadActivitiesData() {
+    try {
+        return JSON.parse(fs.readFileSync('activities-data.json', 'utf8'));
+    } catch {
+        return [];
+    }
+}
+
+function saveActivitiesData(data) {
+    fs.writeFileSync('activities-data.json', JSON.stringify(data, null, 2));
+}
+
 // Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -94,6 +107,10 @@ app.get('/gym', (req, res) => {
 
 app.get('/catify', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'other', 'index.html'));
+});
+
+app.get('/activities', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'activities.html'));
 });
 
 // Schedule API
@@ -142,6 +159,42 @@ app.delete('/api/maintenance/:id', authMiddleware, (req, res) => {
   let records = loadMaintenanceData();
   records = records.filter(r => r.id !== id);
   saveMaintenanceData(records);
+  res.json({ success: true });
+});
+
+// Activities API
+app.get('/api/activities', (req, res) => {
+  res.json(loadActivitiesData());
+});
+
+app.post('/api/activities', authMiddleware, (req, res) => {
+  const activity = req.body;
+  if (!activity || !activity.name || !activity.category || !activity.description) {
+    return res.status(400).json({ error: 'Invalid data' });
+  }
+  const activities = loadActivitiesData();
+  activities.push(activity);
+  saveActivitiesData(activities);
+  res.json({ success: true });
+});
+
+app.put('/api/activities/:id/complete', authMiddleware, (req, res) => {
+  const { id } = req.params;
+  let activities = loadActivitiesData();
+  const activity = activities.find(a => a.id === id);
+  if (activity) {
+    activity.completed = true;
+    activity.completedDate = new Date().toISOString();
+    saveActivitiesData(activities);
+  }
+  res.json({ success: true });
+});
+
+app.delete('/api/activities/:id', authMiddleware, (req, res) => {
+  const { id } = req.params;
+  let activities = loadActivitiesData();
+  activities = activities.filter(a => a.id !== id);
+  saveActivitiesData(activities);
   res.json({ success: true });
 });
 
