@@ -200,8 +200,8 @@ app.get('/api/activities', (req, res) => {
 
 app.post('/api/activities', pinAuthMiddleware, (req, res) => {
   const activity = req.body;
-  if (!activity || !activity.name || !activity.category || !activity.description) {
-    return res.status(400).json({ error: 'Invalid data' });
+  if (!activity || !activity.name || !activity.name.trim()) {
+    return res.status(400).json({ error: 'Activity name is required' });
   }
   const activities = loadActivitiesData();
   activities.push(activity);

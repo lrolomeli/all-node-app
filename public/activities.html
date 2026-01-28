@@ -307,12 +307,12 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="activityName">Activity Name</label>
-                        <input type="text" id="activityName" placeholder="e.g., Visit Paris" required>
+                        <input type="text" id="activityName" placeholder="e.g., Visit Paris">
                     </div>
                     
                     <div class="form-group">
                         <label for="category">Category</label>
-                        <select id="category" required>
+                        <select id="category">
                             <option value="">Select category...</option>
                             <option value="Travel">🌍 Travel</option>
                             <option value="Food">🍽️ Food & Dining</option>
@@ -327,7 +327,7 @@
                     
                     <div class="form-group">
                         <label for="priority">Priority</label>
-                        <select id="priority" required>
+                        <select id="priority">
                             <option value="">Select priority...</option>
                             <option value="High">🔥 High</option>
                             <option value="Medium">⭐ Medium</option>
@@ -337,12 +337,16 @@
                     
                     <div class="form-group">
                         <label for="addedBy">Added by</label>
-                        <input type="text" id="addedBy" placeholder="Your name" required>
+                        <select id="addedBy">
+                            <option value="">Who added this?</option>
+                            <option value="Zuzu">💕 Zuzu</option>
+                            <option value="Cici">💖 Cici</option>
+                        </select>
                     </div>
                     
                     <div class="form-group full-width">
                         <label for="description">Description</label>
-                        <textarea id="description" placeholder="Tell us more about this activity..." required></textarea>
+                        <textarea id="description" placeholder="Tell us more about this activity..."></textarea>
                     </div>
                     
                     <div class="form-group full-width">
@@ -449,14 +453,22 @@
         document.getElementById('activityForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const activityName = document.getElementById('activityName').value.trim();
+            
+            // Only require activity name
+            if (!activityName) {
+                alert('Please enter an activity name');
+                return;
+            }
+            
             const activity = {
                 id: Date.now().toString(),
-                name: document.getElementById('activityName').value,
-                category: document.getElementById('category').value,
-                priority: document.getElementById('priority').value,
-                addedBy: document.getElementById('addedBy').value,
-                description: document.getElementById('description').value,
-                notes: document.getElementById('notes').value,
+                name: activityName,
+                category: document.getElementById('category').value || 'Other',
+                priority: document.getElementById('priority').value || 'Medium',
+                addedBy: document.getElementById('addedBy').value || 'Unknown',
+                description: document.getElementById('description').value || '',
+                notes: document.getElementById('notes').value || '',
                 completed: false,
                 createdAt: new Date().toISOString()
             };
