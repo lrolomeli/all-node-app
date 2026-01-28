@@ -395,6 +395,12 @@
                         <option value="Medium">⭐ Medium</option>
                         <option value="Low">💭 Low</option>
                     </select>
+                    <select id="filterAddedBy">
+                        <option value="">All Contributors</option>
+                        <option value="Zuzu">💕 Zuzu</option>
+                        <option value="Cici">💖 Cici</option>
+                        <option value="Unknown">❓ Unknown</option>
+                    </select>
                 </div>
             </div>
             
@@ -526,15 +532,18 @@
         // Filter activities
         document.getElementById('filterCategory').addEventListener('change', renderActivities);
         document.getElementById('filterPriority').addEventListener('change', renderActivities);
+        document.getElementById('filterAddedBy').addEventListener('change', renderActivities);
         
         // Render activities
         function renderActivities() {
             const filterCategory = document.getElementById('filterCategory').value;
             const filterPriority = document.getElementById('filterPriority').value;
+            const filterAddedBy = document.getElementById('filterAddedBy').value;
             
             let filteredActivities = activities.filter(activity => {
                 return (!filterCategory || activity.category === filterCategory) &&
-                       (!filterPriority || activity.priority === filterPriority);
+                       (!filterPriority || activity.priority === filterPriority) &&
+                       (!filterAddedBy || activity.addedBy === filterAddedBy);
             });
             
             const activitiesList = document.getElementById('activitiesList');
