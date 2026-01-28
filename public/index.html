@@ -3,66 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Node Apps Menu</title>
+    <title>Node Apps Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
-        .back-home { text-align: center; margin-bottom: 20px; }
-        .btn-home { 
-            display: inline-block; 
-            padding: 10px 20px; 
-            background: #007bff; 
-            color: white; 
-            text-decoration: none; 
-            border-radius: 5px; 
-            font-size: 14px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .btn-home:hover { background: #0056b3; color: white; }
-        .app-card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 15px 0; text-decoration: none; display: block; color: #333; }
-        .app-card:hover { background: #f5f5f5; }
-        h1 { text-align: center; color: #333; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            color: #333;
+            text-decoration: none;
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .app-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+            text-align: center;
+        }
+
+        .app-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .app-description {
+            font-size: 0.95em;
+            color: #666;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .category-section {
+            margin-bottom: 40px;
+        }
+
+        .category-title {
+            color: white;
+            font-size: 1.5em;
+            font-weight: 300;
+            margin-bottom: 20px;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 40px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .apps-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .app-card {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            body {
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Node Applications</h1>
-    
-    <!-- Original Apps -->
-    <a href="/schedule" class="app-card">
-        <h3>📅 Schedule App</h3>
-        <p>Manage your schedules and appointments</p>
-    </a>
-    <a href="/checklist" class="app-card">
-        <h3>✅ Checklist App</h3>
-        <p>Firmware engineer interview checklist</p>
-    </a>
-    <a href="/maintenance" class="app-card">
-        <h3>🔧 Maintenance Tracker</h3>
-        <p>Track maintenance dates for filters and equipment</p>
-    </a>
-    
-    <!-- New Portfolio & CV Apps -->
-    <a href="/portfolio" class="app-card">
-        <h3>👨‍💻 Luis Lomeli's Portfolio</h3>
-        <p>Personal portfolio with games, projects, and experience</p>
-    </a>
-    <a href="/cv" class="app-card">
-        <h3>📄 Professional CV</h3>
-        <p>Professional resume and work experience</p>
-    </a>
-    
-    <!-- Health & Fitness Apps -->
-    <a href="/diet" class="app-card">
-        <h3>🥗 Diet Tracker</h3>
-        <p>Track your daily diet plan and nutrition</p>
-    </a>
-    <a href="/gym" class="app-card">
-        <h3>💪 Gym Routine</h3>
-        <p>Weekly workout routine with muscle group exercises</p>
-    </a>
-    
-    <!-- Fun Apps -->
-    <a href="/catify" class="app-card">
-        <h3>🐱 Catify</h3>
-        <p>Cat-themed fun page with images and links</p>
-    </a>
+    <div class="container">
+        <div class="header">
+            <h1>Node Apps Dashboard</h1>
+            <p>Your unified application suite</p>
+        </div>
+
+        <div class="category-section">
+            <h2 class="category-title">📋 Productivity Tools</h2>
+            <div class="apps-grid">
+                <a href="/schedule" class="app-card">
+                    <div class="app-icon">📅</div>
+                    <h3 class="app-title">Schedule App</h3>
+                    <p class="app-description">Manage your schedules and appointments with customizable time slots</p>
+                </a>
+                <a href="/checklist" class="app-card">
+                    <div class="app-icon">✅</div>
+                    <h3 class="app-title">Checklist App</h3>
+                    <p class="app-description">Firmware engineer interview checklist with persistent state</p>
+                </a>
+                <a href="/maintenance" class="app-card">
+                    <div class="app-icon">🔧</div>
+                    <h3 class="app-title">Maintenance Tracker</h3>
+                    <p class="app-description">Track maintenance dates for filters and equipment</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <h2 class="category-title">👨‍💻 Portfolio & Professional</h2>
+            <div class="apps-grid">
+                <a href="/portfolio" class="app-card">
+                    <div class="app-icon">🎯</div>
+                    <h3 class="app-title">Luis Lomeli's Portfolio</h3>
+                    <p class="app-description">Personal portfolio with games, projects, and experience</p>
+                </a>
+                <a href="/cv" class="app-card">
+                    <div class="app-icon">📄</div>
+                    <h3 class="app-title">Professional CV</h3>
+                    <p class="app-description">Professional resume and work experience showcase</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <h2 class="category-title">💪 Health & Fitness</h2>
+            <div class="apps-grid">
+                <a href="/diet" class="app-card">
+                    <div class="app-icon">🥗</div>
+                    <h3 class="app-title">Diet Tracker</h3>
+                    <p class="app-description">Track your daily diet plan and nutrition goals</p>
+                </a>
+                <a href="/gym" class="app-card">
+                    <div class="app-icon">💪</div>
+                    <h3 class="app-title">Gym Routine</h3>
+                    <p class="app-description">Weekly workout routine with muscle group exercises</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <h2 class="category-title">🎮 Fun & Entertainment</h2>
+            <div class="apps-grid">
+                <a href="/catify" class="app-card">
+                    <div class="app-icon">🐱</div>
+                    <h3 class="app-title">Catify</h3>
+                    <p class="app-description">Cat-themed fun page with images and links</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 Node Apps Dashboard - All apps in one place</p>
+        </div>
+    </div>
 </body>
 </html>

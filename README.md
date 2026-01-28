@@ -55,7 +55,14 @@ npm start
 
 ## Authentication
 
-The app uses basic authentication. Default credentials:
+The app uses selective authentication:
+- **Public Access**: All pages can be viewed without authentication
+- **Protected Actions**: Authentication required only for editing operations:
+  - Adding/modifying schedules
+  - Checking/unchecking checklist items  
+  - Adding/deleting maintenance records
+
+Default credentials for editing:
 - Username: `admin`
 - Password: `secure123`
 

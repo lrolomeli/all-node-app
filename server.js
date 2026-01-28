@@ -13,13 +13,13 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Basic authentication
+// Basic authentication middleware (only for editing endpoints)
 const users = {};
 users[process.env.AUTH_USERNAME || 'admin'] = process.env.AUTH_PASSWORD || 'secure123';
-app.use(basicAuth({
+const authMiddleware = basicAuth({
     users,
     challenge: true
-}));
+});
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -98,7 +98,7 @@ app.get('/catify', (req, res) => {
 
 // Schedule API
 app.get('/api/data', (req, res) => res.json(loadScheduleData()));
-app.post('/api/data', (req, res) => {
+app.post('/api/data', authMiddleware, (req, res) => {
     if (!req.body || typeof req.body !== 'object') {
         return res.status(400).json({ error: 'Invalid data' });
     }
@@ -111,7 +111,7 @@ app.get('/api/state', (req, res) => {
   res.json(checklistState);
 });
 
-app.post('/api/state', (req, res) => {
+app.post('/api/state', authMiddleware, (req, res) => {
   const { id, checked } = req.body;
   if (!id || typeof checked !== 'boolean') {
     return res.status(400).json({ error: 'Invalid data' });
@@ -126,7 +126,7 @@ app.get('/api/maintenance', (req, res) => {
   res.json(loadMaintenanceData());
 });
 
-app.post('/api/maintenance', (req, res) => {
+app.post('/api/maintenance', authMiddleware, (req, res) => {
   const record = req.body;
   if (!record || !record.itemType || !record.itemName || !record.date || !record.time || !record.description) {
     return res.status(400).json({ error: 'Invalid data' });
@@ -137,7 +137,7 @@ app.post('/api/maintenance', (req, res) => {
   res.json({ success: true });
 });
 
-app.delete('/api/maintenance/:id', (req, res) => {
+app.delete('/api/maintenance/:id', authMiddleware, (req, res) => {
   const { id } = req.params;
   let records = loadMaintenanceData();
   records = records.filter(r => r.id !== id);
