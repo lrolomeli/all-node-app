@@ -19,32 +19,34 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
+            overflow: hidden;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 25px;
         }
 
         .header h1 {
-            font-size: 2em;
+            font-size: 1.8em;
             font-weight: 300;
             color: #2c3e50;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .header p {
-            font-size: 1em;
+            font-size: 0.9em;
             color: #7f8c8d;
         }
 
         .apps-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 600px;
+            gap: 15px;
+            max-width: 550px;
             width: 100%;
+            max-height: calc(100vh - 120px);
         }
 
         .app-card {
@@ -59,7 +61,8 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
-            padding: 20px;
+            padding: 15px;
+            min-height: 0;
         }
 
         .app-card:hover {
@@ -71,79 +74,112 @@
         }
 
         .app-icon {
-            font-size: 2.5em;
-            margin-bottom: 12px;
+            font-size: 2.2em;
+            margin-bottom: 8px;
             display: block;
+            flex-shrink: 0;
         }
 
         .app-title {
-            font-size: 0.9em;
+            font-size: 0.8em;
             font-weight: 500;
             text-align: center;
-            line-height: 1.3;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
 
         /* Responsive design */
         @media (max-width: 768px) {
             .apps-grid {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 15px;
-                max-width: 600px;
-            }
-            
-            .header h1 {
-                font-size: 1.8em;
-            }
-            
-            .app-icon {
-                font-size: 2.2em;
-            }
-            
-            .app-title {
-                font-size: 0.85em;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .apps-grid {
-                grid-template-columns: repeat(2, 1fr);
                 gap: 12px;
-                max-width: 400px;
-            }
-            
-            .header {
-                margin-bottom: 30px;
+                max-width: 480px;
             }
             
             .header h1 {
                 font-size: 1.6em;
             }
             
+            .header {
+                margin-bottom: 20px;
+            }
+            
             .app-card {
-                padding: 15px;
+                padding: 12px;
             }
             
             .app-icon {
                 font-size: 2em;
-                margin-bottom: 8px;
+                margin-bottom: 6px;
             }
             
             .app-title {
-                font-size: 0.8em;
+                font-size: 0.75em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .apps-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                max-width: 320px;
+            }
+            
+            .header {
+                margin-bottom: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.4em;
+            }
+            
+            .app-card {
+                padding: 10px;
+            }
+            
+            .app-icon {
+                font-size: 1.8em;
+                margin-bottom: 4px;
+            }
+            
+            .app-title {
+                font-size: 0.7em;
             }
         }
 
         @media (max-height: 600px) {
             .header {
-                margin-bottom: 20px;
+                margin-bottom: 15px;
             }
             
             .header h1 {
-                font-size: 1.5em;
+                font-size: 1.4em;
             }
             
             .apps-grid {
-                gap: 15px;
+                gap: 10px;
+                max-width: 450px;
+            }
+            
+            .app-card {
+                padding: 10px;
+            }
+            
+            .app-icon {
+                font-size: 1.8em;
+                margin-bottom: 4px;
+            }
+            
+            .app-title {
+                font-size: 0.7em;
             }
         }
     </style>
