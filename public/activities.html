@@ -383,6 +383,7 @@
         </div>
     </div>
     
+    <script src="/auth.js"></script>
     <script>
         let activities = [];
         
@@ -400,7 +401,7 @@
         // Save activity to server
         async function saveActivity(activity) {
             try {
-                const response = await fetch('/api/activities', {
+                const response = await pinAuth.authenticatedFetch('/api/activities', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(activity)
@@ -415,7 +416,7 @@
         // Mark activity as completed
         async function completeActivity(id) {
             try {
-                await fetch(`/api/activities/${id}/complete`, {
+                await pinAuth.authenticatedFetch(`/api/activities/${id}/complete`, {
                     method: 'PUT'
                 });
                 const activity = activities.find(a => a.id === id);
@@ -433,7 +434,7 @@
         // Delete activity
         async function deleteActivity(id) {
             try {
-                await fetch(`/api/activities/${id}`, {
+                await pinAuth.authenticatedFetch(`/api/activities/${id}`, {
                     method: 'DELETE'
                 });
                 activities = activities.filter(a => a.id !== id);

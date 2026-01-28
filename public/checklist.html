@@ -68,6 +68,7 @@
 <label><input type="checkbox" id="bp_git"> Git: stash, branching, cherry-pick</label>
 <label><input type="checkbox" id="bp_bigO"> Big O Little O notation</label>
 
+<script src="/auth.js"></script>
 <script>
   // Load state from server
   fetch('/api/state')
@@ -78,14 +79,20 @@
       });
     });
 
-  // Save state to server
+  // Save state to server with PIN auth
   document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-    cb.addEventListener('change', () => {
-      fetch('/api/state', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: cb.id, checked: cb.checked })
-      });
+    cb.addEventListener('change', async () => {
+      try {
+        await pinAuth.authenticatedFetch('/api/state', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: cb.id, checked: cb.checked })
+        });
+      } catch (error) {
+        console.error('Error saving state:', error);
+        // Revert checkbox on error
+        cb.checked = !cb.checked;
+      }
     });
   });
 </script>

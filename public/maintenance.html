@@ -328,6 +328,7 @@
         </div>
     </div>
     
+    <script src="/auth.js"></script>
     <script>
         let records = [];
         
@@ -350,7 +351,7 @@
         // Save record to server
         async function saveRecord(record) {
             try {
-                const response = await fetch('/api/maintenance', {
+                const response = await pinAuth.authenticatedFetch('/api/maintenance', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(record)
@@ -365,7 +366,7 @@
         // Delete record from server
         async function deleteRecord(id) {
             try {
-                await fetch(`/api/maintenance/${id}`, {
+                await pinAuth.authenticatedFetch(`/api/maintenance/${id}`, {
                     method: 'DELETE'
                 });
                 records = records.filter(r => r.id !== id);

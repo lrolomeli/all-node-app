@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const basicAuth = require('express-basic-auth');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 const app = express();
@@ -13,13 +12,45 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Basic authentication middleware (only for editing endpoints)
-const users = {};
-users[process.env.AUTH_USERNAME || 'admin'] = process.env.AUTH_PASSWORD || 'secure123';
-const authMiddleware = basicAuth({
-    users,
-    challenge: true
-});
+// PIN authentication middleware
+const AUTH_PIN = process.env.AUTH_PIN || '123456';
+
+// Store authenticated sessions
+const authenticatedSessions = new Set();
+
+// Generate session token
+function generateSessionToken() {
+    return Math.random().toString(36).substring(2) + Date.now().toString(36);
+}
+
+// PIN authentication middleware
+const pinAuthMiddleware = (req, res, next) => {
+    const sessionToken = req.headers['x-session-token'] || req.query.session;
+    
+    if (sessionToken && authenticatedSessions.has(sessionToken)) {
+        return next();
+    }
+    
+    const pin = req.headers['x-auth-pin'] || req.body.pin;
+    
+    if (pin === AUTH_PIN) {
+        const token = generateSessionToken();
+        authenticatedSessions.add(token);
+        
+        // Clean up old sessions after 24 hours
+        setTimeout(() => {
+            authenticatedSessions.delete(token);
+        }, 24 * 60 * 60 * 1000);
+        
+        res.setHeader('x-session-token', token);
+        return next();
+    }
+    
+    return res.status(401).json({ 
+        error: 'Authentication required', 
+        message: 'Please provide a valid 6-digit PIN' 
+    });
+};
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -115,7 +146,7 @@ app.get('/activities', (req, res) => {
 
 // Schedule API
 app.get('/api/data', (req, res) => res.json(loadScheduleData()));
-app.post('/api/data', authMiddleware, (req, res) => {
+app.post('/api/data', pinAuthMiddleware, (req, res) => {
     if (!req.body || typeof req.body !== 'object') {
         return res.status(400).json({ error: 'Invalid data' });
     }
@@ -128,7 +159,7 @@ app.get('/api/state', (req, res) => {
   res.json(checklistState);
 });
 
-app.post('/api/state', authMiddleware, (req, res) => {
+app.post('/api/state', pinAuthMiddleware, (req, res) => {
   const { id, checked } = req.body;
   if (!id || typeof checked !== 'boolean') {
     return res.status(400).json({ error: 'Invalid data' });
@@ -143,7 +174,7 @@ app.get('/api/maintenance', (req, res) => {
   res.json(loadMaintenanceData());
 });
 
-app.post('/api/maintenance', authMiddleware, (req, res) => {
+app.post('/api/maintenance', pinAuthMiddleware, (req, res) => {
   const record = req.body;
   if (!record || !record.itemType || !record.itemName || !record.date || !record.time || !record.description) {
     return res.status(400).json({ error: 'Invalid data' });
@@ -154,7 +185,7 @@ app.post('/api/maintenance', authMiddleware, (req, res) => {
   res.json({ success: true });
 });
 
-app.delete('/api/maintenance/:id', authMiddleware, (req, res) => {
+app.delete('/api/maintenance/:id', pinAuthMiddleware, (req, res) => {
   const { id } = req.params;
   let records = loadMaintenanceData();
   records = records.filter(r => r.id !== id);
@@ -167,7 +198,7 @@ app.get('/api/activities', (req, res) => {
   res.json(loadActivitiesData());
 });
 
-app.post('/api/activities', authMiddleware, (req, res) => {
+app.post('/api/activities', pinAuthMiddleware, (req, res) => {
   const activity = req.body;
   if (!activity || !activity.name || !activity.category || !activity.description) {
     return res.status(400).json({ error: 'Invalid data' });
@@ -178,7 +209,7 @@ app.post('/api/activities', authMiddleware, (req, res) => {
   res.json({ success: true });
 });
 
-app.put('/api/activities/:id/complete', authMiddleware, (req, res) => {
+app.put('/api/activities/:id/complete', pinAuthMiddleware, (req, res) => {
   const { id } = req.params;
   let activities = loadActivitiesData();
   const activity = activities.find(a => a.id === id);
@@ -190,12 +221,31 @@ app.put('/api/activities/:id/complete', authMiddleware, (req, res) => {
   res.json({ success: true });
 });
 
-app.delete('/api/activities/:id', authMiddleware, (req, res) => {
+app.delete('/api/activities/:id', pinAuthMiddleware, (req, res) => {
   const { id } = req.params;
   let activities = loadActivitiesData();
   activities = activities.filter(a => a.id !== id);
   saveActivitiesData(activities);
   res.json({ success: true });
+});
+
+// PIN Authentication endpoint
+app.post('/api/auth/verify', (req, res) => {
+  const { pin } = req.body;
+  
+  if (pin === AUTH_PIN) {
+    const token = generateSessionToken();
+    authenticatedSessions.add(token);
+    
+    // Clean up old sessions after 24 hours
+    setTimeout(() => {
+      authenticatedSessions.delete(token);
+    }, 24 * 60 * 60 * 1000);
+    
+    res.json({ success: true, sessionToken: token });
+  } else {
+    res.status(401).json({ error: 'Invalid PIN' });
+  }
 });
 
 const PORT = process.env.PORT || 3000;

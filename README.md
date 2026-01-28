@@ -55,20 +55,24 @@ npm start
 
 ## Authentication
 
-The app uses selective authentication:
+The app uses simple PIN authentication:
 - **Public Access**: All pages can be viewed without authentication
-- **Protected Actions**: Authentication required only for editing operations:
+- **Protected Actions**: 6-digit PIN required only for editing operations:
   - Adding/modifying schedules
   - Checking/unchecking checklist items  
   - Adding/deleting maintenance records
+  - Adding/completing/deleting activities
 
-Default credentials for editing:
-- Username: `admin`
-- Password: `secure123`
+**Default PIN**: `123456`
 
 Configure via `.env` file:
 ```
-AUTH_USERNAME=your_username
-AUTH_PASSWORD=your_password
+AUTH_PIN=your_6_digit_pin
 PORT=3000
 ```
+
+**How it works**:
+- When you try to edit something, a PIN modal appears
+- Enter your 6-digit PIN using the keypad or keyboard
+- Session stays authenticated for 24 hours
+- Clean, mobile-friendly PIN entry interface
