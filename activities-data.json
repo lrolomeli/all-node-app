@@ -108,6 +108,62 @@
     "notes": "",
     "completed": false,
     "createdAt": "2026-01-28T03:33:33.377Z"
+  },
+  {
+    "id": "1769827792387",
+    "name": "tortas ahogadas",
+    "category": "Food",
+    "priority": "Low",
+    "addedBy": "Zuzu",
+    "description": "d",
+    "notes": "",
+    "completed": true,
+    "createdAt": "2026-01-31T02:49:52.387Z",
+    "completedDate": "2026-02-01T21:48:36.977Z"
+  },
+  {
+    "id": "1769827843181",
+    "name": "padel",
+    "category": "Sports",
+    "priority": "Low",
+    "addedBy": "Zuzu",
+    "description": "jugar padel",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-01-31T02:50:43.181Z"
+  },
+  {
+    "id": "1769982599010",
+    "name": "partido femenil fut liga mx",
+    "category": "Sports",
+    "priority": "Low",
+    "addedBy": "Cici",
+    "description": "soccer girl",
+    "notes": "",
+    "completed": true,
+    "createdAt": "2026-02-01T21:49:59.010Z",
+    "completedDate": "2026-02-03T02:58:06.808Z"
+  },
+  {
+    "id": "1769982661401",
+    "name": "escalar",
+    "category": "Sports",
+    "priority": "High",
+    "addedBy": "Cici",
+    "description": "escalar deportivamente",
+    "notes": "que no sea domingo",
+    "completed": false,
+    "createdAt": "2026-02-01T21:51:01.401Z"
+  },
+  {
+    "id": "1769982699513",
+    "name": "barranca",
+    "category": "Sports",
+    "priority": "Medium",
+    "addedBy": "Zuzu",
+    "description": "cerro",
+    "notes": "tiempo record menos de 3 hrs",
+    "completed": false,
+    "createdAt": "2026-02-01T21:51:39.513Z"
   }
-
 ]
