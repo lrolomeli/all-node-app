@@ -313,6 +313,73 @@
             margin-top: 5px;
         }
 
+        .filter-section {
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-description {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .transaction-meta {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .transaction-amount {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .transaction-amount.income {
+            color: #2ecc71;
+        }
+
+        .transaction-amount.expense {
+            color: #e74c3c;
+        }
+
+        .transaction-amount.savings {
+            color: #3498db;
+        }
+
+        .transaction-amount.fun {
+            color: #9b59b6;
+        }
+
+        .savings-update {
+            background: #e8f5e8;
+            border: 1px solid #2ecc71;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .savings-update h4 {
+            color: #2ecc71;
+            margin-bottom: 10px;
+        }
+
         @media (max-width: 768px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -371,10 +438,133 @@
         
         <!-- Tabs -->
         <div class="tabs">
-            <button class="tab active" onclick="showTab('income')">💵 Income</button>
+            <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="tab" onclick="showTab('transactions')">� Transactions</button>
+            <button class="tab" onclick="showTab('income')">� Income</button>
             <button class="tab" onclick="showTab('expenses')">💸 Fixed Expenses</button>
             <button class="tab" onclick="showTab('savings')">🎯 Savings Goals</button>
             <button class="tab" onclick="showTab('activities')">💕 Fun Money</button>
+        </div>
+        
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="form-section">
+                <h3>Monthly Budget Overview</h3>
+                <div class="dashboard">
+                    <div class="summary-card income">
+                        <h3>Monthly Income</h3>
+                        <div class="amount" id="totalIncome2">$0</div>
+                    </div>
+                    <div class="summary-card expenses">
+                        <h3>Fixed Expenses</h3>
+                        <div class="amount" id="totalExpenses2">$0</div>
+                    </div>
+                    <div class="summary-card savings">
+                        <h3>Savings Goals</h3>
+                        <div class="amount" id="totalSavings2">$0</div>
+                    </div>
+                    <div class="summary-card available">
+                        <h3>Available</h3>
+                        <div class="amount" id="availableMoney2">$0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>This Month's Activity</h3>
+                <div class="dashboard">
+                    <div class="summary-card income">
+                        <h3>Actual Income</h3>
+                        <div class="amount" id="actualIncome">$0</div>
+                    </div>
+                    <div class="summary-card expenses">
+                        <h3>Actual Expenses</h3>
+                        <div class="amount" id="actualExpenses">$0</div>
+                    </div>
+                    <div class="summary-card savings">
+                        <h3>Saved This Month</h3>
+                        <div class="amount" id="actualSavings">$0</div>
+                    </div>
+                    <div class="summary-card available">
+                        <h3>Remaining</h3>
+                        <div class="amount" id="remainingMoney">$0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Transactions Tab -->
+        <div id="transactions" class="tab-content">
+            <div class="form-section">
+                <h3>Add Transaction</h3>
+                <form id="transactionForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="transactionType">Type *</label>
+                            <select id="transactionType" required onchange="updateTransactionCategories()">
+                                <option value="">Select type...</option>
+                                <option value="income">💵 Income</option>
+                                <option value="expense">💸 Expense</option>
+                                <option value="savings">🎯 Savings Contribution</option>
+                                <option value="fun">💕 Fun Money</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="transactionAmount">Amount *</label>
+                            <input type="number" id="transactionAmount" placeholder="0.00" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="transactionCategory">Category</label>
+                            <select id="transactionCategory">
+                                <option value="">Select category...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="transactionDate">Date *</label>
+                            <input type="date" id="transactionDate" required>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="transactionDescription">Description *</label>
+                            <input type="text" id="transactionDescription" placeholder="What was this for?" required>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="transactionNotes">Notes (optional)</label>
+                            <textarea id="transactionNotes" placeholder="Additional details..."></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Transaction</button>
+                </form>
+            </div>
+            
+            <div class="items-list">
+                <h3>Recent Transactions</h3>
+                <div class="filter-section" style="padding: 15px; background: #f8f9fa; border-bottom: 1px solid #e0e0e0;">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="filterTransactionType">Filter by Type</label>
+                            <select id="filterTransactionType" onchange="renderTransactions()">
+                                <option value="">All Types</option>
+                                <option value="income">💵 Income</option>
+                                <option value="expense">💸 Expenses</option>
+                                <option value="savings">🎯 Savings</option>
+                                <option value="fun">💕 Fun Money</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filterMonth">Filter by Month</label>
+                            <select id="filterMonth" onchange="renderTransactions()">
+                                <option value="">All Time</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="transactionsList"></div>
+            </div>
         </div>
         
         <!-- Income Tab -->
@@ -545,7 +735,8 @@
             income: [],
             expenses: [],
             savings: [],
-            funMoney: []
+            funMoney: [],
+            transactions: []
         };
         
         // Load budget data from server
@@ -555,6 +746,9 @@
                 budgetData = await response.json();
                 updateDashboard();
                 renderAllLists();
+                populateMonthFilter();
+                // Set today's date as default
+                document.getElementById('transactionDate').value = new Date().toISOString().split('T')[0];
             } catch (error) {
                 console.error('Error loading budget data:', error);
             }
@@ -604,6 +798,57 @@
             event.target.classList.add('active');
         }
         
+        // Update transaction categories based on type
+        function updateTransactionCategories() {
+            const type = document.getElementById('transactionType').value;
+            const categorySelect = document.getElementById('transactionCategory');
+            
+            let options = '<option value="">Select category...</option>';
+            
+            if (type === 'income') {
+                budgetData.income.forEach(item => {
+                    options += `<option value="${item.name}">${item.name}</option>`;
+                });
+            } else if (type === 'expense') {
+                const categories = ['Housing', 'Utilities', 'Transportation', 'Food', 'Insurance', 'Debt', 'Subscriptions', 'Other'];
+                categories.forEach(cat => {
+                    options += `<option value="${cat}">${cat}</option>`;
+                });
+            } else if (type === 'savings') {
+                budgetData.savings.forEach(item => {
+                    options += `<option value="${item.name}">${item.name}</option>`;
+                });
+            } else if (type === 'fun') {
+                const categories = ['Date Nights', 'Entertainment', 'Hobbies', 'Travel Fund', 'Shopping', 'Dining Out', 'Other Fun'];
+                categories.forEach(cat => {
+                    options += `<option value="${cat}">${cat}</option>`;
+                });
+            }
+            
+            categorySelect.innerHTML = options;
+        }
+        
+        // Populate month filter
+        function populateMonthFilter() {
+            const monthSelect = document.getElementById('filterMonth');
+            const months = new Set();
+            
+            budgetData.transactions.forEach(transaction => {
+                const date = new Date(transaction.date);
+                const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                months.add(monthYear);
+            });
+            
+            let options = '<option value="">All Time</option>';
+            Array.from(months).sort().reverse().forEach(month => {
+                const [year, monthNum] = month.split('-');
+                const monthName = new Date(year, monthNum - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                options += `<option value="${month}">${monthName}</option>`;
+            });
+            
+            monthSelect.innerHTML = options;
+        }
+        
         // Update dashboard summary
         function updateDashboard() {
             const totalIncome = budgetData.income.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
@@ -613,19 +858,67 @@
             
             const available = totalIncome - totalExpenses - totalSavings - totalFunMoney;
             
+            // Update planned budget
             document.getElementById('totalIncome').textContent = `$${totalIncome.toFixed(2)}`;
             document.getElementById('totalExpenses').textContent = `$${totalExpenses.toFixed(2)}`;
             document.getElementById('totalSavings').textContent = `$${totalSavings.toFixed(2)}`;
             document.getElementById('availableMoney').textContent = `$${available.toFixed(2)}`;
             
+            // Update dashboard tab
+            document.getElementById('totalIncome2').textContent = `$${totalIncome.toFixed(2)}`;
+            document.getElementById('totalExpenses2').textContent = `$${totalExpenses.toFixed(2)}`;
+            document.getElementById('totalSavings2').textContent = `$${totalSavings.toFixed(2)}`;
+            document.getElementById('availableMoney2').textContent = `$${available.toFixed(2)}`;
+            
+            // Calculate actual amounts from transactions this month
+            const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+            const thisMonthTransactions = budgetData.transactions.filter(t => 
+                t.date.startsWith(currentMonth)
+            );
+            
+            const actualIncome = thisMonthTransactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                
+            const actualExpenses = thisMonthTransactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                
+            const actualSavings = thisMonthTransactions
+                .filter(t => t.type === 'savings')
+                .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+                
+            const actualFun = thisMonthTransactions
+                .filter(t => t.type === 'fun')
+                .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+            
+            const remaining = actualIncome - actualExpenses - actualSavings - actualFun;
+            
+            document.getElementById('actualIncome').textContent = `$${actualIncome.toFixed(2)}`;
+            document.getElementById('actualExpenses').textContent = `$${actualExpenses.toFixed(2)}`;
+            document.getElementById('actualSavings').textContent = `$${actualSavings.toFixed(2)}`;
+            document.getElementById('remainingMoney').textContent = `$${remaining.toFixed(2)}`;
+            
             // Change color based on available money
             const availableElement = document.getElementById('availableMoney');
-            if (available < 0) {
-                availableElement.style.color = '#e74c3c';
-            } else if (available < 100) {
-                availableElement.style.color = '#f39c12';
+            const remainingElement = document.getElementById('remainingMoney');
+            
+            [availableElement, document.getElementById('availableMoney2')].forEach(el => {
+                if (available < 0) {
+                    el.style.color = '#e74c3c';
+                } else if (available < 100) {
+                    el.style.color = '#f39c12';
+                } else {
+                    el.style.color = '#2ecc71';
+                }
+            });
+            
+            if (remaining < 0) {
+                remainingElement.style.color = '#e74c3c';
+            } else if (remaining < 100) {
+                remainingElement.style.color = '#f39c12';
             } else {
-                availableElement.style.color = '#2ecc71';
+                remainingElement.style.color = '#2ecc71';
             }
         }
         
@@ -635,6 +928,7 @@
             renderExpensesList();
             renderSavingsList();
             renderFunMoneyList();
+            renderTransactions();
         }
         
         // Render income list
@@ -717,7 +1011,78 @@
             }).join('');
         }
         
-        // Render fun money list
+        // Render transactions list
+        function renderTransactions() {
+            const list = document.getElementById('transactionsList');
+            const typeFilter = document.getElementById('filterTransactionType').value;
+            const monthFilter = document.getElementById('filterMonth').value;
+            
+            let filteredTransactions = budgetData.transactions.filter(transaction => {
+                const matchesType = !typeFilter || transaction.type === typeFilter;
+                const matchesMonth = !monthFilter || transaction.date.startsWith(monthFilter);
+                return matchesType && matchesMonth;
+            });
+            
+            if (filteredTransactions.length === 0) {
+                list.innerHTML = '<div class="empty-state"><h4>No transactions yet</h4><p>Start tracking your income and expenses</p></div>';
+                return;
+            }
+            
+            // Sort by date (newest first)
+            filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            list.innerHTML = filteredTransactions.map(transaction => {
+                const date = new Date(transaction.date).toLocaleDateString();
+                const typeIcons = {
+                    income: '💵',
+                    expense: '💸',
+                    savings: '🎯',
+                    fun: '💕'
+                };
+                
+                return `
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-description">
+                                ${typeIcons[transaction.type]} ${transaction.description}
+                            </div>
+                            <div class="transaction-meta">
+                                ${date} • ${transaction.category || 'No category'}
+                                ${transaction.notes ? ` • ${transaction.notes}` : ''}
+                            </div>
+                        </div>
+                        <div class="transaction-amount ${transaction.type}">
+                            ${transaction.type === 'income' ? '+' : '-'}$${parseFloat(transaction.amount).toFixed(2)}
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-danger" onclick="confirmDeleteTransaction('${transaction.id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Delete transaction
+        async function deleteTransaction(id) {
+            try {
+                await pinAuth.authenticatedFetch(`/api/budget/transactions/${id}`, {
+                    method: 'DELETE'
+                });
+                budgetData.transactions = budgetData.transactions.filter(t => t.id !== id);
+                updateDashboard();
+                renderTransactions();
+                populateMonthFilter();
+            } catch (error) {
+                console.error('Error deleting transaction:', error);
+                alert('Failed to delete transaction');
+            }
+        }
+        
+        function confirmDeleteTransaction(id) {
+            if (confirm('Are you sure you want to delete this transaction?')) {
+                deleteTransaction(id);
+            }
+        }
         function renderFunMoneyList() {
             const list = document.getElementById('funMoneyList');
             if (budgetData.funMoney.length === 0) {
@@ -741,6 +1106,40 @@
         }
         
         // Form handlers
+        document.getElementById('transactionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const transaction = {
+                id: Date.now().toString(),
+                type: document.getElementById('transactionType').value,
+                amount: document.getElementById('transactionAmount').value,
+                category: document.getElementById('transactionCategory').value,
+                date: document.getElementById('transactionDate').value,
+                description: document.getElementById('transactionDescription').value,
+                notes: document.getElementById('transactionNotes').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            // If it's a savings contribution, update the savings goal
+            if (transaction.type === 'savings' && transaction.category) {
+                const savingsGoal = budgetData.savings.find(s => s.name === transaction.category);
+                if (savingsGoal) {
+                    savingsGoal.currentAmount = (parseFloat(savingsGoal.currentAmount || 0) + parseFloat(transaction.amount)).toString();
+                }
+            }
+            
+            budgetData.transactions.push(transaction);
+            await saveBudgetData();
+            updateDashboard();
+            renderTransactions();
+            renderSavingsList(); // Update savings list to show new progress
+            populateMonthFilter();
+            e.target.reset();
+            
+            // Show success message
+            alert(`Transaction added successfully! ${transaction.type === 'savings' ? 'Savings goal updated.' : ''}`);
+        });
+        
         document.getElementById('incomeForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const item = {

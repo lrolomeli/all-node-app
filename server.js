@@ -98,7 +98,8 @@ function loadBudgetData() {
             income: [],
             expenses: [],
             savings: [],
-            funMoney: []
+            funMoney: [],
+            transactions: []
         };
     }
 }
@@ -232,11 +233,14 @@ app.delete('/api/budget/:type/:id', pinAuthMiddleware, (req, res) => {
   const { type, id } = req.params;
   const budgetData = loadBudgetData();
   
-  if (!budgetData[type]) {
+  if (type === 'transactions') {
+    budgetData.transactions = budgetData.transactions.filter(item => item.id !== id);
+  } else if (budgetData[type]) {
+    budgetData[type] = budgetData[type].filter(item => item.id !== id);
+  } else {
     return res.status(400).json({ error: 'Invalid budget type' });
   }
   
-  budgetData[type] = budgetData[type].filter(item => item.id !== id);
   saveBudgetData(budgetData);
   res.json({ success: true });
 });
