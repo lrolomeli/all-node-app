@@ -89,6 +89,23 @@ function saveMaintenanceData(data) {
     fs.writeFileSync('maintenance-data.json', JSON.stringify(data, null, 2));
 }
 
+// Budget data handling
+function loadBudgetData() {
+    try {
+        return JSON.parse(fs.readFileSync('budget-data.json', 'utf8'));
+    } catch {
+        return {
+            income: [],
+            expenses: [],
+            savings: [],
+            funMoney: []
+        };
+    }
+}
+
+function saveBudgetData(data) {
+    fs.writeFileSync('budget-data.json', JSON.stringify(data, null, 2));
+}
 // Activities data handling
 function loadActivitiesData() {
     try {
@@ -138,6 +155,10 @@ app.get('/gym', (req, res) => {
 
 app.get('/catify', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'other', 'index.html'));
+});
+
+app.get('/budget', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'budget.html'));
 });
 
 app.get('/activities', (req, res) => {
@@ -190,6 +211,33 @@ app.delete('/api/maintenance/:id', pinAuthMiddleware, (req, res) => {
   let records = loadMaintenanceData();
   records = records.filter(r => r.id !== id);
   saveMaintenanceData(records);
+  res.json({ success: true });
+});
+
+// Budget API
+app.get('/api/budget', (req, res) => {
+  res.json(loadBudgetData());
+});
+
+app.post('/api/budget', pinAuthMiddleware, (req, res) => {
+  const budgetData = req.body;
+  if (!budgetData || typeof budgetData !== 'object') {
+    return res.status(400).json({ error: 'Invalid budget data' });
+  }
+  saveBudgetData(budgetData);
+  res.json({ success: true });
+});
+
+app.delete('/api/budget/:type/:id', pinAuthMiddleware, (req, res) => {
+  const { type, id } = req.params;
+  const budgetData = loadBudgetData();
+  
+  if (!budgetData[type]) {
+    return res.status(400).json({ error: 'Invalid budget type' });
+  }
+  
+  budgetData[type] = budgetData[type].filter(item => item.id !== id);
+  saveBudgetData(budgetData);
   res.json({ success: true });
 });
 
