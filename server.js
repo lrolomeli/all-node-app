@@ -106,6 +106,19 @@ function loadBudgetData() {
 function saveBudgetData(data) {
     fs.writeFileSync('budget-data.json', JSON.stringify(data, null, 2));
 }
+// Gym media data handling
+function loadGymMedia() {
+    try {
+        return JSON.parse(fs.readFileSync('gym-media.json', 'utf8'));
+    } catch {
+        return {};
+    }
+}
+
+function saveGymMedia(data) {
+    fs.writeFileSync('gym-media.json', JSON.stringify(data, null, 2));
+}
+
 // Activities data handling
 function loadActivitiesData() {
     try {
@@ -239,6 +252,33 @@ app.delete('/api/budget/:type/:id', pinAuthMiddleware, (req, res) => {
   budgetData[type] = budgetData[type].filter(item => item.id !== id);
   saveBudgetData(budgetData);
   res.json({ success: true });
+});
+
+// Gym media API
+app.get('/api/gym/media', (req, res) => {
+    res.json(loadGymMedia());
+});
+
+app.post('/api/gym/media', pinAuthMiddleware, (req, res) => {
+    const { exercise, url, label } = req.body;
+    if (!exercise || !url) return res.status(400).json({ error: 'exercise and url are required' });
+
+    const media = loadGymMedia();
+    if (!media[exercise]) media[exercise] = [];
+    media[exercise].push({ id: Date.now().toString(), url, label: label || url });
+    saveGymMedia(media);
+    res.json({ success: true, media: media[exercise] });
+});
+
+app.delete('/api/gym/media/:exercise/:id', pinAuthMiddleware, (req, res) => {
+    const { exercise, id } = req.params;
+    const media = loadGymMedia();
+    if (media[exercise]) {
+        media[exercise] = media[exercise].filter(m => m.id !== id);
+        if (media[exercise].length === 0) delete media[exercise];
+    }
+    saveGymMedia(media);
+    res.json({ success: true });
 });
 
 // Activities API

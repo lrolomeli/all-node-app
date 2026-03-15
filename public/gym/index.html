@@ -2,87 +2,836 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rutina de Gym</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f0f0f;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
         }
-        .container {
-            max-width: 600px;
-            margin-top: 20px;
+
+        .header {
+            text-align: center;
+            padding: 30px 20px 20px;
+            position: relative;
         }
-        .card {
+
+        .btn-home {
+            position: absolute;
+            left: 0;
+            top: 30px;
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-home:hover { background: rgba(255,255,255,0.2); }
+
+        .header h1 {
+            font-size: 2em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            color: #888;
+            margin-top: 6px;
+            font-size: 0.95em;
+        }
+
+        /* Block tabs */
+        .block-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        .block-tab {
+            padding: 10px 35px;
+            border-radius: 30px;
+            border: 2px solid #333;
+            background: transparent;
+            color: #888;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+        }
+
+        .block-tab.active {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            color: #fff;
+        }
+
+        /* Day tabs */
+        .days-nav {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .day-tab {
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: 2px solid #333;
+            background: transparent;
+            color: #888;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .day-tab.active {
+            border-color: #e74c3c;
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        /* Exercises grid */
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .exercise-card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 14px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exercise-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #e74c3c;
+        }
+
+        .exercise-card:hover {
+            border-color: #e74c3c;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.15);
+        }
+
+        .exercise-name {
+            font-size: 1em;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .exercise-stats {
+            display: flex;
+            gap: 10px;
+        }
+
+        .stat {
+            background: #252525;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.8em;
+            color: #aaa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .stat span:first-child {
+            font-size: 0.7em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+        }
+
+        .stat span:last-child {
+            font-weight: 700;
+            color: #e74c3c;
+            font-size: 0.95em;
+        }
+
+        .exercise-notes {
+            margin-top: 10px;
+            font-size: 0.8em;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Media links */
+        .media-section {
+            margin-top: 12px;
+            border-top: 1px solid #2a2a2a;
+            padding-top: 10px;
+        }
+
+        .media-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .media-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            background: #252525;
+            border: 1px solid #333;
+            border-radius: 20px;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.75em;
+            transition: all 0.2s;
+        }
+
+        .media-link:hover { background: #333; color: #fff; }
+
+        .media-link .delete-media {
+            background: none;
+            border: none;
+            color: #555;
+            cursor: pointer;
+            font-size: 0.9em;
+            padding: 0;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .media-link .delete-media:hover { color: #e74c3c; }
+
+        .add-media-btn {
+            background: none;
+            border: 1px dashed #333;
+            border-radius: 20px;
+            color: #555;
+            font-size: 0.75em;
+            padding: 4px 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-media-btn:hover { border-color: #e74c3c; color: #e74c3c; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 25px;
+            width: 90%;
+            max-width: 420px;
+        }
+
+        .modal h3 {
+            color: #fff;
+            margin-bottom: 5px;
+            font-size: 1em;
+        }
+
+        .modal p {
+            color: #666;
+            font-size: 0.82em;
+            margin-bottom: 15px;
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 10px 14px;
+            background: #252525;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9em;
             margin-bottom: 10px;
+            outline: none;
+        }
+
+        .modal input:focus { border-color: #e74c3c; }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 5px;
+        }
+
+        .btn-cancel {
+            padding: 8px 18px;
+            background: #252525;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #888;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .btn-save {
+            padding: 8px 18px;
+            background: #e74c3c;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        /* Muscle links section */
+        .muscles-section {
+            max-width: 1000px;
+            margin: 30px auto 0;
+            background: #1a1a1a;
+            border-radius: 14px;
+            padding: 20px 25px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .muscles-section h3 {
+            color: #888;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .muscles-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .muscle-link {
+            padding: 6px 14px;
+            background: #252525;
+            border: 1px solid #333;
+            border-radius: 20px;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.82em;
+            transition: all 0.2s;
+        }
+
+        .muscle-link:hover {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            color: #fff;
+        }
+
+        .empty-day {
+            text-align: center;
+            padding: 60px 20px;
+            color: #444;
+            grid-column: 1 / -1;
+        }
+
+        .empty-day h3 { font-size: 1.2em; margin-bottom: 8px; }
+
+        @media (max-width: 600px) {
+            .exercises-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.5em; }
+            .btn-home { position: static; display: block; width: fit-content; margin: 0 auto 15px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="text-center mb-3">
-            <a href="/" class="btn btn-secondary">← Volver al Inicio</a>
-        </div>
-        <h2 class="text-center mb-4">Mi Rutina de Gym</h2>
-        <div class="accordion" id="gymRoutine">
-            <script>
 
-                const exerciseLinks = {
-                    "Triceps": "https://musclewiki.com/exercises/male/triceps",
-                    "Pecho": "https://musclewiki.com/machine/male/chest",
-                    "Cuadriceps": "https://musclewiki.com/machine/male/quads",
-                    "Pantorrilla": "https://musclewiki.com/machine/male/calves",
-                    "Abdomen Lateral": "https://musclewiki.com/machine/male/obliques",
-                    "Espalda Central": "https://musclewiki.com/machine/male/traps-middle",
-                    "Espalda Lateral": "https://musclewiki.com/machine/male/lats",
-                    "Espalda Baja": "https://musclewiki.com/machine/male/lowerback",
-                    "Biceps": "https://musclewiki.com/machine/male/biceps",
-                    "Antebrazo": "https://musclewiki.com/exercises/male/forearms",
-                    "Hombro": "https://musclewiki.com/exercises/male/front-shoulders",
-                    "Trapecio": "https://musclewiki.com/exercises/male/traps",
-                    "Ingle": "https://www.surreyphysio.co.uk/top-5/best-5-exercises-for-a-groin-strain/",
-                    "Abdomen Central": "https://musclewiki.com/exercises/male/abdominals",
-                    "Femoral": "https://musclewiki.com/exercises/male/hamstrings",
-                    "Gluteos": "https://musclewiki.com/exercises/male/glutes"
-                };
+<div class="header">
+    <a href="/" class="btn-home">← Inicio</a>
+    <h1>💪 Gym Routine</h1>
+    <p>Selecciona tu bloque y día</p>
+</div>
 
+<div class="block-tabs">
+    <button class="block-tab active" onclick="selectBlock('A')">BLOQUE A</button>
+    <button class="block-tab" onclick="selectBlock('B')">BLOQUE B</button>
+</div>
 
-                const routine = {
-                    "Lunes": ["Pecho", "Hombro"],
-                    "Martes": ["Pantorrilla", "Cuadriceps", "Femoral"], 
-                    "Miercoles": ["Biceps", "Antebrazo", "Triceps"],
-                    "Jueves": ["Espalda Central", "Espalda Lateral", "Espalda Baja"],
-                    "Viernes": ["Gluteos", "Ingle"],
-                    "Sabado": ["Abdomen Central", "Abdomen Lateral"]
-                };
-                
-                let index = 0;
-                for (let day in routine) {
-                    document.write(`
-                        <div class="card">
-                            <div class="card-header" id="heading${index}">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="true" aria-controls="collapse${index}">
-                                        ${day}
-                                    </button>
-                                </h5>
-                            </div>
-                            <div id="collapse${index}" class="collapse" aria-labelledby="heading${index}" data-bs-parent="#gymRoutine">
-                                <div class="card-body">
-                                    <ul>
-                                        ${routine[day].map(muscle => `<li><a href="${exerciseLinks[muscle] || '#'}">${muscle}</a></li>`).join('')}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    `);
-                    index++;
-                }
-            </script>
+<div class="days-nav" id="daysNav"></div>
+
+<div class="exercises-grid" id="exercisesGrid"></div>
+
+<!-- Add media modal -->
+<div class="modal-overlay" id="mediaModal">
+    <div class="modal">
+        <h3>Agregar referencia</h3>
+        <p id="modalExerciseName"></p>
+        <input type="url" id="mediaUrl" placeholder="URL del video o imagen (YouTube, etc.)">
+        <input type="text" id="mediaLabel" placeholder="Etiqueta (opcional)">
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+            <button class="btn-save" onclick="saveMedia()">Guardar</button>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<div class="muscles-section">
+    <h3>Referencia de músculos</h3>
+    <div class="muscles-grid" id="musclesGrid"></div>
+</div>
+
+<script>
+    const muscleLinks = {
+        "Triceps":          "https://musclewiki.com/exercises/male/triceps",
+        "Pecho":            "https://musclewiki.com/machine/male/chest",
+        "Cuadriceps":       "https://musclewiki.com/machine/male/quads",
+        "Pantorrilla":      "https://musclewiki.com/machine/male/calves",
+        "Oblicuos":         "https://musclewiki.com/machine/male/obliques",
+        "Espalda Media":    "https://musclewiki.com/machine/male/traps-middle",
+        "Espalda Lateral":  "https://musclewiki.com/machine/male/lats",
+        "Espalda Baja":     "https://musclewiki.com/machine/male/lowerback",
+        "Biceps":           "https://musclewiki.com/machine/male/biceps",
+        "Antebrazo":        "https://musclewiki.com/exercises/male/forearms",
+        "Hombro":           "https://musclewiki.com/exercises/male/front-shoulders",
+        "Trapecio":         "https://musclewiki.com/exercises/male/traps",
+        "Abdomen":          "https://musclewiki.com/exercises/male/abdominals",
+        "Femoral":          "https://musclewiki.com/exercises/male/hamstrings",
+        "Gluteos":          "https://musclewiki.com/exercises/male/glutes"
+    };
+
+    const dayLabels = {
+        1: "Lunes", 2: "Martes", 3: "Miércoles",
+        4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo"
+    };
+
+    let routine = {};
+    let gymMedia = {};
+    let currentBlock = 'A';
+    let currentDay = null;
+    let modalExercise = null;
+
+    async function loadCSV() {
+        const response = await fetch('/gym/routine.csv');
+        const text = await response.text();
+        const lines = text.trim().split('\n').slice(1);
+
+        lines.forEach(line => {
+            const parts = line.split(',');
+            const [bloque, dia, ejercicio, series, repeticiones, notas] = parts;
+            if (!bloque || !dia || !ejercicio || !ejercicio.trim()) return;
+
+            const b = bloque.trim();
+            const d = parseInt(dia.trim());
+            if (isNaN(d)) return;
+
+            if (!routine[b]) routine[b] = {};
+            if (!routine[b][d]) routine[b][d] = [];
+
+            routine[b][d].push({
+                name: ejercicio.trim(),
+                sets: series ? series.trim() : '',
+                reps: repeticiones ? repeticiones.trim() : '',
+                notes: notas ? notas.trim() : ''
+            });
+        });
+    }
+
+    async function loadMedia() {
+        try {
+            const res = await fetch('/api/gym/media');
+            gymMedia = await res.json();
+        } catch (e) {
+            gymMedia = {};
+        }
+    }
+
+    function selectBlock(block) {
+        currentBlock = block;
+        currentDay = null;
+        document.querySelectorAll('.block-tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+        renderDays();
+    }
+
+    function renderDays() {
+        const nav = document.getElementById('daysNav');
+        const days = Object.keys(routine[currentBlock] || {}).map(Number).sort((a, b) => a - b);
+
+        if (currentDay === null || !days.includes(currentDay)) {
+            currentDay = days[0] || null;
+        }
+
+        nav.innerHTML = days.map(day => {
+            const label = dayLabels[day] || `Día ${day}`;
+            return `<button class="day-tab ${currentDay === day ? 'active' : ''}" onclick="selectDay(${day}, this)">${label}</button>`;
+        }).join('');
+
+        renderExercises();
+    }
+
+    function selectDay(day, el) {
+        currentDay = day;
+        document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        renderExercises();
+    }
+
+    function renderExercises() {
+        const grid = document.getElementById('exercisesGrid');
+        const exercises = (routine[currentBlock] || {})[currentDay] || [];
+
+        if (exercises.length === 0) {
+            grid.innerHTML = `<div class="empty-day"><h3>Sin ejercicios</h3><p>No hay ejercicios para este día</p></div>`;
+            return;
+        }
+
+        grid.innerHTML = exercises.map(ex => {
+            const links = gymMedia[ex.name] || [];
+            const safeName = ex.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+            return `
+                <div class="exercise-card">
+                    <div class="exercise-name">${ex.name}</div>
+                    <div class="exercise-stats">
+                        ${ex.sets ? `<div class="stat"><span>Series</span><span>${ex.sets}</span></div>` : ''}
+                        ${ex.reps ? `<div class="stat"><span>Reps</span><span>${ex.reps}</span></div>` : ''}
+                    </div>
+                    ${ex.notes ? `<div class="exercise-notes">📝 ${ex.notes}</div>` : ''}
+                    <div class="media-section">
+                        <div class="media-links">
+                            ${links.map(m => `
+                                <a href="${m.url}" target="_blank" class="media-link">
+                                    🎬 ${m.label || 'Ver'}
+                                    <button class="delete-media" onclick="event.preventDefault(); deleteMedia('${safeName}', '${m.id}')">✕</button>
+                                </a>
+                            `).join('')}
+                        </div>
+                        <button class="add-media-btn" onclick="openModal('${safeName}')">+ video / imagen</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderMuscleLinks() {
+        const grid = document.getElementById('musclesGrid');
+        grid.innerHTML = Object.entries(muscleLinks).map(([muscle, url]) =>
+            `<a href="${url}" target="_blank" class="muscle-link">${muscle}</a>`
+        ).join('');
+    }
+
+    // Modal
+    function openModal(exerciseName) {
+        modalExercise = exerciseName;
+        document.getElementById('modalExerciseName').textContent = exerciseName;
+        document.getElementById('mediaUrl').value = '';
+        document.getElementById('mediaLabel').value = '';
+        document.getElementById('mediaModal').classList.add('open');
+        setTimeout(() => document.getElementById('mediaUrl').focus(), 100);
+    }
+
+    function closeModal() {
+        document.getElementById('mediaModal').classList.remove('open');
+        modalExercise = null;
+    }
+
+    async function saveMedia() {
+        const url = document.getElementById('mediaUrl').value.trim();
+        const label = document.getElementById('mediaLabel').value.trim();
+        if (!url) return;
+
+        try {
+            const res = await pinAuth.authenticatedFetch('/api/gym/media', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ exercise: modalExercise, url, label })
+            });
+            const data = await res.json();
+            gymMedia[modalExercise] = data.media;
+            closeModal();
+            renderExercises();
+        } catch (e) {
+            alert('Error al guardar');
+        }
+    }
+
+    async function deleteMedia(exercise, id) {
+        try {
+            await pinAuth.authenticatedFetch(`/api/gym/media/${encodeURIComponent(exercise)}/${id}`, {
+                method: 'DELETE'
+            });
+            if (gymMedia[exercise]) {
+                gymMedia[exercise] = gymMedia[exercise].filter(m => m.id !== id);
+                if (gymMedia[exercise].length === 0) delete gymMedia[exercise];
+            }
+            renderExercises();
+        } catch (e) {
+            alert('Error al eliminar');
+        }
+    }
+
+    document.getElementById('mediaModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    // Init — load both CSV and media, then render
+    Promise.all([loadCSV(), loadMedia()]).then(() => {
+        renderDays();
+        renderMuscleLinks();
+    });
+</script>
+        "Triceps":          "https://musclewiki.com/exercises/male/triceps",
+        "Pecho":            "https://musclewiki.com/machine/male/chest",
+        "Cuadriceps":       "https://musclewiki.com/machine/male/quads",
+        "Pantorrilla":      "https://musclewiki.com/machine/male/calves",
+        "Oblicuos":         "https://musclewiki.com/machine/male/obliques",
+        "Espalda Media":    "https://musclewiki.com/machine/male/traps-middle",
+        "Espalda Lateral":  "https://musclewiki.com/machine/male/lats",
+        "Espalda Baja":     "https://musclewiki.com/machine/male/lowerback",
+        "Biceps":           "https://musclewiki.com/machine/male/biceps",
+        "Antebrazo":        "https://musclewiki.com/exercises/male/forearms",
+        "Hombro":           "https://musclewiki.com/exercises/male/front-shoulders",
+        "Trapecio":         "https://musclewiki.com/exercises/male/traps",
+        "Abdomen":          "https://musclewiki.com/exercises/male/abdominals",
+        "Femoral":          "https://musclewiki.com/exercises/male/hamstrings",
+        "Gluteos":          "https://musclewiki.com/exercises/male/glutes"
+    };
+
+    // Day labels for each block
+    const dayLabels = {
+        A: { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo" },
+        B: { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo" }
+    };
+
+    let routine = {};
+    let gymMedia = {};
+    let currentBlock = 'A';
+    let currentDay = null;
+    let modalExercise = null;
+
+    async function loadCSV() {
+        const response = await fetch('/gym/routine.csv');
+        const text = await response.text();
+        const lines = text.trim().split('\n').slice(1);
+
+        lines.forEach(line => {
+            const [bloque, dia, ejercicio, series, repeticiones, notas] = line.split(',');
+            if (!bloque || !dia || !ejercicio) return;
+
+            const b = bloque.trim();
+            const d = parseInt(dia.trim());
+
+            if (!routine[b]) routine[b] = {};
+            if (!routine[b][d]) routine[b][d] = [];
+
+            routine[b][d].push({
+                name: ejercicio.trim(),
+                sets: series.trim(),
+                reps: repeticiones.trim(),
+                notes: notas ? notas.trim() : ''
+            });
+        });
+
+        renderDays();
+    }
+
+    async function loadMedia() {
+        try {
+            const res = await fetch('/api/gym/media');
+            gymMedia = await res.json();
+        } catch (e) {
+            gymMedia = {};
+        }
+    }
+
+    function openModal(exerciseName) {
+        modalExercise = exerciseName;
+        document.getElementById('modalExerciseName').textContent = exerciseName;
+        document.getElementById('mediaUrl').value = '';
+        document.getElementById('mediaLabel').value = '';
+        document.getElementById('mediaModal').classList.add('open');
+        document.getElementById('mediaUrl').focus();
+    }
+
+    function closeModal() {
+        document.getElementById('mediaModal').classList.remove('open');
+        modalExercise = null;
+    }
+
+    async function saveMedia() {
+        const url = document.getElementById('mediaUrl').value.trim();
+        const label = document.getElementById('mediaLabel').value.trim();
+        if (!url) return;
+
+        try {
+            const res = await pinAuth.authenticatedFetch('/api/gym/media', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ exercise: modalExercise, url, label })
+            });
+            const data = await res.json();
+            gymMedia[modalExercise] = data.media;
+            closeModal();
+            renderExercises();
+        } catch (e) {
+            alert('Error al guardar');
+        }
+    }
+
+    async function deleteMedia(exercise, id) {
+        try {
+            await pinAuth.authenticatedFetch(`/api/gym/media/${encodeURIComponent(exercise)}/${id}`, {
+                method: 'DELETE'
+            });
+            gymMedia[exercise] = gymMedia[exercise].filter(m => m.id !== id);
+            if (gymMedia[exercise].length === 0) delete gymMedia[exercise];
+            renderExercises();
+        } catch (e) {
+            alert('Error al eliminar');
+        }
+    }
+
+    // Close modal on overlay click
+    document.getElementById('mediaModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    async function loadCSV() {
+        const response = await fetch('/gym/routine.csv');
+        const text = await response.text();
+        const lines = text.trim().split('\n').slice(1); // skip header
+
+        lines.forEach(line => {
+            const [bloque, dia, ejercicio, series, repeticiones, notas] = line.split(',');
+            if (!bloque || !dia || !ejercicio) return;
+
+            const b = bloque.trim();
+            const d = parseInt(dia.trim());
+
+            if (!routine[b]) routine[b] = {};
+            if (!routine[b][d]) routine[b][d] = [];
+
+            routine[b][d].push({
+                name: ejercicio.trim(),
+                sets: series.trim(),
+                reps: repeticiones.trim(),
+                notes: notas ? notas.trim() : ''
+            });
+        });
+
+        renderDays();
+    }
+
+    function selectBlock(block) {
+        currentBlock = block;
+        currentDay = null;
+
+        document.querySelectorAll('.block-tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+
+        renderDays();
+    }
+
+    function renderDays() {
+        const nav = document.getElementById('daysNav');
+        const days = Object.keys(routine[currentBlock] || {}).map(Number).sort((a, b) => a - b);
+        const labels = dayLabels[currentBlock] || {};
+
+        nav.innerHTML = days.map((day, i) => {
+            const label = labels[day] || `Día ${day}`;
+            const isActive = currentDay === day || (currentDay === null && i === 0);
+            if (currentDay === null && i === 0) currentDay = day;
+            return `<button class="day-tab ${isActive ? 'active' : ''}" onclick="selectDay(${day}, this)">${label}</button>`;
+        }).join('');
+
+        renderExercises();
+    }
+
+    function selectDay(day, el) {
+        currentDay = day;
+        document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        renderExercises();
+    }
+
+    function renderExercises() {
+        const grid = document.getElementById('exercisesGrid');
+        const exercises = (routine[currentBlock] || {})[currentDay] || [];
+
+        if (exercises.length === 0) {
+            grid.innerHTML = `<div class="empty-day"><h3>Sin ejercicios</h3><p>No hay ejercicios para este día</p></div>`;
+            return;
+        }
+
+        grid.innerHTML = exercises.map(ex => {
+            const links = gymMedia[ex.name] || [];
+            const mediaHtml = `
+                <div class="media-section">
+                    <div class="media-links">
+                        ${links.map(m => `
+                            <a href="${m.url}" target="_blank" class="media-link">
+                                🎬 ${m.label || m.url}
+                                <button class="delete-media" onclick="event.preventDefault(); deleteMedia('${ex.name}', '${m.id}')">✕</button>
+                            </a>
+                        `).join('')}
+                    </div>
+                    <button class="add-media-btn" onclick="openModal('${ex.name.replace(/'/g, "\\'")}')">+ video / imagen</button>
+                </div>
+            `;
+
+            return `
+                <div class="exercise-card">
+                    <div class="exercise-name">${ex.name}</div>
+                    <div class="exercise-stats">
+                        ${ex.sets ? `<div class="stat"><span>Series</span><span>${ex.sets}</span></div>` : ''}
+                        ${ex.reps ? `<div class="stat"><span>Reps</span><span>${ex.reps}</span></div>` : ''}
+                    </div>
+                    ${ex.notes ? `<div class="exercise-notes">📝 ${ex.notes}</div>` : ''}
+                    ${mediaHtml}
+                </div>
+            `;
+        }).join('');
+    }
+
+    function renderMuscleLinks() {
+        const grid = document.getElementById('musclesGrid');
+        grid.innerHTML = Object.entries(muscleLinks).map(([muscle, url]) =>
+            `<a href="${url}" target="_blank" class="muscle-link">${muscle}</a>`
+        ).join('');
+    }
+
+    loadCSV();
+    loadMedia().then(() => renderExercises());
+    renderMuscleLinks();
+</script>
 </body>
 </html>
-
