@@ -77,7 +77,134 @@
             color: #fff;
         }
 
-        /* Day tabs */
+        /* View toggle */
+        .view-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .view-btn {
+            padding: 7px 18px;
+            border-radius: 20px;
+            border: 1px solid #333;
+            background: transparent;
+            color: #666;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: #222;
+            border-color: #555;
+            color: #fff;
+        }
+
+        /* Full view — weekly table */
+        .full-view {
+            display: none;
+            max-width: 1100px;
+            margin: 0 auto;
+            overflow-x: auto;
+        }
+
+        .full-view.visible { display: block; }
+
+        .full-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+        }
+
+        .full-table th {
+            background: #1a1a1a;
+            color: #888;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 2px solid #e74c3c;
+            white-space: nowrap;
+        }
+
+        .full-table th.day-header {
+            color: #fff;
+            font-size: 0.85em;
+        }
+
+        .full-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #1e1e1e;
+            vertical-align: top;
+        }
+
+        .full-table tr:hover td { background: #161616; }
+
+        .full-table .block-label {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-right: 6px;
+        }
+
+        .full-table .block-a { background: rgba(231,76,60,0.15); color: #e74c3c; border: 1px solid rgba(231,76,60,0.3); }
+        .full-table .block-b { background: rgba(52,152,219,0.15); color: #3498db; border: 1px solid rgba(52,152,219,0.3); }
+
+        .full-table .ex-name { color: #fff; font-weight: 500; }
+
+        .full-table .ex-muscle {
+            font-size: 0.75em;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        .full-table .ex-stats {
+            font-size: 0.78em;
+            color: #e74c3c;
+            margin-top: 3px;
+            white-space: nowrap;
+        }
+
+        .full-table .day-col {
+            min-width: 150px;
+        }
+
+        .full-table .day-exercises {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .full-table .ex-cell {
+            padding: 8px 10px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            border-left: 3px solid #e74c3c;
+        }
+
+        .full-table .ex-cell.block-b-cell { border-left-color: #3498db; }
+
+        .day-section-label {
+            color: #444;
+            font-size: 0.72em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        /* Block tabs hidden in both-view */
+        .block-tabs.hidden { display: none; }
+        .days-nav.hidden { display: none; }
+        .exercises-grid.hidden { display: none; }
         .days-nav {
             display: flex;
             justify-content: center;
@@ -395,14 +522,20 @@
     <p>Selecciona tu bloque y día</p>
 </div>
 
-<div class="block-tabs">
+<div class="block-tabs" id="blockTabs">
     <button class="block-tab active" onclick="selectBlock('A')">BLOQUE A</button>
     <button class="block-tab" onclick="selectBlock('B')">BLOQUE B</button>
 </div>
 
-<div class="days-nav" id="daysNav"></div>
+<div class="view-toggle">
+    <button class="view-btn active" onclick="setView('day', this)">📅 Por día</button>
+    <button class="view-btn" onclick="setView('block', this)">📋 Bloque completo</button>
+    <button class="view-btn" onclick="setView('both', this)">🗓 Ambos bloques</button>
+</div>
 
+<div class="days-nav" id="daysNav"></div>
 <div class="exercises-grid" id="exercisesGrid"></div>
+<div class="full-view" id="fullView"></div>
 
 <!-- Add media modal -->
 <div class="modal-overlay" id="mediaModal">
@@ -451,6 +584,7 @@
     let gymMedia = {};
     let currentBlock = 'A';
     let currentDay = null;
+    let currentView = 'day';
     let modalExercise = null;
 
     async function loadCSV() {
@@ -487,6 +621,88 @@
         } catch (e) {
             gymMedia = {};
         }
+    }
+
+    function setView(view, el) {
+        currentView = view;
+        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+
+        const blockTabs = document.getElementById('blockTabs');
+        const daysNav = document.getElementById('daysNav');
+        const grid = document.getElementById('exercisesGrid');
+        const fullView = document.getElementById('fullView');
+
+        if (view === 'day') {
+            blockTabs.classList.remove('hidden');
+            daysNav.classList.remove('hidden');
+            grid.classList.remove('hidden');
+            fullView.classList.remove('visible');
+            renderDays();
+        } else {
+            blockTabs.classList.add('hidden');
+            daysNav.classList.add('hidden');
+            grid.classList.add('hidden');
+            fullView.classList.add('visible');
+            renderFullView(view);
+        }
+    }
+
+    function renderFullView(view) {
+        const fullView = document.getElementById('fullView');
+        const blocks = view === 'both' ? ['A', 'B'] : [currentBlock];
+        const dayLabelsMap = { 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado', 7: 'Domingo' };
+
+        // Collect all days across selected blocks
+        const allDays = [1, 2, 3, 4, 5, 6, 7];
+
+        let html = '<table class="full-table"><thead><tr><th>Día</th>';
+
+        if (view === 'both') {
+            html += '<th>Bloque A</th><th>Bloque B</th>';
+        } else {
+            html += `<th>Ejercicios — Bloque ${blocks[0]}</th>`;
+        }
+
+        html += '</tr></thead><tbody>';
+
+        allDays.forEach(day => {
+            const label = dayLabelsMap[day] || `Día ${day}`;
+
+            if (view === 'both') {
+                const exA = (routine['A'] || {})[day] || [];
+                const exB = (routine['B'] || {})[day] || [];
+                if (exA.length === 0 && exB.length === 0) return;
+
+                html += `<tr>
+                    <td style="color:#888; font-weight:700; white-space:nowrap;">${label}</td>
+                    <td class="day-col">${renderExCells(exA, 'a')}</td>
+                    <td class="day-col">${renderExCells(exB, 'b')}</td>
+                </tr>`;
+            } else {
+                const exs = (routine[blocks[0]] || {})[day] || [];
+                if (exs.length === 0) return;
+
+                html += `<tr>
+                    <td style="color:#888; font-weight:700; white-space:nowrap;">${label}</td>
+                    <td class="day-col">${renderExCells(exs, blocks[0].toLowerCase())}</td>
+                </tr>`;
+            }
+        });
+
+        html += '</tbody></table>';
+        fullView.innerHTML = html;
+    }
+
+    function renderExCells(exercises, block) {
+        if (exercises.length === 0) return '<span style="color:#333">—</span>';
+        return `<div class="day-exercises">${exercises.map(ex => `
+            <div class="ex-cell ${block === 'b' ? 'block-b-cell' : ''}">
+                <div class="ex-name">${ex.name}</div>
+                ${ex.muscle ? `<div class="ex-muscle">${ex.muscle}</div>` : ''}
+                ${(ex.sets || ex.reps) ? `<div class="ex-stats">${ex.sets ? ex.sets + ' series' : ''} ${ex.reps ? '× ' + ex.reps : ''}</div>` : ''}
+            </div>
+        `).join('')}</div>`;
     }
 
     function selectBlock(block) {
