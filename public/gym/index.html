@@ -640,7 +640,7 @@
             fullView.classList.remove('visible');
             renderDays();
         } else {
-            blockTabs.classList.add('hidden');
+            blockTabs.classList[view === 'both' ? 'add' : 'remove']('hidden');
             daysNav.classList.add('hidden');
             grid.classList.add('hidden');
             fullView.classList.add('visible');
@@ -710,7 +710,12 @@
         currentDay = null;
         document.querySelectorAll('.block-tab').forEach(t => t.classList.remove('active'));
         event.target.classList.add('active');
-        renderDays();
+
+        if (currentView === 'day') {
+            renderDays();
+        } else {
+            renderFullView(currentView);
+        }
     }
 
     function renderDays() {
