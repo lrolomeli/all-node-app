@@ -7,8 +7,9 @@
     "addedBy": "Pelon",
     "description": "Cocinar Enchiladas verdes",
     "notes": "",
-    "completed": false,
-    "createdAt": "2026-01-28T02:32:23.217Z"
+    "completed": true,
+    "createdAt": "2026-01-28T02:32:23.217Z",
+    "completedDate": "2026-02-19T02:28:46.801Z"
   },
   {
     "id": "1769569785877",
@@ -18,8 +19,9 @@
     "addedBy": "Zuzu",
     "description": "patinar en hielo",
     "notes": "",
-    "completed": false,
-    "createdAt": "2026-01-28T03:09:45.877Z"
+    "completed": true,
+    "createdAt": "2026-01-28T03:09:45.877Z",
+    "completedDate": "2026-03-22T21:55:55.775Z"
   },
   {
     "id": "1769569847532",
@@ -29,8 +31,9 @@
     "addedBy": "Zuzu",
     "description": "jugar Maplestory",
     "notes": "",
-    "completed": false,
-    "createdAt": "2026-01-28T03:10:47.532Z"
+    "completed": true,
+    "createdAt": "2026-01-28T03:10:47.532Z",
+    "completedDate": "2026-02-13T15:05:05.997Z"
   },
   {
     "id": "1769569912424",
@@ -84,8 +87,9 @@
     "addedBy": "Cici",
     "description": "Ir a ver una película en el cine de Cinery en plaza Punto Sao Paulo",
     "notes": "",
-    "completed": false,
-    "createdAt": "2026-01-28T03:25:54.712Z"
+    "completed": true,
+    "createdAt": "2026-01-28T03:25:54.712Z",
+    "completedDate": "2026-03-22T21:56:13.073Z"
   },
   {
     "id": "1769571104365",
@@ -106,8 +110,9 @@
     "addedBy": "Cici",
     "description": "Ir en bicicleta a la vía recreativa ",
     "notes": "",
-    "completed": false,
-    "createdAt": "2026-01-28T03:33:33.377Z"
+    "completed": true,
+    "createdAt": "2026-01-28T03:33:33.377Z",
+    "completedDate": "2026-02-13T15:19:26.409Z"
   },
   {
     "id": "1769827792387",
@@ -165,5 +170,85 @@
     "notes": "tiempo record menos de 3 hrs",
     "completed": false,
     "createdAt": "2026-02-01T21:51:39.513Z"
+  },
+  {
+    "id": "1770996011297",
+    "name": "Ver Basketball",
+    "category": "Sports",
+    "priority": "Low",
+    "addedBy": "Zuzu",
+    "description": "astros de jalisco en vivo",
+    "notes": "",
+    "completed": true,
+    "createdAt": "2026-02-13T15:20:11.297Z",
+    "completedDate": "2026-02-13T15:20:53.985Z"
+  },
+  {
+    "id": "1770996033054",
+    "name": "ver el super bowl",
+    "category": "Sports",
+    "priority": "Low",
+    "addedBy": "Zuzu",
+    "description": "con badbunny",
+    "notes": "",
+    "completed": true,
+    "createdAt": "2026-02-13T15:20:33.054Z",
+    "completedDate": "2026-02-13T15:20:44.396Z"
+  },
+  {
+    "id": "1770996112858",
+    "name": "Ir a ver una orquesta",
+    "category": "Culture",
+    "priority": "Medium",
+    "addedBy": "Cici",
+    "description": "conjunto santander",
+    "notes": "",
+    "completed": true,
+    "createdAt": "2026-02-13T15:21:52.858Z",
+    "completedDate": "2026-02-13T15:22:03.991Z"
+  },
+  {
+    "id": "1771789471489",
+    "name": "Viaje a Colombia",
+    "category": "Travel",
+    "priority": "High",
+    "addedBy": "Cici",
+    "description": "",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-02-22T19:44:31.489Z"
+  },
+  {
+    "id": "1774216746766",
+    "name": "Manejar",
+    "category": "Learning",
+    "priority": "High",
+    "addedBy": "Cici",
+    "description": "Aprender a manejar ",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-03-22T21:59:06.766Z"
+  },
+  {
+    "id": "1774216881050",
+    "name": "Inventar un juego de mesa",
+    "category": "Other",
+    "priority": "Medium",
+    "addedBy": "Cici",
+    "description": "Inventar un juego de mesa ",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-03-22T22:01:21.050Z"
+  },
+  {
+    "id": "1774217268474",
+    "name": "Reto de cocina",
+    "category": "Food",
+    "priority": "Medium",
+    "addedBy": "Cici",
+    "description": "Preparar una receta para ver a quien le queda mejor ",
+    "notes": "",
+    "completed": false,
+    "createdAt": "2026-03-22T22:07:48.474Z"
   }
 ]

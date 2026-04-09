@@ -84,15 +84,5 @@
       "createdAt": "2026-02-04T04:39:00.970Z"
     }
   ],
-  "funMoney": [
-    {
-      "id": "1770182012504",
-      "name": "Dates",
-      "amount": "10000",
-      "category": "Dining Out",
-      "priority": "High",
-      "notes": "",
-      "createdAt": "2026-02-04T05:13:32.504Z"
-    }
-  ]
+  "funMoney": []
 }
