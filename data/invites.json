@@ -1,0 +1,36 @@
+{
+  "invites": [
+    {
+      "id": "de0f6d2f7b244b87",
+      "tokenHash": "e5938cd414070af737b9028dc2dfe73c7adc5c175424ff1af8488b396877f310",
+      "label": "test",
+      "createdAt": "2026-04-08T00:05:54.602Z",
+      "expiresAt": null,
+      "maxUses": 3,
+      "usedCount": 0,
+      "revoked": false
+    },
+    {
+      "id": "232e1d9580e2eb0b",
+      "tokenHash": "5f0891c75e6ca562f3e6a03ef7c3eda9108465d9f90668848811c9b068b8fd1a",
+      "label": "",
+      "createdAt": "2026-04-08T00:06:10.885Z",
+      "expiresAt": null,
+      "maxUses": null,
+      "usedCount": 1,
+      "revoked": false,
+      "lastUsedAt": "2026-04-08T00:06:11.165Z"
+    },
+    {
+      "id": "c0dc45b09a7e86fd",
+      "tokenHash": "686a9e80f3466a485a143396d00ce5e14b35953f71a14072949cfc5515680667",
+      "label": "t",
+      "createdAt": "2026-04-08T00:14:18.879Z",
+      "expiresAt": null,
+      "maxUses": null,
+      "usedCount": 1,
+      "revoked": false,
+      "lastUsedAt": "2026-04-08T00:14:18.956Z"
+    }
+  ]
+}

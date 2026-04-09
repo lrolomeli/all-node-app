@@ -37,6 +37,42 @@
 
         .btn-home:hover { background: rgba(255,255,255,0.2); }
 
+        .btn-edit-routine {
+            position: absolute;
+            right: 0;
+            top: 30px;
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(231, 76, 60, 0.25);
+            color: #e74c3c;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+            border: 1px solid rgba(231, 76, 60, 0.5);
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-edit-routine:hover { background: rgba(231, 76, 60, 0.4); color: #fff; }
+
+        .btn-download-routine {
+            position: absolute;
+            right: 140px;
+            top: 30px;
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(46, 204, 113, 0.25);
+            color: #2ecc71;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+            border: 1px solid rgba(46, 204, 113, 0.5);
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-download-routine:hover { background: rgba(46, 204, 113, 0.4); color: #fff; }
+
         .header h1 {
             font-size: 2em;
             font-weight: 700;
@@ -429,6 +465,186 @@
 
         .modal input:focus { border-color: #e74c3c; }
 
+        .modal textarea.routine-csv {
+            width: 100%;
+            min-height: 220px;
+            padding: 12px 14px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 12px;
+            font-family: ui-monospace, monospace;
+            line-height: 1.45;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+
+        .modal textarea.routine-csv:focus {
+            outline: none;
+            border-color: #e74c3c;
+        }
+
+        .routine-hint {
+            font-size: 0.78em;
+            color: #555;
+            margin-top: 8px;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .routine-editor-modal.modal {
+            max-width: min(1100px, 96vw);
+            width: 96%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .routine-editor-intro {
+            color: #888;
+            font-size: 0.85em;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .routine-editor-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .routine-tab {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #252525;
+            color: #888;
+            cursor: pointer;
+            font-size: 0.88em;
+            font-family: inherit;
+        }
+
+        .routine-tab.active {
+            background: #333;
+            color: #fff;
+            border-color: #e74c3c;
+        }
+
+        .routine-pane { display: none; min-height: 0; }
+        .routine-pane-table.visible {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .routine-pane-csv.visible { display: block; }
+        .routine-pane-csv.visible .routine-csv {
+            min-height: 240px;
+        }
+
+        .routine-toolbar {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .routine-toolbar button {
+            padding: 8px 14px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-family: inherit;
+        }
+
+        .routine-toolbar button:hover {
+            border-color: #e74c3c;
+            color: #fff;
+        }
+
+        .routine-table-scroll {
+            overflow: auto;
+            max-height: min(52vh, 480px);
+            border: 1px solid #333;
+            border-radius: 10px;
+        }
+
+        .routine-edit-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8em;
+        }
+
+        .routine-edit-table th {
+            position: sticky;
+            top: 0;
+            background: #1f1f1f;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-size: 0.72em;
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+            z-index: 1;
+        }
+
+        .routine-edit-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #2a2a2a;
+            vertical-align: middle;
+        }
+
+        .routine-edit-table tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .routine-edit-table select,
+        .routine-edit-table input[type="text"] {
+            width: 100%;
+            min-width: 0;
+            padding: 6px 8px;
+            background: #252525;
+            border: 1px solid #3a3a3a;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 0.95em;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .routine-edit-table select:focus,
+        .routine-edit-table input:focus {
+            outline: none;
+            border-color: #e74c3c;
+        }
+
+        .routine-edit-table .re-col-bloque { width: 72px; }
+        .routine-edit-table .re-col-dia { width: 120px; }
+        .routine-edit-table .re-col-sets { width: 64px; }
+        .routine-edit-table .re-col-reps { width: 88px; }
+        .routine-edit-table .re-col-del { width: 44px; text-align: center; }
+
+        .re-del {
+            padding: 4px 8px;
+            background: transparent;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #888;
+            cursor: pointer;
+            font-size: 1em;
+            line-height: 1;
+        }
+
+        .re-del:hover {
+            color: #e74c3c;
+            border-color: #e74c3c;
+        }
+
         .modal-actions {
             display: flex;
             gap: 10px;
@@ -511,6 +727,12 @@
             .exercises-grid { grid-template-columns: 1fr; }
             .header h1 { font-size: 1.5em; }
             .btn-home { position: static; display: block; width: fit-content; margin: 0 auto 15px; }
+            .btn-edit-routine, .btn-download-routine {
+                position: static;
+                display: block;
+                width: fit-content;
+                margin: 10px auto 0;
+            }
         }
     </style>
 </head>
@@ -518,13 +740,15 @@
 
 <div class="header">
     <a href="/" class="btn-home">← Inicio</a>
+    <button type="button" class="btn-download-routine" onclick="downloadRoutine()">📥 Descargar rutina</button>
+    <button type="button" class="btn-edit-routine" onclick="openRoutineModal()">✏️ Editar rutina</button>
     <h1>💪 Gym Routine</h1>
     <p>Selecciona tu bloque y día</p>
 </div>
 
 <div class="block-tabs" id="blockTabs">
-    <button class="block-tab active" onclick="selectBlock('A')">BLOQUE A</button>
-    <button class="block-tab" onclick="selectBlock('B')">BLOQUE B</button>
+    <button type="button" class="block-tab active" onclick="selectBlock('A', this)">BLOQUE A</button>
+    <button type="button" class="block-tab" onclick="selectBlock('B', this)">BLOQUE B</button>
 </div>
 
 <div class="view-toggle">
@@ -536,6 +760,49 @@
 <div class="days-nav" id="daysNav"></div>
 <div class="exercises-grid" id="exercisesGrid"></div>
 <div class="full-view" id="fullView"></div>
+
+<!-- Edit routine: table + CSV -->
+<div class="modal-overlay" id="routineModal">
+    <div class="modal routine-editor-modal">
+        <h3>Editar rutina</h3>
+        <p class="routine-editor-intro">Modifica filas en la tabla o usa la pestaña CSV para pegar desde una hoja de cálculo. Al guardar se pide la sesión (misma invitación que para los videos).</p>
+        <div class="routine-editor-tabs">
+            <button type="button" class="routine-tab active" id="routineTabTable" onclick="setRoutineEditorTab('table')">Tabla</button>
+            <button type="button" class="routine-tab" id="routineTabCsv" onclick="setRoutineEditorTab('csv')">CSV avanzado</button>
+        </div>
+        <div id="routineTablePane" class="routine-pane routine-pane-table visible">
+            <div class="routine-toolbar">
+                <button type="button" onclick="addRoutineEditRow()">+ Añadir fila</button>
+            </div>
+            <div class="routine-table-scroll">
+                <table class="routine-edit-table">
+                    <thead>
+                        <tr>
+                            <th class="re-col-bloque">Bloque</th>
+                            <th class="re-col-dia">Día</th>
+                            <th>Músculo</th>
+                            <th>Ejercicio</th>
+                            <th class="re-col-sets">Series</th>
+                            <th class="re-col-reps">Reps</th>
+                            <th>Notas</th>
+                            <th class="re-col-del"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="routineEditBody"></tbody>
+                </table>
+            </div>
+            <p class="routine-hint">Día 1 = Lunes … 7 = Domingo. Las filas sin ejercicio se ignoran al guardar.</p>
+        </div>
+        <div id="routineCsvPane" class="routine-pane routine-pane-csv">
+            <textarea class="routine-csv" id="routineCsvField" spellcheck="false"></textarea>
+            <p class="routine-hint">Encabezado obligatorio: <code>bloque,dia,muscle,ejercicio,series,repeticiones,notas</code></p>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="btn-cancel" onclick="closeRoutineModal()">Cancelar</button>
+            <button type="button" class="btn-save" onclick="saveRoutineEditor()">Guardar</button>
+        </div>
+    </div>
+</div>
 
 <!-- Add media modal -->
 <div class="modal-overlay" id="mediaModal">
@@ -556,6 +823,7 @@
     <div class="muscles-grid" id="musclesGrid"></div>
 </div>
 
+<script src="/auth.js"></script>
 <script>
     const muscleLinks = {
         "Triceps":          "https://musclewiki.com/exercises/male/triceps",
@@ -586,32 +854,210 @@
     let currentDay = null;
     let currentView = 'day';
     let modalExercise = null;
+    let routineCsvRaw = '';
+    let routineEditorTab = 'table';
 
-    async function loadCSV() {
-        const response = await fetch('/gym/routine.csv');
-        const text = await response.text();
-        const lines = text.trim().split('\n').slice(1);
+    function parseCSVLine(line) {
+        const out = [];
+        let cur = '';
+        let inQ = false;
+        for (let i = 0; i < line.length; i++) {
+            const c = line[i];
+            if (c === '"') {
+                inQ = !inQ;
+                continue;
+            }
+            if (!inQ && c === ',') {
+                out.push(cur);
+                cur = '';
+                continue;
+            }
+            cur += c;
+        }
+        out.push(cur);
+        return out;
+    }
 
-        lines.forEach(line => {
-            const parts = line.split(',');
-            const [bloque, dia, muscle, ejercicio, series, repeticiones, notas] = parts;
-            if (!bloque || !dia || !ejercicio || !ejercicio.trim()) return;
-
-            const b = bloque.trim();
-            const d = parseInt(dia.trim());
+    function buildRoutineFromCsvText(text) {
+        const next = {};
+        const lines = text.trim().split(/\r?\n/).slice(1);
+        lines.forEach((line) => {
+            if (!line.trim()) return;
+            const parts = parseCSVLine(line);
+            if (parts.length < 4) return;
+            const bloque = (parts[0] || '').trim();
+            const diaRaw = (parts[1] || '').trim();
+            const muscle = (parts[2] || '').trim();
+            const ejercicio = (parts[3] || '').trim();
+            const series = (parts[4] || '').trim();
+            const repeticiones = (parts[5] || '').trim();
+            const notas = parts.slice(6).join(',').trim();
+            if (!bloque || !diaRaw || !ejercicio) return;
+            const d = parseInt(diaRaw, 10);
             if (isNaN(d)) return;
-
-            if (!routine[b]) routine[b] = {};
-            if (!routine[b][d]) routine[b][d] = [];
-
-            routine[b][d].push({
-                name: ejercicio.trim(),
-                muscle: muscle ? muscle.trim() : '',
-                sets: series ? series.trim() : '',
-                reps: repeticiones ? repeticiones.trim() : '',
-                notes: notas ? notas.trim() : ''
+            if (!next[bloque]) next[bloque] = {};
+            if (!next[bloque][d]) next[bloque][d] = [];
+            next[bloque][d].push({
+                name: ejercicio,
+                muscle,
+                sets: series,
+                reps: repeticiones,
+                notes: notas,
             });
         });
+        return next;
+    }
+
+    function routineToFlat(r) {
+        const rows = [];
+        const blocks = Object.keys(r).sort();
+        for (const b of blocks) {
+            const days = Object.keys(r[b] || {}).map(Number).sort((a, c) => a - c);
+            for (const d of days) {
+                for (const ex of r[b][d] || []) {
+                    rows.push({
+                        bloque: b,
+                        dia: d,
+                        muscle: ex.muscle || '',
+                        name: ex.name || '',
+                        sets: ex.sets || '',
+                        reps: ex.reps || '',
+                        notes: ex.notes || '',
+                    });
+                }
+            }
+        }
+        return rows;
+    }
+
+    function escapeCsvField(val) {
+        const s = String(val ?? '');
+        if (/[",\n\r]/.test(s)) {
+            return '"' + s.replace(/"/g, '""') + '"';
+        }
+        return s;
+    }
+
+    function escapeAttr(s) {
+        return String(s ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;');
+    }
+
+    function collectRoutineEditRows() {
+        const body = document.getElementById('routineEditBody');
+        const rows = [];
+        body.querySelectorAll('tr.routine-edit-row').forEach((tr) => {
+            const bloque = tr.querySelector('.re-bloque').value.trim();
+            const dia = parseInt(tr.querySelector('.re-dia').value, 10);
+            rows.push({
+                bloque,
+                dia: Number.isNaN(dia) ? '' : dia,
+                muscle: tr.querySelector('.re-muscle').value.trim(),
+                name: tr.querySelector('.re-name').value.trim(),
+                sets: tr.querySelector('.re-sets').value.trim(),
+                reps: tr.querySelector('.re-reps').value.trim(),
+                notes: tr.querySelector('.re-notes').value.trim(),
+            });
+        });
+        return rows;
+    }
+
+    function rowsToCsv(rows) {
+        const header = 'bloque,dia,muscle,ejercicio,series,repeticiones,notas';
+        const lines = [header];
+        for (const row of rows) {
+            const b = String(row.bloque || '').trim();
+            const d = row.dia === '' || row.dia == null ? '' : String(row.dia);
+            const name = String(row.name || '').trim();
+            if (!b || !d || !name) continue;
+            lines.push([
+                escapeCsvField(b),
+                escapeCsvField(d),
+                escapeCsvField(row.muscle || ''),
+                escapeCsvField(name),
+                escapeCsvField(row.sets || ''),
+                escapeCsvField(row.reps || ''),
+                escapeCsvField(row.notes || ''),
+            ].join(','));
+        }
+        return lines.join('\n') + '\n';
+    }
+
+    function daySelectOptions(selected) {
+        let html = '';
+        for (let d = 1; d <= 7; d += 1) {
+            const lab = dayLabels[d] || `Día ${d}`;
+            const sel = selected === d ? ' selected' : '';
+            html += `<option value="${d}"${sel}>${d} · ${lab}</option>`;
+        }
+        return html;
+    }
+
+    function addRoutineEditRow(prefill) {
+        const body = document.getElementById('routineEditBody');
+        const tr = document.createElement('tr');
+        tr.className = 'routine-edit-row';
+        const p = prefill || {};
+        const b = p.bloque || currentBlock || 'A';
+        const dNum = p.dia != null && !Number.isNaN(Number(p.dia)) ? Number(p.dia) : (currentDay || 1);
+        const d = dNum >= 1 && dNum <= 7 ? dNum : 1;
+        tr.innerHTML = `
+            <td class="re-col-bloque">
+                <select class="re-bloque">
+                    <option value="A"${b === 'A' ? ' selected' : ''}>A</option>
+                    <option value="B"${b === 'B' ? ' selected' : ''}>B</option>
+                </select>
+            </td>
+            <td class="re-col-dia">
+                <select class="re-dia">${daySelectOptions(d)}</select>
+            </td>
+            <td><input type="text" class="re-muscle" value="${escapeAttr(p.muscle || '')}"></td>
+            <td><input type="text" class="re-name" value="${escapeAttr(p.name || '')}"></td>
+            <td class="re-col-sets"><input type="text" class="re-sets" value="${escapeAttr(p.sets || '')}"></td>
+            <td class="re-col-reps"><input type="text" class="re-reps" value="${escapeAttr(p.reps || '')}"></td>
+            <td><input type="text" class="re-notes" value="${escapeAttr(p.notes || '')}"></td>
+            <td class="re-col-del"><button type="button" class="re-del" title="Eliminar fila" onclick="this.closest('tr').remove()">✕</button></td>
+        `;
+        body.appendChild(tr);
+    }
+
+    function renderRoutineEditBody(flatRows) {
+        const body = document.getElementById('routineEditBody');
+        body.innerHTML = '';
+        if (!flatRows.length) {
+            addRoutineEditRow({});
+            return;
+        }
+        flatRows.forEach((row) => addRoutineEditRow(row));
+    }
+
+    function setRoutineEditorTab(tab) {
+        if (tab === 'csv' && routineEditorTab === 'table') {
+            document.getElementById('routineCsvField').value = rowsToCsv(collectRoutineEditRows());
+        }
+        if (tab === 'table' && routineEditorTab === 'csv') {
+            const txt = document.getElementById('routineCsvField').value;
+            const r = buildRoutineFromCsvText(txt);
+            renderRoutineEditBody(routineToFlat(r));
+        }
+        routineEditorTab = tab;
+        document.getElementById('routineTabTable').classList.toggle('active', tab === 'table');
+        document.getElementById('routineTabCsv').classList.toggle('active', tab === 'csv');
+        document.getElementById('routineTablePane').classList.toggle('visible', tab === 'table');
+        document.getElementById('routineCsvPane').classList.toggle('visible', tab === 'csv');
+    }
+
+    async function loadRoutine() {
+        const response = await fetch('/api/gym/routine');
+        if (!response.ok) {
+            console.error('No se pudo cargar /api/gym/routine');
+            return;
+        }
+        const text = await response.text();
+        routineCsvRaw = text;
+        routine = buildRoutineFromCsvText(text);
     }
 
     async function loadMedia() {
@@ -705,11 +1151,11 @@
         `).join('')}</div>`;
     }
 
-    function selectBlock(block) {
+    function selectBlock(block, el) {
         currentBlock = block;
         currentDay = null;
         document.querySelectorAll('.block-tab').forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
+        if (el) el.classList.add('active');
 
         if (currentView === 'day') {
             renderDays();
@@ -840,8 +1286,78 @@
         if (e.target === this) closeModal();
     });
 
-    // Init — load both CSV and media, then render
-    Promise.all([loadCSV(), loadMedia()]).then(() => {
+    function openRoutineModal() {
+        renderRoutineEditBody(routineToFlat(routine));
+        document.getElementById('routineCsvField').value = routineCsvRaw.trim()
+            ? routineCsvRaw
+            : rowsToCsv(routineToFlat(routine));
+        routineEditorTab = 'table';
+        document.getElementById('routineTabTable').classList.add('active');
+        document.getElementById('routineTabCsv').classList.remove('active');
+        document.getElementById('routineTablePane').classList.add('visible');
+        document.getElementById('routineCsvPane').classList.remove('visible');
+        document.getElementById('routineModal').classList.add('open');
+    }
+
+    function downloadRoutine() {
+        if (!routineCsvRaw) return;
+        const blob = new Blob([routineCsvRaw], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "gym-routine.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function closeRoutineModal() {
+        document.getElementById('routineModal').classList.remove('open');
+    }
+
+    async function saveRoutineEditor() {
+        let csv;
+        if (routineEditorTab === 'csv') {
+            csv = document.getElementById('routineCsvField').value;
+        } else {
+            csv = rowsToCsv(collectRoutineEditRows());
+        }
+        try {
+            const res = await pinAuth.authenticatedFetch('/api/gym/routine', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ csv }),
+            });
+            if (!res.ok) {
+                let msg = 'No se pudo guardar';
+                try {
+                    const err = await res.json();
+                    if (err.message) msg = err.message;
+                    else if (err.error) msg = err.error;
+                } catch (_) { /* ignore */ }
+                alert(msg);
+                return;
+            }
+            routineCsvRaw = csv.replace(/^\uFEFF/, '');
+            routine = buildRoutineFromCsvText(routineCsvRaw);
+            closeRoutineModal();
+            if (currentView === 'day') {
+                renderDays();
+            } else {
+                renderFullView(currentView);
+            }
+        } catch (e) {
+            alert('Error al guardar');
+        }
+    }
+
+    document.getElementById('routineModal').addEventListener('click', function(e) {
+        if (e.target === this) closeRoutineModal();
+    });
+
+    // Init — load routine CSV and media, then render
+    Promise.all([loadRoutine(), loadMedia()]).then(() => {
         renderDays();
         renderMuscleLinks();
     });

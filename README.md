@@ -6,73 +6,125 @@ A unified Node.js application with multiple mini-apps for productivity, portfoli
 
 ### Original Apps
 1. **Schedule App** (`/schedule`) - Manage your schedules and appointments with customizable time slots
-2. **Checklist App** (`/checklist`) - Firmware engineer interview checklist with persistent state  
+2. **Checklist App** (`/checklist`) - Firmware engineer interview checklist with persistent state
 3. **Maintenance Tracker** (`/maintenance`) - Track maintenance dates for filters, equipment, and other items
 
 ### Portfolio & Professional Apps
 4. **Luis Lomeli's Portfolio** (`/portfolio`) - Personal portfolio with games, projects, work experience, and skills
 5. **Professional CV** (`/cv`) - Bootstrap-styled professional resume with navigation
 
-### Health & Fitness Apps  
+### Health & Fitness Apps
 6. **Diet Tracker** (`/diet`) - Spanish diet plan tracker with checkboxes and local storage persistence
-7. **Gym Routine** (`/gym`) - Weekly workout routine with muscle group exercises and external links
+7. **Gym Routine** (`/gym`) - Weekly workout routine with muscle group exercises, external links, and optional saved media (API)
+
+### Productivity
+8. **Budget** (`/budget`) - Income, expenses, savings, and fun money tracking
+9. **Activities** (`/activities`) - Activity list with completion tracking
 
 ### Fun Apps
-8. **Catify** (`/catify`) - Cat-themed page with images and links
+10. **Catify** (`/catify`) - Cat-themed page with images and links
 
 ## Project Structure
 
 ```
-├── server.js              # Main Express server
-├── public/                # Static files served by Express
-│   ├── index.html         # Main homepage with navigation
-│   ├── schedule.html      # Schedule app
-│   ├── checklist.html     # Checklist app  
-│   ├── maintenance.html   # Maintenance tracker
-│   ├── allp/             # Portfolio files
-│   ├── cv/               # CV/Resume files
-│   ├── diet/             # Diet tracker files
-│   ├── gym/              # Gym routine files
-│   └── other/            # Catify files
-├── schedule-data.json     # Schedule persistence
-├── checklist-state.json  # Checklist persistence
-└── maintenance-data.json  # Maintenance persistence
+├── src/
+│   ├── index.js              # HTTP server entry
+│   ├── app.js                # Express app (middleware, static, routers)
+│   ├── paths.js              # Root / data / public path constants
+│   ├── data/
+│   │   ├── persistence.js    # JSON file read/write for app data
+│   │   └── invites.js        # Invite tokens (hashed) + redeem / admin helpers
+│   ├── middleware/
+│   │   ├── sessionAuth.js    # In-memory session tokens after invite exchange
+│   │   └── rateLimiter.js
+│   └── routes/
+│       ├── auth.js           # POST /api/auth/exchange, invite admin APIs
+│       ├── pages.js          # Friendly URLs → HTML
+│       └── api.js            # REST JSON APIs
+├── data/                     # Runtime JSON persistence (git may track defaults)
+│   ├── schedule-data.json
+│   ├── checklist-state.json
+│   ├── maintenance-data.json
+│   ├── budget-data.json
+│   ├── activities-data.json
+│   ├── gym-media.json
+│   ├── gym-routine.csv       # Gym weekly routine (editable from /gym UI)
+│   └── invites.json          # Invite records (hashes only; see Authentication)
+├── scripts/
+│   └── create-invite.js      # CLI: print a new invite token
+├── public/
+│   ├── index.html            # Home hub
+│   ├── auth.js               # Client: invite modal + session (global pinAuth)
+│   ├── apps/                 # Dashboard mini-apps (schedule, checklist, …)
+│   ├── allp/                 # Portfolio (`/portfolio`); subpages in `pages/`
+│   ├── cv/                   # CV site; subpages in `pages/`
+│   ├── diet/
+│   ├── gym/                  # Includes routine.csv where used
+│   └── other/                # Catify; subpages in `pages/`
+├── Dockerfile
+├── docker-compose.yml
+└── package.json
 ```
 
 ## Getting Started
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Start the server:
+
 ```bash
 npm start
 ```
 
-3. Access the app at `http://localhost:3000`
+3. Open `http://localhost:3000`
 
 ## Authentication
 
-The app uses simple PIN authentication:
-- **Public Access**: All pages can be viewed without authentication
-- **Protected Actions**: 6-digit PIN required only for editing operations:
-  - Adding/modifying schedules
-  - Checking/unchecking checklist items  
-  - Adding/deleting maintenance records
-  - Adding/completing/deleting activities
+Invites and sessions replace fixed passwords:
 
-**Default PIN**: `123456`
+- **Public access**: All pages load without logging in.
+- **Writes**: Mutating APIs (schedule, checklist, maintenance, budget, activities, gym media, …) need a **session** obtained by redeeming an **invite token**.
+- **Invite tokens** are long random strings. Only a **SHA-256 hash** (plus optional pepper) is stored in `data/invites.json`.
+- **Sessions** live in server memory (`SESSION_TTL_MS`, default 24h) and in the browser as `localStorage.sessionToken`.
 
-Configure via `.env` file:
+### First invite (CLI)
+
+After clone or deploy, create at least one invite:
+
+```bash
+npm run invite:create
 ```
-AUTH_PIN=your_6_digit_pin
+
+Optional flags:
+
+```bash
+npm run invite:create -- --label "laptop" --max-uses 5 --expires-days 30
+```
+
+Copy the printed token once; it cannot be recovered from disk.
+
+### Magic link
+
+Share `https://your-host/schedule?invite=TOKEN` (any page works). The client exchanges the token, stores the session, and strips `invite` from the URL.
+
+### Environment
+
+```
 PORT=3000
+# Strong random string; changing it invalidates existing invite hashes
+INVITE_PEPPER=change_me_to_something_long_and_random
+# Session lifetime in ms (default 86400000 = 24h)
+SESSION_TTL_MS=86400000
 ```
 
-**How it works**:
-- When you try to edit something, a PIN modal appears
-- Enter your 6-digit PIN using the keypad or keyboard
-- Session stays authenticated for 24 hours
-- Clean, mobile-friendly PIN entry interface
+### Managing invites over HTTP (optional)
+
+With a valid session (`x-session-token` header):
+
+- `GET /api/invites` — list metadata (no secrets)
+- `POST /api/invites` — body `{ "label"?, "maxUses"?, "expiresInDays"? }` — returns new `inviteToken` once
+- `DELETE /api/invites/:id` — revoke an invite
