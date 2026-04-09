@@ -31,6 +31,17 @@
       "usedCount": 1,
       "revoked": false,
       "lastUsedAt": "2026-04-08T00:14:18.956Z"
+    },
+    {
+      "id": "da900c2b7880709e",
+      "tokenHash": "a332ed878c7ba6691227db18854bf7387fe49db3fe2042ad638b325abfb626b5",
+      "label": "",
+      "createdAt": "2026-04-09T21:57:15.172Z",
+      "expiresAt": null,
+      "maxUses": null,
+      "usedCount": 1,
+      "revoked": false,
+      "lastUsedAt": "2026-04-09T21:57:37.111Z"
     }
   ]
 }
