@@ -14,7 +14,6 @@ router.get('/', sendPublic('index.html'));
 router.get('/schedule', sendPublic('apps', 'schedule.html'));
 router.get('/checklist', sendPublic('apps', 'checklist.html'));
 router.get('/maintenance', sendPublic('apps', 'maintenance.html'));
-router.get('/portfolio', sendPublic('allp', 'index.html'));
 router.get('/cv', sendPublic('cv', 'index.html'));
 router.get('/diet', sendPublic('diet', 'index.html'));
 router.get('/gym', sendPublic('gym', 'index.html'));
