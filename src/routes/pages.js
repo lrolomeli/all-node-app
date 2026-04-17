@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const path = require('path');
-const { PUBLIC_DIR, EXPEDIENTE_DIR } = require('../paths');
+const { PUBLIC_DIR } = require('../paths');
 
 const router = Router();
 
@@ -20,6 +20,6 @@ router.get('/gym', sendPublic('gym', 'index.html'));
 router.get('/catify', sendPublic('other', 'index.html'));
 router.get('/budget', sendPublic('apps', 'budget.html'));
 router.get('/activities', sendPublic('apps', 'activities.html'));
-router.get('/expediente', (_, res) => res.sendFile(path.join(EXPEDIENTE_DIR, 'historial.html')));
+router.get('/expediente', sendPublic('expediente', 'historial.html'));
 
 module.exports = router;
