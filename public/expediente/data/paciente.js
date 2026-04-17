@@ -25,6 +25,11 @@ const paciente = {
       litrosDiarios: 1,
       alerta: true,
       nota: "Insuficiente"
+    },
+    mascotas: {
+      contacto: "24/7",
+      animales: ["perros", "gatos"],
+      nota: "Convivencia constante en interiores"
     }
   },
 

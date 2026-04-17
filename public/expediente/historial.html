@@ -147,10 +147,50 @@
 
   @media print { body { background: white; } .top-bar { background: black; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .container { padding: 20px; } }
   @media (max-width: 600px) { .patient-header { grid-template-columns: 1fr; } .symptom-grid { grid-template-columns: 1fr; } .two-col { grid-template-columns: 1fr; } .container { padding: 20px 14px 60px; } .lab-tabs { flex-wrap: wrap; } }
+
+  .export-btn { font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em; padding: 4px 12px; border: 1px solid #555; background: transparent; color: var(--bg); cursor: pointer; }
+  .export-btn:hover { background: #333; border-color: #888; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: var(--surface); border: 1px solid var(--border-strong); width: 100%; max-width: 720px; max-height: 84vh; display: flex; flex-direction: column; }
+  .modal-head { padding: 13px 20px; background: var(--text); color: var(--bg); font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center; }
+  .modal-head-close { background: transparent; border: 1px solid #555; color: var(--bg); font-family: var(--mono); font-size: 10px; padding: 3px 10px; cursor: pointer; }
+  .modal-head-close:hover { border-color: #999; }
+  .modal-opts { padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--surface2); display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--text-muted); }
+  .modal-opts input[type=checkbox] { accent-color: var(--text); width: 13px; height: 13px; cursor: pointer; }
+  .modal-opts label { cursor: pointer; user-select: none; }
+  .modal-ta { flex: 1; overflow: hidden; min-height: 0; }
+  .modal-ta textarea { width: 100%; height: 100%; min-height: 300px; border: none; outline: none; resize: none; font-family: var(--mono); font-size: 11px; line-height: 1.65; padding: 16px 20px; background: var(--surface); color: var(--text); display: block; }
+  .modal-foot { padding: 10px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; background: var(--surface2); }
+  .mbtn { font-family: var(--mono); font-size: 11px; padding: 6px 14px; border: 1px solid var(--border-strong); cursor: pointer; background: var(--surface); color: var(--text); letter-spacing: 0.02em; }
+  .mbtn:hover { background: var(--surface2); }
+  .mbtn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .mbtn-primary:hover { background: #333; }
+  .mbtn-ok { background: var(--green) !important; color: #fff !important; border-color: var(--green) !important; }
 </style>
 </head>
 <body>
 <div id="app"></div>
+
+<div class="modal-overlay" id="promptModal" onclick="if(event.target===this)cerrarModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span>EXPORTAR PARA IA — TEXTO LISTO PARA COPIAR</span>
+      <button class="modal-head-close" onclick="cerrarModal()">✕ CERRAR</button>
+    </div>
+    <div class="modal-opts">
+      <input type="checkbox" id="chkDetallado" onchange="actualizarPrompt()">
+      <label for="chkDetallado">Incluir laboratorios detallados (biometría hemática + química sanguínea completa)</label>
+    </div>
+    <div class="modal-ta">
+      <textarea id="promptText" readonly spellcheck="false"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="mbtn" onclick="cerrarModal()">Cerrar</button>
+      <button class="mbtn mbtn-primary" id="btnCopiar" onclick="copiarPrompt()">Copiar al portapapeles</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ─────────────────────────────────────────────────────────────────────────────
@@ -209,7 +249,10 @@ function renderHeader() {
   return `
   <div class="top-bar">
     <span>HISTORIAL CLÍNICO — USO MÉDICO</span>
-    <span class="top-bar-right">Actualizado: abril 2026 · Versión 2.0</span>
+    <span style="display:flex;align-items:center;gap:16px">
+      <span class="top-bar-right">Actualizado: abril 2026 · Versión 2.0</span>
+      <button class="export-btn" onclick="abrirModal()">⬆ EXPORTAR PARA IA</button>
+    </span>
   </div>
   <div class="container">
   <div class="patient-header">
@@ -405,7 +448,8 @@ function renderAntecedentes() {
       <span class="muted">Tabaco:</span> Fumador activo desde los ${hab.tabaco.edadInicio} años · ${hab.tabaco.cajetillasDiarias} cajetillas/día (${hab.tabaco.anosTabaquismo} años)<br>
       <span class="muted">Alcohol:</span> ${hab.alcohol.nota} · cese ~${hab.alcohol.cese}<br>
       <span class="muted">Actividad:</span> ${hab.ejercicio.nivel}, ${hab.ejercicio.frecuencia}<br>
-      <span class="muted">Hidratación:</span> <strong style="color:var(--orange)">~${hab.hidratacion.litrosDiarios} L/día (${hab.hidratacion.nota})</strong>
+      <span class="muted">Hidratación:</span> <strong style="color:var(--orange)">~${hab.hidratacion.litrosDiarios} L/día (${hab.hidratacion.nota})</strong><br>
+      <span class="muted">Mascotas:</span> ${hab.mascotas.animales.join(', ')} — contacto ${hab.mascotas.contacto} (${hab.mascotas.nota})
     </div>`)}
     ${card('','',null,`<div class="meta-row" style="border:none;padding:0">
       <strong>Composición corporal (${formatFecha(comp.fecha)})</strong><br>
@@ -507,6 +551,246 @@ function renderFooter() {
     <span>Historial clínico estructurado · Roberto Lomelí · Uso médico exclusivo</span>
     <span>Abril 2026</span>
   </div></div>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EXPORTAR PARA IA
+// ─────────────────────────────────────────────────────────────────────────────
+function abrirModal() {
+  actualizarPrompt();
+  document.getElementById('promptModal').classList.add('open');
+}
+
+function cerrarModal() {
+  document.getElementById('promptModal').classList.remove('open');
+}
+
+function actualizarPrompt() {
+  const detallado = document.getElementById('chkDetallado').checked;
+  document.getElementById('promptText').value = generarPromptIA(detallado);
+}
+
+function copiarPrompt() {
+  const ta = document.getElementById('promptText');
+  navigator.clipboard.writeText(ta.value).then(() => {
+    const btn = document.getElementById('btnCopiar');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copiado';
+    btn.classList.add('mbtn-ok');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('mbtn-ok'); }, 2200);
+  });
+}
+
+function generarPromptIA(detallado) {
+  const p = paciente;
+  const h = hipotesis;
+  const s = sintomas;
+  const hoy = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+  const SEP = '='.repeat(62);
+  const sep = '-'.repeat(62);
+  const out = [];
+
+  out.push(SEP);
+  out.push('EXPEDIENTE CLÍNICO — ROBERTO LOMELÍ');
+  out.push(`Generado: ${hoy}`);
+  out.push(SEP);
+  out.push('');
+
+  // Datos del paciente
+  out.push('## DATOS DEL PACIENTE');
+  out.push(`Nombre:           ${p.nombre}`);
+  out.push(`Edad:             ${p.edad} años (n. ${formatFecha(p.fechaNacimiento)})`);
+  out.push(`Sexo:             ${p.sexo}`);
+  out.push(`Ubicación:        ${p.ubicacion}`);
+  out.push(`Estatus:          SIN DIAGNÓSTICO DEFINITIVO`);
+  out.push(`Inicio síntomas:  Mayo 2025 (~${s.duracionMeses} meses de evolución)`);
+  out.push('');
+
+  // Antecedentes
+  out.push('## ANTECEDENTES');
+  const hab = p.habitos;
+  out.push(`Tabaco:           Fumador activo desde los ${hab.tabaco.edadInicio} años, ${hab.tabaco.cajetillasDiarias} cajetillas/día (${hab.tabaco.anosTabaquismo} años de tabaquismo)`);
+  out.push(`Alcohol:          ${hab.alcohol.nota}, cese ~${hab.alcohol.cese}`);
+  out.push(`Actividad física: ${hab.ejercicio.nivel}, ${hab.ejercicio.frecuencia}`);
+  out.push(`Hidratación:      ~${hab.hidratacion.litrosDiarios} L/día — ${hab.hidratacion.nota}`);
+  if (hab.mascotas) {
+    out.push(`Mascotas:         ${hab.mascotas.animales.join(', ')} — contacto ${hab.mascotas.contacto} (${hab.mascotas.nota})`);
+  }
+  out.push(`Nutrición:        ${p.nutricion.kcalDiarias} kcal/día — ${p.nutricion.dietaActual}`);
+  out.push(`Cirugías:         ${p.antecedentesQuirurgicos.join(', ')}`);
+  out.push(`Patológicos:      ${p.antecedentesPatologicos.join(' · ')}`);
+  const comp = p.composicionCorporal;
+  out.push(`Peso actual:      ${comp.pesoKg} kg (pérdida de ${Math.abs(comp.perdidaPesoDesdeInicio)} kg desde mayo 2025)`);
+  out.push(`Composición:      Grasa ${comp.grasaPct}% (${comp.grasaKg} kg) · Músculo ${comp.musculoPct}% (${comp.musculoKg} kg) · ICC ${comp.icc}`);
+  out.push('');
+
+  // Cuadro principal
+  out.push('## CUADRO PRINCIPAL');
+  out.push(`Paciente masculino de ${p.edad - 1} años al inicio (${p.edad} años actualmente). Síntomas desde mayo 2025 coincidiendo con inicio de Wegovy: mareos, hormigueos en cabeza, debilidad generalizada y fatiga intensa, sin dolor. Patrón fluctuante ("montaña rusa"), ~${s.duracionMeses} meses sin resolución y sin diagnóstico definitivo.`);
+  out.push('');
+
+  // Síntomas activos
+  out.push('## SÍNTOMAS ACTIVOS');
+  s.activos.forEach(sym => {
+    const det = sym.detalle ? ` — ${sym.detalle}` : '';
+    const per = sym.fin
+      ? ` (${formatFecha(sym.inicio)}–${formatFecha(sym.fin)})`
+      : sym.inicio ? ` (desde ${formatFecha(sym.inicio)})` : '';
+    out.push(`· ${sym.nombre}${det}${per}`);
+  });
+  out.push('');
+
+  // Hipótesis
+  out.push('## HIPÓTESIS DIAGNÓSTICA PRINCIPAL');
+  out.push(h.principal.nombre);
+  out.push(h.principal.descripcion);
+  out.push(`Problema central: ${h.principal.problemaCentral}`);
+  out.push('');
+  out.push('Correlaciones clínicas:');
+  h.correlacionesClinicas.forEach(c => {
+    const tag = c.peso === 'alto' ? '[ALTA]  ' : c.peso === 'patron' ? '[PATRÓN]' : '[MOD]   ';
+    out.push(`  ${tag} ${c.hallazgo} — ${c.interpretacion}`);
+  });
+  out.push('');
+
+  // Cronología
+  out.push('## CRONOLOGÍA CLÍNICA');
+  cronologia.forEach(ev => {
+    out.push(`${ev.fecha}: ${ev.evento}`);
+    if (ev.detalle) out.push(`         ${ev.detalle}`);
+    if (ev.alerta)  out.push(`         ⚠ ${ev.alerta}`);
+  });
+  out.push('');
+
+  // Medicamentos
+  out.push('## MEDICAMENTOS');
+  const activos = medicamentos.filter(m => m.estado === 'activo');
+  const disc    = medicamentos.filter(m => m.estado !== 'activo');
+  if (activos.length) out.push(`Activos:        ${activos.map(m => `${m.nombre} (desde ${formatFecha(m.inicio)})`).join(', ')}`);
+  if (disc.length)    out.push(`Discontinuados: ${disc.map(m => m.nombre + (m.duracion ? ' · ' + m.duracion : '')).join(', ')}`);
+  medicamentos.filter(m => m.nota).forEach(m => out.push(`Nota ${m.nombre}: ${m.nota}`));
+  out.push('');
+
+  // Especialistas
+  out.push('## ESPECIALISTAS CONSULTADOS');
+  especialistas.forEach(e => {
+    out.push(`· ${e.especialidad} (${e.fecha}): ${e.resultado}${e.alerta ? ' ⚠' : ''}`);
+  });
+  out.push('');
+
+  // Imagen
+  out.push('## ESTUDIOS DE IMAGEN');
+  imagenologia.forEach(est => {
+    out.push(`${est.estudio}${est.fecha ? ' — ' + formatFecha(est.fecha) : ''}`);
+    est.hallazgos.filter(h => h.relevancia === 'clave' || h.relevancia === 'hallazgo').forEach(h => {
+      out.push(`  · ${h.descripcion}`);
+      if (h.nota) out.push(`    ⚠ ${h.nota}`);
+    });
+    if (est.conclusionDiagnostica?.length) out.push(`  Conclusión: ${est.conclusionDiagnostica.join('; ')}`);
+  });
+  out.push('');
+
+  // Lab evolución
+  out.push('## LABORATORIO — EVOLUCIÓN DE PARÁMETROS CLAVE');
+  out.push(`${'Parámetro'.padEnd(22)} | ${'May 2025'.padEnd(10)} | ${'Feb 2026'.padEnd(10)} | ${'Abr 2026'.padEnd(10)} | Referencia`);
+  out.push(sep);
+  const paramsEv = [
+    { nombre: 'Plaquetas',     unidad: 'k/µL',   ref: '163–337',   fechas: ['2025-05-29','2026-02-25','2026-04-15'] },
+    { nombre: 'VCM',           unidad: 'fL',      ref: '79–92',     fechas: ['2025-05-29','2026-02-25','2026-04-15'] },
+    { nombre: 'T3 Total',      unidad: 'ng/mL',   ref: '0.80–2.00', fechas: ['2025-05-01','2026-02-25', null] },
+    { nombre: 'T3 Libre',      unidad: 'pg/mL',   ref: '2.00–4.40', fechas: ['2025-05-01','2026-02-25', null] },
+    { nombre: 'Hierro',        unidad: 'µg/dL',   ref: '33–193',    fechas: ['2025-05-29','2026-02-25', null] },
+    { nombre: 'Cortisol sérico',unidad:'µg/dL',   ref: null,        fechas: ['2025-05-29', null, null] },
+    { nombre: 'Glucosa',       unidad: 'mg/dL',   ref: '74–106',    fechas: ['2025-05-29','2026-02-25','2026-04-15'] },
+    { nombre: 'HbA1c',         unidad: '%',        ref: '≤5.7',     fechas: ['2025-05-29','2026-02-25', null] },
+    { nombre: 'Colesterol HDL',unidad: 'mg/dL',   ref: '≥55',       fechas: ['2025-05-29','2026-02-25', null] },
+    { nombre: 'Triglicéridos', unidad: 'mg/dL',   ref: '<150',      fechas: ['2025-05-29','2026-02-25', null] },
+    { nombre: 'BUN',           unidad: 'mg/dL',   ref: '6–20',      fechas: ['2025-05-29','2026-02-25','2026-04-15'] },
+  ];
+
+  function findValText(nombre, fecha) {
+    if (!fecha) return '—';
+    let panel = quimicaSanguinea.find(p => p.fecha === fecha);
+    if (panel) {
+      const r = panel.resultados.find(x => x.parametro === nombre);
+      if (r) return r.valor + (r.anormal ? (r.direccion === 'alta' ? '↑' : '↓') : '');
+    }
+    panel = biometriaHematica.find(p => p.fecha === fecha);
+    if (panel) {
+      const r = panel.resultados.find(x => x.parametro === nombre || (nombre === 'VCM' && (x.parametro === 'VCM' || x.parametro === 'VGM')));
+      if (r) return r.valor + (r.anormal ? (r.direccion === 'alta' ? '↑' : '↓') : '');
+    }
+    return '—';
+  }
+
+  paramsEv.forEach(ep => {
+    const v = ep.fechas.map(f => findValText(ep.nombre, f));
+    const ref = ep.ref ? `${ep.ref} ${ep.unidad}` : ep.unidad;
+    out.push(`${ep.nombre.padEnd(22)} | ${String(v[0]).padEnd(10)} | ${String(v[1]).padEnd(10)} | ${String(v[2]).padEnd(10)} | ${ref}`);
+  });
+  out.push('');
+
+  // Pendientes
+  out.push('## ESTUDIOS PENDIENTES');
+  pendientes.forEach(g => {
+    out.push(`Prioridad ${g.prioridad} — ${g.categoria}:`);
+    g.estudios.forEach(e => out.push(`  · ${e}`));
+  });
+
+  if (!detallado) {
+    out.push('');
+    out.push(SEP);
+    out.push(`Historial clínico · Roberto Lomelí · Uso médico exclusivo · ${hoy}`);
+    return out.join('\n');
+  }
+
+  // ── SECCIÓN DETALLADA ──────────────────────────────────────────────────────
+  out.push('');
+  out.push(SEP);
+  out.push('LABORATORIO DETALLADO');
+  out.push(SEP);
+
+  function tablaLab(paneles) {
+    paneles.forEach(panel => {
+      out.push('');
+      out.push(`--- ${formatFecha(panel.fecha)}${panel.ayuno === false ? ' (sin ayuno)' : ''} ---`);
+      out.push(`${'Parámetro'.padEnd(30)} | ${'Resultado'.padEnd(12)} | ${'Unidad'.padEnd(13)} | Referencia`);
+      out.push('-'.repeat(72));
+      panel.resultados.forEach(r => {
+        const flag = r.anormal ? (r.direccion === 'alta' ? ' ↑' : ' ↓') : '';
+        out.push(`${r.parametro.padEnd(30)} | ${String(r.valor + flag).padEnd(12)} | ${(r.unidad||'').padEnd(13)} | ${refLabel(r)}`);
+        if (r.nota) out.push(`  → ${r.nota}`);
+      });
+      if (panel.notas?.length) out.push(`Notas: ${panel.notas.join(' · ')}`);
+    });
+  }
+
+  out.push('');
+  out.push('### BIOMETRÍA HEMÁTICA COMPLETA');
+  tablaLab(biometriaHematica);
+
+  out.push('');
+  out.push('### QUÍMICA SANGUÍNEA COMPLETA');
+  tablaLab(quimicaSanguinea);
+
+  out.push('');
+  out.push('### LABORATORIO HORMONAL — MAYO 2025');
+  const panelHorm = quimicaSanguinea.find(p => p.fecha === '2025-05-29');
+  if (panelHorm) {
+    panelHorm.resultados
+      .filter(r => ['Cortisol sérico','Insulina sérica','TSH','T3 Total','T3 Libre','T4 Libre','T4 Total'].includes(r.parametro))
+      .forEach(r => {
+        const flag = r.anormal ? (r.direccion === 'alta' ? ' ↑' : ' ↓') : '';
+        out.push(`· ${r.parametro}: ${r.valor}${flag} ${r.unidad||''} (ref: ${refLabel(r)})`);
+        if (r.nota) out.push(`  → ${r.nota}`);
+      });
+    out.push('Nota clínica: La combinación de cortisol normal-bajo con insulina en límite inferior y episodios hipoglucémicos recurrentes sugiere respuesta insuficiente ante el estrés metabólico. La prueba de estimulación con ACTH sigue siendo el estudio necesario para descartar hipocortisolismo funcional bajo demanda.');
+  }
+
+  out.push('');
+  out.push(SEP);
+  out.push(`Historial clínico · Roberto Lomelí · Uso médico exclusivo · ${hoy}`);
+  return out.join('\n');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
