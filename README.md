@@ -24,6 +24,9 @@ A unified Node.js application with multiple mini-apps for productivity, portfoli
 ### Fun Apps
 10. **Catify** (`/catify`) - Cat-themed page with images and links
 
+### Family Health
+11. **Expediente Médico** (`/expediente`) - Roberto Lomelí's clinical record (historial, estudios, medicamentos, etc.)
+
 ## Project Structure
 
 ```
@@ -51,7 +54,8 @@ A unified Node.js application with multiple mini-apps for productivity, portfoli
 │   ├── gym-routine.csv       # Gym weekly routine (editable from /gym UI)
 │   └── invites.json          # Invite records (hashes only; see Authentication)
 ├── scripts/
-│   └── create-invite.js      # CLI: print a new invite token
+│   ├── create-invite.js      # CLI: print a new invite token
+│   └── sync-expediente.sh    # Sync expediente data from its source repo
 ├── public/
 │   ├── index.html            # Home hub
 │   ├── auth.js               # Client: invite modal + session (global pinAuth)
@@ -60,6 +64,7 @@ A unified Node.js application with multiple mini-apps for productivity, portfoli
 │   ├── cv/                   # CV site; subpages in `pages/`
 │   ├── diet/
 │   ├── gym/                  # Includes routine.csv where used
+│   ├── expediente/           # Roberto Lomelí clinical record (synced via script)
 │   └── other/                # Catify; subpages in `pages/`
 ├── Dockerfile
 ├── docker-compose.yml
@@ -81,6 +86,21 @@ npm start
 ```
 
 3. Open `http://localhost:3000`
+
+## Expediente Médico — sincronización
+
+Los datos del expediente viven en un repo separado ([Expediente_RobertoLM](https://github.com/lrolomeli/Expediente_RobertoLM)). Cuando haya cambios allá, ejecutar:
+
+```bash
+./scripts/sync-expediente.sh
+```
+
+El script clona el repo, sobreescribe `public/expediente/historial.html` y `public/expediente/data/`, y limpia el directorio temporal. Después hacer commit normalmente:
+
+```bash
+git add public/expediente/
+git commit -m "sync expediente"
+```
 
 ## Authentication
 
