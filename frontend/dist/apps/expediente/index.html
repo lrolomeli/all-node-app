@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Historial Clínico — Roberto Lomelí</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- DATOS: editar estos archivos para actualizar el historial -->
+<script src="data/paciente.js"></script>
+<script src="data/sintomas.js"></script>
+<script src="data/medicamentos.js"></script>
+<script src="data/cronologia.js"></script>
+<script src="data/hipotesis.js"></script>
+<script src="data/especialistas.js"></script>
+<script src="data/pendientes.js"></script>
+<script src="data/estudios/biometria_hematica.js"></script>
+<script src="data/estudios/quimica_sanguinea.js"></script>
+<script src="data/estudios/imagenologia.js"></script>
+<script src="data/estudios/orina.js"></script>
+<script src="data/estudios/coprologico.js"></script>
+
+<style>
+  :root {
+    --bg: #F7F6F2;
+    --surface: #FFFFFF;
+    --surface2: #F0EFE9;
+    --border: #E2E0D8;
+    --border-strong: #C8C5BA;
+    --text: #1A1916;
+    --text-muted: #6B6860;
+    --text-faint: #9B9890;
+    --red: #C0392B;
+    --red-bg: #FDF2F0;
+    --red-border: #F0C4BE;
+    --orange: #C05C1A;
+    --orange-bg: #FDF5EE;
+    --orange-border: #EECFA8;
+    --purple: #4A3F9F;
+    --purple-bg: #F2F0FB;
+    --purple-border: #C5BFED;
+    --blue: #1A5276;
+    --blue-bg: #EEF4F9;
+    --blue-border: #A8C8E0;
+    --green: #1E6B3A;
+    --green-bg: #F0F7F3;
+    --green-border: #A8D4BA;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+  .top-bar { background: var(--text); color: var(--bg); padding: 10px 40px; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; }
+  .top-bar-right { color: #888; }
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .patient-header { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--text); padding: 28px 32px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start; }
+  .patient-name { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
+  .patient-sub { font-size: 13px; color: var(--text-muted); margin-top: 6px; font-family: var(--mono); }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .badge { font-size: 11px; font-family: var(--mono); font-weight: 500; padding: 3px 9px; border-radius: 2px; letter-spacing: 0.02em; }
+  .badge-red { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .badge-orange { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
+  .badge-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+  .status-block { text-align: right; }
+  .status-label { font-size: 10px; font-family: var(--mono); color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .status-value { font-size: 13px; font-family: var(--mono); color: var(--red); font-weight: 500; }
+
+  .section { margin-bottom: 20px; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .section-label { font-size: 10px; font-family: var(--mono); font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-faint); }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  .card { background: var(--surface); border: 1px solid var(--border); padding: 18px 22px; margin-bottom: 10px; }
+  .card-red { background: var(--red-bg); border: 1px solid var(--red-border); border-left: 3px solid var(--red); }
+  .card-orange { background: var(--orange-bg); border: 1px solid var(--orange-border); border-left: 3px solid var(--orange); }
+  .card-purple { background: var(--purple-bg); border: 1px solid var(--purple-border); border-left: 3px solid var(--purple); }
+  .card-blue { background: var(--blue-bg); border: 1px solid var(--blue-border); border-left: 3px solid var(--blue); }
+  .card-title { font-size: 12px; font-family: var(--mono); font-weight: 500; margin-bottom: 10px; letter-spacing: 0.02em; }
+  .card-title-red { color: var(--red); }
+  .card-title-orange { color: var(--orange); }
+  .card-title-purple { color: var(--purple); }
+  .card-title-blue { color: var(--blue); }
+  .card p, .card-body { font-size: 13px; line-height: 1.75; color: var(--text); }
+
+  .symptom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .symptom-item { background: var(--surface); border: 1px solid var(--border); padding: 10px 14px; font-size: 13px; font-weight: 500; }
+  .symptom-item .sub { font-size: 11px; color: var(--text-muted); font-weight: 400; margin-top: 2px; font-family: var(--mono); }
+
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before { content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 1px; background: var(--border-strong); }
+  .tl-item { position: relative; margin-bottom: 16px; }
+  .tl-dot { position: absolute; left: -20px; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--bg); border: 2px solid var(--border-strong); }
+  .tl-dot-red { border-color: var(--red); background: var(--red-bg); }
+  .tl-dot-orange { border-color: var(--orange); background: var(--orange-bg); }
+  .tl-dot-purple { border-color: var(--purple); background: var(--purple-bg); }
+  .tl-dot-blue { border-color: var(--blue); background: var(--blue-bg); }
+  .tl-date { font-size: 11px; font-family: var(--mono); color: var(--text-faint); margin-bottom: 3px; letter-spacing: 0.03em; }
+  .tl-main { font-size: 13px; color: var(--text); line-height: 1.6; }
+  .tl-sub { font-size: 11px; font-family: var(--mono); color: var(--text-muted); margin-top: 3px; }
+  .tl-gap { display: inline-block; font-size: 10px; font-family: var(--mono); background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); padding: 2px 8px; margin-top: 4px; letter-spacing: 0.03em; }
+
+  .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .data-table th { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--border-strong); font-weight: 500; }
+  .data-table td { padding: 6px 10px 6px 0; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .val-red { color: var(--red); font-weight: 600; font-family: var(--mono); }
+  .val-orange { color: var(--orange); font-weight: 600; font-family: var(--mono); }
+  .val-green { color: var(--green); font-family: var(--mono); }
+  .val-mono { font-family: var(--mono); }
+
+  .checklist { list-style: none; }
+  .checklist li { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; line-height: 1.6; }
+  .checklist li:last-child { border-bottom: none; }
+  .cl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .cl-red { background: var(--red); }
+  .cl-orange { background: var(--orange); }
+  .cl-blue { background: var(--blue); }
+
+  .pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill { font-size: 11px; font-family: var(--mono); padding: 4px 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); border-radius: 1px; }
+  .pill-active { background: var(--blue-bg); color: var(--blue); border-color: var(--blue-border); font-weight: 500; }
+  .pill-disc { background: var(--surface2); color: var(--text-faint); }
+
+  .priority-list { list-style: none; }
+  .priority-list li { padding: 7px 0; border-bottom: 1px dashed var(--border); font-size: 13px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.6; }
+  .priority-list li:last-child { border-bottom: none; }
+  .p-num { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--surface); background: var(--red); padding: 1px 5px; border-radius: 1px; flex-shrink: 0; margin-top: 3px; }
+  .p-num-2 { background: var(--orange); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .meta-row { font-size: 13px; color: var(--text); line-height: 1.9; background: var(--surface); border: 1px solid var(--border); padding: 14px 18px; }
+  .meta-row .muted { color: var(--text-muted); }
+
+  .lab-tabs { display: flex; gap: 0; margin-bottom: -1px; }
+  .lab-tab { font-size: 11px; font-family: var(--mono); padding: 6px 14px; border: 1px solid var(--border); border-bottom: none; cursor: pointer; background: var(--surface2); color: var(--text-muted); }
+  .lab-tab.active { background: var(--surface); color: var(--text); font-weight: 500; }
+  .lab-panel { display: none; }
+  .lab-panel.active { display: block; }
+
+  .note-box { font-size: 11px; font-family: var(--mono); color: var(--text-muted); padding: 8px 12px; border: 1px dashed var(--border); background: var(--surface); margin-top: 10px; }
+  .note-box-blue { color: var(--blue); border-color: var(--blue-border); background: var(--blue-bg); }
+
+  .footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 11px; font-family: var(--mono); color: var(--text-faint); display: flex; justify-content: space-between; }
+
+  @media print { body { background: white; } .top-bar { background: black; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .container { padding: 20px; } }
+  @media (max-width: 600px) { .patient-header { grid-template-columns: 1fr; } .symptom-grid { grid-template-columns: 1fr; } .two-col { grid-template-columns: 1fr; } .container { padding: 20px 14px 60px; } .lab-tabs { flex-wrap: wrap; } }
+
+  .export-btn { font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em; padding: 4px 12px; border: 1px solid #555; background: transparent; color: var(--bg); cursor: pointer; }
+  .export-btn:hover { background: #333; border-color: #888; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: var(--surface); border: 1px solid var(--border-strong); width: 100%; max-width: 720px; max-height: 84vh; display: flex; flex-direction: column; }
+  .modal-head { padding: 13px 20px; background: var(--text); color: var(--bg); font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center; }
+  .modal-head-close { background: transparent; border: 1px solid #555; color: var(--bg); font-family: var(--mono); font-size: 10px; padding: 3px 10px; cursor: pointer; }
+  .modal-head-close:hover { border-color: #999; }
+  .modal-opts { padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--surface2); display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--text-muted); }
+  .modal-opts input[type=checkbox] { accent-color: var(--text); width: 13px; height: 13px; cursor: pointer; }
+  .modal-opts label { cursor: pointer; user-select: none; }
+  .modal-ta { flex: 1; overflow: hidden; min-height: 0; }
+  .modal-ta textarea { width: 100%; height: 100%; min-height: 300px; border: none; outline: none; resize: none; font-family: var(--mono); font-size: 11px; line-height: 1.65; padding: 16px 20px; background: var(--surface); color: var(--text); display: block; }
+  .modal-foot { padding: 10px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; background: var(--surface2); }
+  .mbtn { font-family: var(--mono); font-size: 11px; padding: 6px 14px; border: 1px solid var(--border-strong); cursor: pointer; background: var(--surface); color: var(--text); letter-spacing: 0.02em; }
+  .mbtn:hover { background: var(--surface2); }
+  .mbtn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .mbtn-primary:hover { background: #333; }
+  .mbtn-ok { background: var(--green) !important; color: #fff !important; border-color: var(--green) !important; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<div class="modal-overlay" id="promptModal" onclick="if(event.target===this)cerrarModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span>EXPORTAR PARA IA — TEXTO LISTO PARA COPIAR</span>
+      <button class="modal-head-close" onclick="cerrarModal()">✕ CERRAR</button>
+    </div>
+    <div class="modal-opts">
+      <input type="checkbox" id="chkDetallado" onchange="actualizarPrompt()">
+      <label for="chkDetallado">Incluir laboratorios detallados (biometría hemática + química sanguínea completa)</label>
+    </div>
+    <div class="modal-ta">
+      <textarea id="promptText" readonly spellcheck="false"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="mbtn" onclick="cerrarModal()">Cerrar</button>
+      <button class="mbtn mbtn-primary" id="btnCopiar" onclick="copiarPrompt()">Copiar al portapapeles</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+function sec(label, content) {
+  return `<div class="section">
+    <div class="section-header"><span class="section-label">${label}</span><div class="section-line"></div></div>
+    ${content}
+  </div>`;
+}
+
+function card(cls, titleCls, title, body) {
+  return `<div class="card ${cls || ''}">
+    ${title ? `<div class="card-title ${titleCls || ''}">${title}</div>` : ''}
+    ${body}
+  </div>`;
+}
+
+function formatFecha(iso) {
+  if (!iso) return '—';
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const [y,m,d] = iso.split('-');
+  if (!m) return iso;
+  return `${d ? d+' ' : ''}${meses[parseInt(m)-1]} ${y}`;
+}
+
+function valClass(r) {
+  if (!r.anormal) return 'val-mono';
+  if (r.direccion === 'alta') return 'val-red';
+  if (r.direccion === 'baja') return 'val-orange';
+  return 'val-red';
+}
+
+function valLabel(r) {
+  if (!r.anormal) return r.valor;
+  if (r.direccion === 'alta') return `${r.valor} ↑`;
+  if (r.direccion === 'baja') return `${r.valor} ↓`;
+  return `${r.valor} *`;
+}
+
+function refLabel(r) {
+  if (r.refMin !== null && r.refMax !== null) return `${r.refMin}–${r.refMax}`;
+  if (r.refMin !== null) return `≥${r.refMin}`;
+  if (r.refMax !== null) return `<${r.refMax}`;
+  return '—';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SECCIONES
+// ─────────────────────────────────────────────────────────────────────────────
+function renderHeader() {
+  const p = paciente;
+  const edad = p.edad;
+  const sintomasActivos = hipotesis.principal.estado;
+  return `
+  <div class="top-bar">
+    <span>HISTORIAL CLÍNICO — USO MÉDICO</span>
+    <span style="display:flex;align-items:center;gap:16px">
+      <span class="top-bar-right">Actualizado: abril 2026 · Versión 2.0</span>
+      <button class="export-btn" onclick="abrirModal()">⬆ EXPORTAR PARA IA</button>
+    </span>
+  </div>
+  <div class="container">
+  <div class="patient-header">
+    <div>
+      <div class="patient-name">${p.nombre}</div>
+      <div class="patient-sub">${p.sexo} · ${edad} años (n. ${formatFecha(p.fechaNacimiento)}) · ${p.ubicacion}</div>
+      <div class="badges">
+        <span class="badge badge-red">Sin diagnóstico definitivo</span>
+        <span class="badge badge-red">Hipopituitarismo parcial — no estudiado</span>
+        <span class="badge badge-orange">Trombocitopenia progresiva</span>
+        <span class="badge badge-orange">Síntomas activos ~11 meses</span>
+        <span class="badge badge-blue">Hematología abr 2026 · Endocrino ene 2026</span>
+      </div>
+    </div>
+    <div class="status-block">
+      <div class="status-label">Estatus</div>
+      <div class="status-value">SIN DX</div>
+      <div style="margin-top:10px">
+        <div class="status-label">Inicio síntomas</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--text-muted)">Mayo 2025</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderMotivo() {
+  const s = sintomas;
+  return sec('Motivo de consulta', card('card-orange','card-title-orange','Cuadro principal',
+    `<p>Paciente masculino de ${paciente.edad - 1} años al inicio (${paciente.edad} años actualmente, n. ${formatFecha(paciente.fechaNacimiento)}) con síntomas de inicio en mayo 2025 (coincidiendo con uso de Wegovy): <strong>mareos, hormigueos en cabeza, debilidad generalizada y fatiga intensa</strong>, sin dolor. Los síntomas llevan ~${s.duracionMeses} meses con patrón fluctuante ("montaña rusa"), sin resolución y sin diagnóstico definitivo a la fecha.</p>`
+  ));
+}
+
+function renderSintomas() {
+  const rows = sintomas.activos.map(s => {
+    const det = s.detalle || '';
+    const periodo = s.fin ? `${formatFecha(s.inicio)}–${formatFecha(s.fin)}` : (s.inicio ? `Desde ${formatFecha(s.inicio)}` : '');
+    const sub = [periodo, det].filter(Boolean).join(' · ');
+    return `<div class="symptom-item">${s.nombre}<div class="sub">${sub}</div></div>`;
+  }).join('');
+  return sec('Síntomas actuales', `<div class="symptom-grid">${rows}</div>`);
+}
+
+function renderHipotesis() {
+  const h = hipotesis;
+  const corr = h.correlacionesClinicas.map(c => {
+    const cls = c.peso === 'alto' ? 'cl-red' : c.peso === 'patron' ? 'cl-blue' : 'cl-orange';
+    return `<li><span class="cl-dot ${cls}"></span><div><strong>${c.hallazgo}</strong> — ${c.interpretacion}</div></li>`;
+  }).join('');
+
+  const hipCard = card('card-purple','card-title-purple', h.principal.nombre,
+    `<p>${h.principal.descripcion}<br><br>
+    <strong style="color:var(--red)">Problema central:</strong> ${h.principal.problemaCentral}</p>`
+  );
+  const corrCard = card('','', null,
+    `<ul class="checklist">${corr}</ul>
+    <div style="margin-top:10px;font-size:11px;font-family:var(--mono);color:var(--text-faint)">Rojo = alta correlación · Naranja = correlación moderada · Azul = patrón temporal</div>`
+  );
+
+  return sec('Hipótesis diagnóstica principal', hipCard)
+       + sec('Por qué el cuadro apunta a hipófisis', corrCard);
+}
+
+function renderCronologia() {
+  const tipoMap = {
+    rojo: 'tl-dot-red', naranja: 'tl-dot-orange', morado: 'tl-dot-purple', azul: 'tl-dot-blue', neutro: ''
+  };
+  const items = cronologia.map(ev => {
+    const dot = tipoMap[ev.tipo] || '';
+    const alerta = ev.alerta ? `<div><span class="tl-gap">⚠ ${ev.alerta}</span></div>` : '';
+    const sub = ev.detalle ? `<div class="tl-sub">${ev.detalle}</div>` : '';
+    return `<div class="tl-item">
+      <div class="tl-dot ${dot}"></div>
+      <div class="tl-date">${ev.fecha}</div>
+      <div class="tl-main">${ev.evento}</div>
+      ${sub}${alerta}
+    </div>`;
+  }).join('');
+  return sec('Cronología clínica', card('','',null,`<div class="timeline">${items}</div>`));
+}
+
+function renderLabEvolucion() {
+  const params = [
+    { nombre: 'Plaquetas', unidad: 'k/µL', ref: '163–337', fechas: ['2025-05-29','2026-02-25','2026-04-15'] },
+    { nombre: 'VCM', unidad: 'fL', ref: '79–92', fechas: ['2025-05-29','2026-02-25','2026-04-15'] },
+    { nombre: 'T3 Total', unidad: 'ng/mL', ref: '0.80–2.00', fechas: ['2025-05-01','2026-02-25',null] },
+    { nombre: 'T3 Libre', unidad: 'pg/mL', ref: '2.00–4.40', fechas: ['2025-05-01','2026-02-25',null] },
+    { nombre: 'Hierro', unidad: 'µg/dL', ref: '33–193', fechas: ['2025-05-29','2026-02-25',null] },
+    { nombre: 'Albúmina', unidad: 'g/dL', ref: '3.97–4.94', fechas: ['2025-05-29','2026-02-25',null] },
+    { nombre: 'Ácido úrico', unidad: 'mg/dL', ref: '3.4–7.0', fechas: ['2025-05-29','2026-02-25',null] },
+    { nombre: 'Colesterol HDL', unidad: 'mg/dL', ref: '≥55', fechas: ['2025-05-29','2026-02-25',null] },
+    { nombre: 'Triglicéridos', unidad: 'mg/dL', ref: '<150', fechas: ['2025-05-29','2026-02-25',null] },
+    { nombre: 'HbA1c', unidad: '%', ref: '≤5.7', fechas: ['2025-05-29','2026-02-25',null] },
+    { nombre: 'BUN', unidad: 'mg/dL', ref: '6–20', fechas: ['2025-05-29','2026-02-25','2026-04-15'] },
+    { nombre: 'AST (TGO)', unidad: 'U/L', ref: '10–35', fechas: ['2025-05-29','2026-02-25',null] },
+    { nombre: 'Glucosa', unidad: 'mg/dL', ref: '74–106', fechas: ['2025-05-29','2026-02-25','2026-04-15'] }
+  ];
+
+  function findVal(nombre, fecha) {
+    if (!fecha) return null;
+    // buscar en química sanguínea
+    let panel = quimicaSanguinea.find(p => p.fecha === fecha);
+    if (panel) {
+      let r = panel.resultados.find(x => x.parametro === nombre ||
+        (nombre === 'Hierro' && x.parametro === 'Hierro') ||
+        (nombre === 'Ácido úrico' && x.parametro === 'Ácido úrico'));
+      if (r) return r;
+    }
+    // buscar en biometría
+    panel = biometriaHematica.find(p => p.fecha === fecha);
+    if (panel) {
+      let r = panel.resultados.find(x => x.parametro === nombre ||
+        (nombre === 'VCM' && (x.parametro === 'VCM' || x.parametro === 'VGM')));
+      if (r) return r;
+    }
+    return null;
+  }
+
+  const rows = params.map(p => {
+    const cells = [0,1,2].map(colIdx => {
+      const buscarFecha = p.fechas[colIdx];
+      if (!buscarFecha) return `<td class="val-mono">—</td>`;
+      const r = findVal(p.nombre, buscarFecha);
+      if (!r) return `<td class="val-mono">—</td>`;
+      const cls = r.anormal ? (r.direccion === 'alta' ? 'val-red' : r.direccion === 'baja' ? 'val-orange' : 'val-red') : 'val-green';
+      const arrow = r.anormal ? (r.direccion === 'alta' ? ' ↑' : ' ↓') : ' ✓';
+      return `<td class="${cls}">${r.valor}${arrow}</td>`;
+    });
+    return `<tr><td>${p.nombre}</td>${cells.join('')}<td class="val-mono">${p.ref} ${p.unidad}</td></tr>`;
+  }).join('');
+
+  const tabla = `<table class="data-table">
+    <thead><tr><th>Parámetro</th><th>May 2025</th><th>Feb 2026</th><th>Abr 2026</th><th>Referencia</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+
+  return sec('Laboratorio — parámetros clave (evolución)', card('','',null,tabla));
+}
+
+function renderImagenologia() {
+  const cards = imagenologia.map(est => {
+    const hallazgosClave = est.hallazgos.filter(h => h.relevancia === 'clave' || h.relevancia === 'hallazgo');
+    const conclusiones = est.conclusionDiagnostica.map(c => `· ${c}`).join('<br>');
+    const cls = est.estudio.includes('RM') ? 'card-purple' : 'card-orange';
+    const titleCls = est.estudio.includes('RM') ? 'card-title-purple' : 'card-title-orange';
+    const notaClave = hallazgosClave.find(h => h.relevancia === 'clave');
+    const alertaHTML = notaClave?.nota ? `<div style="color:var(--red);font-size:12px;margin-top:8px">${notaClave.nota}</div>` : '';
+
+    const hallazgosHTML = hallazgosClave.map(h => `· ${h.descripcion}`).join('<br>');
+    return card(cls, titleCls, `${est.estudio}${est.fecha ? ' — ' + formatFecha(est.fecha) : ''}`,
+      `<p style="font-size:13px;line-height:1.75">${hallazgosHTML}${alertaHTML}</p>`
+    );
+  }).join('');
+  return sec('Estudios de imagen', `<div class="two-col">${cards}</div>`);
+}
+
+function renderPendientes() {
+  const grupos = pendientes.map(g => {
+    const items = g.estudios.map(e => `<li><span class="p-num${g.prioridad === 2 ? ' p-num-2' : ''}">P${g.prioridad}</span><div>${e}</div></li>`).join('');
+    const cls = g.prioridad === 1 ? 'card-red' : 'card-orange';
+    const titleCls = g.prioridad === 1 ? 'card-title-red' : 'card-title-orange';
+    return card(cls, titleCls, `Prioridad ${g.prioridad} — ${g.categoria}`,
+      `<ul class="priority-list">${items}</ul>`
+    );
+  }).join('');
+  return sec('Estudios pendientes — por prioridad', grupos);
+}
+
+function renderMedicamentos() {
+  const activos = medicamentos.filter(m => m.estado === 'activo');
+  const disc = medicamentos.filter(m => m.estado !== 'activo');
+  const pills = [
+    ...activos.map(m => `<span class="pill pill-active">${m.nombre} (activo desde ${formatFecha(m.inicio)})</span>`),
+    ...disc.map(m => `<span class="pill pill-disc">${m.nombre} ${m.inicio ? formatFecha(m.inicio) : ''}${m.duracion ? ' · ' + m.duracion : ''}</span>`)
+  ].join('');
+  const alertas = medicamentos.filter(m => m.nota).map(m =>
+    `<div class="note-box" style="margin-top:8px"><strong>${m.nombre}:</strong> ${m.nota}</div>`
+  ).join('');
+  return sec('Medicamentos', `<div class="pill-row">${pills}</div>${alertas}`);
+}
+
+function renderAntecedentes() {
+  const p = paciente;
+  const hab = p.habitos;
+  const comp = p.composicionCorporal;
+  const esp = especialistas.map(e => {
+    const alerta = e.alerta ? ` <span style="color:var(--red);font-size:11px">⚠</span>` : '';
+    return `<span class="muted">${e.especialidad}:</span> ${e.fecha} — ${e.resultado}${alerta}`;
+  }).join('<br>');
+
+  return sec('Antecedentes y perfil del paciente', `<div class="two-col">
+    ${card('','',null,`<div class="meta-row" style="border:none;padding:0">
+      <strong>Hábitos</strong><br>
+      <span class="muted">Tabaco:</span> Fumador activo desde los ${hab.tabaco.edadInicio} años · ${hab.tabaco.cajetillasDiarias} cajetillas/día (${hab.tabaco.anosTabaquismo} años)<br>
+      <span class="muted">Alcohol:</span> ${hab.alcohol.nota} · cese ~${hab.alcohol.cese}<br>
+      <span class="muted">Actividad:</span> ${hab.ejercicio.nivel}, ${hab.ejercicio.frecuencia}<br>
+      <span class="muted">Hidratación:</span> <strong style="color:var(--orange)">~${hab.hidratacion.litrosDiarios} L/día (${hab.hidratacion.nota})</strong><br>
+      <span class="muted">Mascotas:</span> ${hab.mascotas.animales.join(', ')} — contacto ${hab.mascotas.contacto} (${hab.mascotas.nota})
+    </div>`)}
+    ${card('','',null,`<div class="meta-row" style="border:none;padding:0">
+      <strong>Composición corporal (${formatFecha(comp.fecha)})</strong><br>
+      <span class="muted">Peso:</span> ${comp.pesoKg} kg (${comp.perdidaPesoDesdeInicio} kg desde may 2025)<br>
+      <span class="muted">Grasa:</span> ${comp.grasaPct}% (${comp.grasaKg} kg)<br>
+      <span class="muted">Músculo:</span> ${comp.musculoPct}% (${comp.musculoKg} kg)<br>
+      <span class="muted">ICC:</span> ${comp.icc} · Cintura: ${comp.perimetrosCm.cintura} cm
+    </div>`)}
+    ${card('','',null,`<div class="meta-row" style="border:none;padding:0">
+      <strong>Nutrición</strong><br>
+      <span class="muted">Ingesta:</span> ${p.nutricion.kcalDiarias} kcal/día<br>
+      <span class="muted">Dieta actual:</span> ${p.nutricion.dietaActual}<br>
+      <span class="muted">Historial:</span> ${p.nutricion.dietaHistorial}<br>
+      <span class="muted">Cirugías:</span> ${p.antecedentesQuirurgicos.join(', ')}
+    </div>`)}
+    ${card('','',null,`<div class="meta-row" style="border:none;padding:0">
+      <strong>Especialistas consultados</strong><br>${esp}
+    </div>`)}
+  </div>`);
+}
+
+function renderLabDetallado() {
+  function tablaBH(panel) {
+    const notas = panel.notas.length ? `<div class="note-box">${panel.notas.join('<br>')}</div>` : '';
+    const rows = panel.resultados.map(r => {
+      const cls = valClass(r);
+      const nota = r.nota ? `<span style="font-size:10px;color:var(--text-faint);display:block">${r.nota}</span>` : '';
+      return `<tr><td>${r.parametro}${nota}</td><td class="${cls}">${valLabel(r)}</td><td class="val-mono">${r.unidad || ''}</td><td class="val-mono">${refLabel(r)}</td></tr>`;
+    }).join('');
+    return `<table class="data-table">
+      <thead><tr><th>Parámetro</th><th>Resultado</th><th>Unidad</th><th>Referencia</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>${notas}`;
+  }
+
+  const tabs = biometriaHematica.map((p,i) =>
+    `<div class="lab-tab ${i===0?'active':''}" onclick="switchTab('bh','bh-${i}',this)">${formatFecha(p.fecha)}</div>`
+  ).join('');
+  const panels = biometriaHematica.map((p,i) =>
+    `<div id="bh-${i}" class="lab-panel ${i===0?'active':''}">${tablaBH(p)}</div>`
+  ).join('');
+
+  const tabsQS = quimicaSanguinea.map((p,i) =>
+    `<div class="lab-tab ${i===0?'active':''}" onclick="switchTab('qs','qs-${i}',this)">${formatFecha(p.fecha)}${p.ayuno===false?' (sin ayuno)':''}</div>`
+  ).join('');
+  const panelsQS = quimicaSanguinea.map((p,i) => {
+    const rows = p.resultados.map(r => {
+      const cls = valClass(r);
+      const nota = r.nota ? `<span style="font-size:10px;color:var(--text-faint);display:block">${r.nota}</span>` : '';
+      return `<tr><td>${r.parametro}${nota}</td><td class="${cls}">${valLabel(r)}</td><td class="val-mono">${r.unidad || ''}</td><td class="val-mono">${refLabel(r)}</td></tr>`;
+    }).join('');
+    const notasPanel = p.notas.length ? `<div class="note-box">${p.notas.join('<br>')}</div>` : '';
+    return `<div id="qs-${i}" class="lab-panel ${i===0?'active':''}">
+      <table class="data-table">
+        <thead><tr><th>Parámetro</th><th>Resultado</th><th>Unidad</th><th>Referencia</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>${notasPanel}
+    </div>`;
+  }).join('');
+
+  return sec('Biometría hemática completa',
+    `<div class="card" style="padding-bottom:0">
+      <div class="lab-tabs">${tabs}</div>
+      <div style="border:1px solid var(--border);padding:14px">${panels}</div>
+    </div>`
+  ) + sec('Química sanguínea completa',
+    `<div class="card" style="padding-bottom:0">
+      <div class="lab-tabs">${tabsQS}</div>
+      <div style="border:1px solid var(--border);padding:14px">${panelsQS}</div>
+    </div>`
+  );
+}
+
+function renderHormonal() {
+  const panel = quimicaSanguinea.find(p => p.fecha === '2025-05-29');
+  if (!panel) return '';
+  const hormonales = panel.resultados.filter(r =>
+    ['Cortisol sérico','Insulina sérica'].includes(r.parametro)
+  );
+  const thyroid29 = quimicaSanguinea.find(p => p.fecha === '2025-05-29')?.resultados.find(r => r.parametro === 'TSH');
+  const all = [thyroid29, ...hormonales].filter(Boolean);
+  const rows = all.map(r => {
+    const cls = valClass(r);
+    const nota = r.nota ? `<span style="font-size:11px;color:var(--text-muted)">${r.nota}</span>` : '';
+    return `<tr><td>${r.parametro}</td><td class="${cls}">${valLabel(r)} ${r.unidad||''}</td><td class="val-mono">${refLabel(r)}</td><td style="font-size:12px;color:var(--text-muted)">${nota}</td></tr>`;
+  }).join('');
+
+  return sec('Laboratorio hormonal — Mayo 2025', card('card-blue','card-title-blue','Tomado 29 may 2025',
+    `<table class="data-table">
+      <thead><tr><th>Parámetro</th><th>Resultado</th><th>Referencia</th><th>Interpretación</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="note-box note-box-blue" style="margin-top:12px">Nota clínica: La combinación de cortisol normal-bajo con insulina en límite inferior y episodios hipoglucémicos recurrentes sugiere respuesta insuficiente ante el estrés metabólico. La prueba de estimulación con ACTH sigue siendo el estudio necesario para descartar hipocortisolismo funcional bajo demanda.</div>`
+  ));
+}
+
+function renderFooter() {
+  return `<div class="footer">
+    <span>Historial clínico estructurado · Roberto Lomelí · Uso médico exclusivo</span>
+    <span>Abril 2026</span>
+  </div></div>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EXPORTAR PARA IA
+// ─────────────────────────────────────────────────────────────────────────────
+function abrirModal() {
+  actualizarPrompt();
+  document.getElementById('promptModal').classList.add('open');
+}
+
+function cerrarModal() {
+  document.getElementById('promptModal').classList.remove('open');
+}
+
+function actualizarPrompt() {
+  const detallado = document.getElementById('chkDetallado').checked;
+  document.getElementById('promptText').value = generarPromptIA(detallado);
+}
+
+function copiarPrompt() {
+  const ta = document.getElementById('promptText');
+  navigator.clipboard.writeText(ta.value).then(() => {
+    const btn = document.getElementById('btnCopiar');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copiado';
+    btn.classList.add('mbtn-ok');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('mbtn-ok'); }, 2200);
+  });
+}
+
+function generarPromptIA(detallado) {
+  const p = paciente;
+  const h = hipotesis;
+  const s = sintomas;
+  const hoy = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' });
+  const SEP = '='.repeat(62);
+  const sep = '-'.repeat(62);
+  const out = [];
+
+  out.push(SEP);
+  out.push('EXPEDIENTE CLÍNICO — ROBERTO LOMELÍ');
+  out.push(`Generado: ${hoy}`);
+  out.push(SEP);
+  out.push('');
+
+  // Datos del paciente
+  out.push('## DATOS DEL PACIENTE');
+  out.push(`Nombre:           ${p.nombre}`);
+  out.push(`Edad:             ${p.edad} años (n. ${formatFecha(p.fechaNacimiento)})`);
+  out.push(`Sexo:             ${p.sexo}`);
+  out.push(`Ubicación:        ${p.ubicacion}`);
+  out.push(`Estatus:          SIN DIAGNÓSTICO DEFINITIVO`);
+  out.push(`Inicio síntomas:  Mayo 2025 (~${s.duracionMeses} meses de evolución)`);
+  out.push('');
+
+  // Antecedentes
+  out.push('## ANTECEDENTES');
+  const hab = p.habitos;
+  out.push(`Tabaco:           Fumador activo desde los ${hab.tabaco.edadInicio} años, ${hab.tabaco.cajetillasDiarias} cajetillas/día (${hab.tabaco.anosTabaquismo} años de tabaquismo)`);
+  out.push(`Alcohol:          ${hab.alcohol.nota}, cese ~${hab.alcohol.cese}`);
+  out.push(`Actividad física: ${hab.ejercicio.nivel}, ${hab.ejercicio.frecuencia}`);
+  out.push(`Hidratación:      ~${hab.hidratacion.litrosDiarios} L/día — ${hab.hidratacion.nota}`);
+  if (hab.mascotas) {
+    out.push(`Mascotas:         ${hab.mascotas.animales.join(', ')} — contacto ${hab.mascotas.contacto} (${hab.mascotas.nota})`);
+  }
+  out.push(`Nutrición:        ${p.nutricion.kcalDiarias} kcal/día — ${p.nutricion.dietaActual}`);
+  out.push(`Cirugías:         ${p.antecedentesQuirurgicos.join(', ')}`);
+  out.push(`Patológicos:      ${p.antecedentesPatologicos.join(' · ')}`);
+  const comp = p.composicionCorporal;
+  out.push(`Peso actual:      ${comp.pesoKg} kg (pérdida de ${Math.abs(comp.perdidaPesoDesdeInicio)} kg desde mayo 2025)`);
+  out.push(`Composición:      Grasa ${comp.grasaPct}% (${comp.grasaKg} kg) · Músculo ${comp.musculoPct}% (${comp.musculoKg} kg) · ICC ${comp.icc}`);
+  out.push('');
+
+  // Cuadro principal
+  out.push('## CUADRO PRINCIPAL');
+  out.push(`Paciente masculino de ${p.edad - 1} años al inicio (${p.edad} años actualmente). Síntomas desde mayo 2025 coincidiendo con inicio de Wegovy: mareos, hormigueos en cabeza, debilidad generalizada y fatiga intensa, sin dolor. Patrón fluctuante ("montaña rusa"), ~${s.duracionMeses} meses sin resolución y sin diagnóstico definitivo.`);
+  out.push('');
+
+  // Síntomas activos
+  out.push('## SÍNTOMAS ACTIVOS');
+  s.activos.forEach(sym => {
+    const det = sym.detalle ? ` — ${sym.detalle}` : '';
+    const per = sym.fin
+      ? ` (${formatFecha(sym.inicio)}–${formatFecha(sym.fin)})`
+      : sym.inicio ? ` (desde ${formatFecha(sym.inicio)})` : '';
+    out.push(`· ${sym.nombre}${det}${per}`);
+  });
+  out.push('');
+
+  // Hipótesis
+  out.push('## HIPÓTESIS DIAGNÓSTICA PRINCIPAL');
+  out.push(h.principal.nombre);
+  out.push(h.principal.descripcion);
+  out.push(`Problema central: ${h.principal.problemaCentral}`);
+  out.push('');
+  out.push('Correlaciones clínicas:');
+  h.correlacionesClinicas.forEach(c => {
+    const tag = c.peso === 'alto' ? '[ALTA]  ' : c.peso === 'patron' ? '[PATRÓN]' : '[MOD]   ';
+    out.push(`  ${tag} ${c.hallazgo} — ${c.interpretacion}`);
+  });
+  out.push('');
+
+  // Cronología
+  out.push('## CRONOLOGÍA CLÍNICA');
+  cronologia.forEach(ev => {
+    out.push(`${ev.fecha}: ${ev.evento}`);
+    if (ev.detalle) out.push(`         ${ev.detalle}`);
+    if (ev.alerta)  out.push(`         ⚠ ${ev.alerta}`);
+  });
+  out.push('');
+
+  // Medicamentos
+  out.push('## MEDICAMENTOS');
+  const activos = medicamentos.filter(m => m.estado === 'activo');
+  const disc    = medicamentos.filter(m => m.estado !== 'activo');
+  if (activos.length) out.push(`Activos:        ${activos.map(m => `${m.nombre} (desde ${formatFecha(m.inicio)})`).join(', ')}`);
+  if (disc.length)    out.push(`Discontinuados: ${disc.map(m => m.nombre + (m.duracion ? ' · ' + m.duracion : '')).join(', ')}`);
+  medicamentos.filter(m => m.nota).forEach(m => out.push(`Nota ${m.nombre}: ${m.nota}`));
+  out.push('');
+
+  // Especialistas
+  out.push('## ESPECIALISTAS CONSULTADOS');
+  especialistas.forEach(e => {
+    out.push(`· ${e.especialidad} (${e.fecha}): ${e.resultado}${e.alerta ? ' ⚠' : ''}`);
+  });
+  out.push('');
+
+  // Imagen
+  out.push('## ESTUDIOS DE IMAGEN');
+  imagenologia.forEach(est => {
+    out.push(`${est.estudio}${est.fecha ? ' — ' + formatFecha(est.fecha) : ''}`);
+    est.hallazgos.filter(h => h.relevancia === 'clave' || h.relevancia === 'hallazgo').forEach(h => {
+      out.push(`  · ${h.descripcion}`);
+      if (h.nota) out.push(`    ⚠ ${h.nota}`);
+    });
+    if (est.conclusionDiagnostica?.length) out.push(`  Conclusión: ${est.conclusionDiagnostica.join('; ')}`);
+  });
+  out.push('');
+
+  // Lab evolución
+  out.push('## LABORATORIO — EVOLUCIÓN DE PARÁMETROS CLAVE');
+  out.push(`${'Parámetro'.padEnd(22)} | ${'May 2025'.padEnd(10)} | ${'Feb 2026'.padEnd(10)} | ${'Abr 2026'.padEnd(10)} | Referencia`);
+  out.push(sep);
+  const paramsEv = [
+    { nombre: 'Plaquetas',     unidad: 'k/µL',   ref: '163–337',   fechas: ['2025-05-29','2026-02-25','2026-04-15'] },
+    { nombre: 'VCM',           unidad: 'fL',      ref: '79–92',     fechas: ['2025-05-29','2026-02-25','2026-04-15'] },
+    { nombre: 'T3 Total',      unidad: 'ng/mL',   ref: '0.80–2.00', fechas: ['2025-05-01','2026-02-25', null] },
+    { nombre: 'T3 Libre',      unidad: 'pg/mL',   ref: '2.00–4.40', fechas: ['2025-05-01','2026-02-25', null] },
+    { nombre: 'Hierro',        unidad: 'µg/dL',   ref: '33–193',    fechas: ['2025-05-29','2026-02-25', null] },
+    { nombre: 'Cortisol sérico',unidad:'µg/dL',   ref: null,        fechas: ['2025-05-29', null, null] },
+    { nombre: 'Glucosa',       unidad: 'mg/dL',   ref: '74–106',    fechas: ['2025-05-29','2026-02-25','2026-04-15'] },
+    { nombre: 'HbA1c',         unidad: '%',        ref: '≤5.7',     fechas: ['2025-05-29','2026-02-25', null] },
+    { nombre: 'Colesterol HDL',unidad: 'mg/dL',   ref: '≥55',       fechas: ['2025-05-29','2026-02-25', null] },
+    { nombre: 'Triglicéridos', unidad: 'mg/dL',   ref: '<150',      fechas: ['2025-05-29','2026-02-25', null] },
+    { nombre: 'BUN',           unidad: 'mg/dL',   ref: '6–20',      fechas: ['2025-05-29','2026-02-25','2026-04-15'] },
+  ];
+
+  function findValText(nombre, fecha) {
+    if (!fecha) return '—';
+    let panel = quimicaSanguinea.find(p => p.fecha === fecha);
+    if (panel) {
+      const r = panel.resultados.find(x => x.parametro === nombre);
+      if (r) return r.valor + (r.anormal ? (r.direccion === 'alta' ? '↑' : '↓') : '');
+    }
+    panel = biometriaHematica.find(p => p.fecha === fecha);
+    if (panel) {
+      const r = panel.resultados.find(x => x.parametro === nombre || (nombre === 'VCM' && (x.parametro === 'VCM' || x.parametro === 'VGM')));
+      if (r) return r.valor + (r.anormal ? (r.direccion === 'alta' ? '↑' : '↓') : '');
+    }
+    return '—';
+  }
+
+  paramsEv.forEach(ep => {
+    const v = ep.fechas.map(f => findValText(ep.nombre, f));
+    const ref = ep.ref ? `${ep.ref} ${ep.unidad}` : ep.unidad;
+    out.push(`${ep.nombre.padEnd(22)} | ${String(v[0]).padEnd(10)} | ${String(v[1]).padEnd(10)} | ${String(v[2]).padEnd(10)} | ${ref}`);
+  });
+  out.push('');
+
+  // Pendientes
+  out.push('## ESTUDIOS PENDIENTES');
+  pendientes.forEach(g => {
+    out.push(`Prioridad ${g.prioridad} — ${g.categoria}:`);
+    g.estudios.forEach(e => out.push(`  · ${e}`));
+  });
+
+  if (!detallado) {
+    out.push('');
+    out.push(SEP);
+    out.push(`Historial clínico · Roberto Lomelí · Uso médico exclusivo · ${hoy}`);
+    return out.join('\n');
+  }
+
+  // ── SECCIÓN DETALLADA ──────────────────────────────────────────────────────
+  out.push('');
+  out.push(SEP);
+  out.push('LABORATORIO DETALLADO');
+  out.push(SEP);
+
+  function tablaLab(paneles) {
+    paneles.forEach(panel => {
+      out.push('');
+      out.push(`--- ${formatFecha(panel.fecha)}${panel.ayuno === false ? ' (sin ayuno)' : ''} ---`);
+      out.push(`${'Parámetro'.padEnd(30)} | ${'Resultado'.padEnd(12)} | ${'Unidad'.padEnd(13)} | Referencia`);
+      out.push('-'.repeat(72));
+      panel.resultados.forEach(r => {
+        const flag = r.anormal ? (r.direccion === 'alta' ? ' ↑' : ' ↓') : '';
+        out.push(`${r.parametro.padEnd(30)} | ${String(r.valor + flag).padEnd(12)} | ${(r.unidad||'').padEnd(13)} | ${refLabel(r)}`);
+        if (r.nota) out.push(`  → ${r.nota}`);
+      });
+      if (panel.notas?.length) out.push(`Notas: ${panel.notas.join(' · ')}`);
+    });
+  }
+
+  out.push('');
+  out.push('### BIOMETRÍA HEMÁTICA COMPLETA');
+  tablaLab(biometriaHematica);
+
+  out.push('');
+  out.push('### QUÍMICA SANGUÍNEA COMPLETA');
+  tablaLab(quimicaSanguinea);
+
+  out.push('');
+  out.push('### LABORATORIO HORMONAL — MAYO 2025');
+  const panelHorm = quimicaSanguinea.find(p => p.fecha === '2025-05-29');
+  if (panelHorm) {
+    panelHorm.resultados
+      .filter(r => ['Cortisol sérico','Insulina sérica','TSH','T3 Total','T3 Libre','T4 Libre','T4 Total'].includes(r.parametro))
+      .forEach(r => {
+        const flag = r.anormal ? (r.direccion === 'alta' ? ' ↑' : ' ↓') : '';
+        out.push(`· ${r.parametro}: ${r.valor}${flag} ${r.unidad||''} (ref: ${refLabel(r)})`);
+        if (r.nota) out.push(`  → ${r.nota}`);
+      });
+    out.push('Nota clínica: La combinación de cortisol normal-bajo con insulina en límite inferior y episodios hipoglucémicos recurrentes sugiere respuesta insuficiente ante el estrés metabólico. La prueba de estimulación con ACTH sigue siendo el estudio necesario para descartar hipocortisolismo funcional bajo demanda.');
+  }
+
+  out.push('');
+  out.push(SEP);
+  out.push(`Historial clínico · Roberto Lomelí · Uso médico exclusivo · ${hoy}`);
+  return out.join('\n');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB SWITCHER
+// ─────────────────────────────────────────────────────────────────────────────
+function switchTab(group, targetId, el) {
+  const container = el.closest('.card');
+  container.querySelectorAll('.lab-tab').forEach(t => t.classList.remove('active'));
+  container.querySelectorAll('.lab-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(targetId).classList.add('active');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────────────────────────────────────
+document.getElementById('app').innerHTML = [
+  renderHeader(),
+  renderMotivo(),
+  renderSintomas(),
+  renderHipotesis(),
+  renderCronologia(),
+  renderLabEvolucion(),
+  renderImagenologia(),
+  renderPendientes(),
+  renderMedicamentos(),
+  renderAntecedentes(),
+  renderLabDetallado(),
+  renderHormonal(),
+  renderFooter()
+].join('');
+</script>
+</body>
+</html>

@@ -42,7 +42,11 @@ export default defineConfig({
     },
   },
   server: {
+    host: true, // Importante para Docker
     port: 5173,
+    watch: {
+      usePolling: true, // Forza a revisar cambios en el disco
+    },
     proxy: {
       '/api': 'http://localhost:3000',
       '/auth': 'http://localhost:3000',

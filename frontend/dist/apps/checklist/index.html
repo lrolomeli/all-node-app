@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Checklist – Firmware Interview</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+      background: #f7f7f7;
+      position: relative;
+    }
+    
+    .back-home {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+
+    .btn-home {
+      display: inline-block;
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 20px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .btn-home:hover {
+      background: #0056b3;
+      color: white;
+      text-decoration: none;
+    }
+    
+    h1 {
+      margin-top: 60px;
+    }
+    
+    h2 {
+      margin-top: 30px;
+      border-bottom: 2px solid #444;
+      padding-bottom: 5px;
+    }
+    label {
+      display: block;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="back-home">
+  <a href="/" class="btn-home">← Home</a>
+</div>
+
+<h1>✅ Checklist – Firmware Engineer</h1>
+
+<h2>C Basics for embedded</h2>
+<label><input type="checkbox" id="c_types"> DataTypes and Sizes</label>
+<label><input type="checkbox" id="c_bitwise"> bitwise Operations</label>
+<label><input type="checkbox" id="c_volatile"> volatile</label>
+<label><input type="checkbox" id="c_const"> const pointers</label>
+<label><input type="checkbox" id="c_pointers"> pointers arithmetic</label>
+<label><input type="checkbox" id="c_structs"> struct / union / enum</label>
+<label><input type="checkbox" id="c_memory"> Memory static vs dynamic</label>
+<label><input type="checkbox" id="c_endianness"> Endianness</label>
+<label><input type="checkbox" id="c_isr"> Interrupts and ISR</label>
+<label><input type="checkbox" id="c_linking"> Linking: startup code, vector table</label>
+<label><input type="checkbox" id="c_makefiles"> basic Makefiles</label>
+<label><input type="checkbox" id="c_xcompile"> Cross-compilation</label>
+
+
+<h2>Microcontroller Design</h2>
+<label><input type="checkbox" id="arch_harvard"> Harvard vs Von Neumann</label>
+<label><input type="checkbox" id="arch_bus"> Registers and Buses</label>
+<label><input type="checkbox" id="arch_mmio"> Memory-Mapped I/O</label>
+<label><input type="checkbox" id="arch_gpio"> GPIO</label>
+<label><input type="checkbox" id="arch_hal"> Hardware Abstraction</label>
+<label><input type="checkbox" id="arch_dma"> DMA vs Polling or ISR</label>
+<label><input type="checkbox" id="arch_timers"> PLL prescalers Timers</label>
+<label><input type="checkbox" id="arch_watchdog"> Watchdogs</label>
+<label><input type="checkbox" id="arch_protocols"> UART / SPI / I2C /CAN</label>
+
+<h2>RTOS</h2>
+<label><input type="checkbox" id="rtos_sched"> Scheduling</label>
+<label><input type="checkbox" id="rtos_tasks"> Tareas</label>
+<label><input type="checkbox" id="rtos_sync"> Semáforos / Mutex</label>
+
+<h2>Various Topics</h2>
+<label><input type="checkbox" id="bp_debug"> Debuggers / jtag / SWD</label>
+<label><input type="checkbox" id="bp_modular"> Diseño modular</label>
+<label><input type="checkbox" id="bp_misra"> MISRA C</label>
+<label><input type="checkbox" id="bp_testing"> Pruebas unitarias</label>
+<label><input type="checkbox" id="bp_classes"> Clases</label>
+<label><input type="checkbox" id="bp_construct"> Constructores</label>
+<label><input type="checkbox" id="bp_encapsulated"> Encapsulamiento</label>
+<label><input type="checkbox" id="bp_linkermpfile"> Linker Map file</label>
+<label><input type="checkbox" id="bp_git"> Git: stash, branching, cherry-pick</label>
+<label><input type="checkbox" id="bp_bigO"> Big O Little O notation</label>
+
+<script src="/auth.js"></script>
+<script>
+  // Load state from server
+  fetch('/api/state')
+    .then(res => res.json())
+    .then(state => {
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.checked = state[cb.id] || false;
+      });
+    });
+
+  // Save state to server (invite session)
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', async () => {
+      try {
+        await pinAuth.authenticatedFetch('/api/state', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: cb.id, checked: cb.checked })
+        });
+      } catch (error) {
+        console.error('Error saving state:', error);
+        // Revert checkbox on error
+        cb.checked = !cb.checked;
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
