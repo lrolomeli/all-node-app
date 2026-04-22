@@ -55,7 +55,6 @@ A unified Node.js application with multiple mini-apps for productivity, portfoli
 │   └── invites.json          # Invite records (hashes only; see Authentication)
 ├── scripts/
 │   ├── create-invite.js      # CLI: print a new invite token
-│   └── sync-expediente.sh    # Sync expediente data from its source repo
 ├── public/
 │   ├── index.html            # Home hub
 │   ├── auth.js               # Client: invite modal + session (global pinAuth)
@@ -86,20 +85,6 @@ npm start
 ```
 
 3. Open `http://localhost:3000`
-
-## Expediente Médico — sincronización
-
-Los datos del expediente viven en un repo separado ([Expediente_RobertoLM](https://github.com/lrolomeli/Expediente_RobertoLM)). Cuando haya cambios allá, ejecutar:
-
-```bash
-./scripts/sync-expediente.sh
-```
-
-El script clona el repo, sobreescribe `public/expediente/historial.html` y `public/expediente/data/`, y limpia el directorio temporal. Después hacer commit normalmente:
-
-```bash
-git add public/expediente/
-git commit -m "sync expediente"
 ```
 
 ## Authentication
