@@ -1,4 +1,110 @@
 {
-  "activityLists": [],
-  "schedules": []
+  "activityLists": [
+    {
+      "id": 1776847671771,
+      "name": "sdf",
+      "activities": [
+        {
+          "id": 1776847676986,
+          "name": "sdf"
+        },
+        {
+          "id": 1776847677597,
+          "name": "sdf"
+        }
+      ]
+    }
+  ],
+  "schedules": [
+    {
+      "id": 1776847674310,
+      "name": "sdf",
+      "startTime": 480,
+      "endTime": 840,
+      "interval": 60,
+      "slots": [
+        {
+          "id": 1776847674790,
+          "startTime": 480,
+          "endTime": 540,
+          "activity": "sdf"
+        },
+        {
+          "id": 1776847674850,
+          "startTime": 540,
+          "endTime": 600,
+          "activity": "sdf"
+        },
+        {
+          "id": 1776847674910,
+          "startTime": 600,
+          "endTime": 660,
+          "activity": "sdf"
+        },
+        {
+          "id": 1776847674970,
+          "startTime": 660,
+          "endTime": 720,
+          "activity": "sdf"
+        },
+        {
+          "id": 1776847675030,
+          "startTime": 720,
+          "endTime": 780,
+          "activity": null
+        },
+        {
+          "id": 1776847675090,
+          "startTime": 780,
+          "endTime": 840,
+          "activity": null
+        }
+      ]
+    },
+    {
+      "id": 1776847944657,
+      "name": "sdgda",
+      "startTime": 480,
+      "endTime": 840,
+      "interval": 60,
+      "slots": [
+        {
+          "id": 1776847945137,
+          "startTime": 480,
+          "endTime": 540,
+          "activity": "sdf"
+        },
+        {
+          "id": 1776847945197,
+          "startTime": 540,
+          "endTime": 600,
+          "activity": null
+        },
+        {
+          "id": 1776847945257,
+          "startTime": 600,
+          "endTime": 660,
+          "activity": null
+        },
+        {
+          "id": 1776847945317,
+          "startTime": 660,
+          "endTime": 720,
+          "activity": null
+        },
+        {
+          "id": 1776847945377,
+          "startTime": 720,
+          "endTime": 780,
+          "activity": null
+        },
+        {
+          "id": 1776847945437,
+          "startTime": 780,
+          "endTime": 840,
+          "activity": null
+        }
+      ]
+    }
+  ]
 }

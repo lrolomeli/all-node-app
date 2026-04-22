@@ -1,18 +1,52 @@
-require('dotenv').config();
 const express = require('express');
+const session = require("express-session");
+
 const limiter = require('./middleware/rateLimiter');
-const authRouter = require('./routes/auth');
-const apiRouter = require('./routes/api');
-const cors = require('cors');
+const { sessionMiddleware } = require("./middleware/auth");
+
+const authRoutes = require("./routes/auth.routes");
+
+const bdg_r = require('./routes/budget-routes');
+const calis_r = require('./routes/calis-routes');
+const chkl_r = require('./routes/checklist-routes');
+const gym_r = require('./routes/gym-routes');
+const mntc_r = require('./routes/maintenance-routes');
+const sch_r = require('./routes/schedule-routes');
 
 const app = express();
 
-app.use(cors({
-  origin: 'https://luisrlp.com'
-}));
 app.use(limiter);
 app.use(express.json());
-app.use(authRouter);
-app.use(apiRouter);
+
+// 🔐 session setup
+app.use(session({
+  secret: "super-secret-key",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: false
+  }
+}));
+
+// =========================
+// ✅ PUBLIC ROUTES
+// =========================
+app.use('/api/auth', authRoutes);
+
+// =========================
+// 🔒 DEFAULT DENY
+// =========================
+app.use('/api', sessionMiddleware);
+
+// =========================
+// 🔒 PROTECTED ROUTES
+// =========================
+app.use('/api/budget', bdg_r);
+app.use('/api/calisthenics', calis_r);
+app.use('/api/checklist', chkl_r);
+app.use('/api/gym', gym_r);
+app.use('/api/maintenance', mntc_r);
+app.use('/api/schedule', sch_r);
 
 module.exports = app;

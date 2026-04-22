@@ -1,42 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Activity Scheduler</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <div class="back-home">
-            <a href="/" class="btn-home">← Home</a>
-        </div>
-        <h1>Activity Scheduler</h1>
-        
-        <div class="controls">
-            <input type="text" id="scheduleName" placeholder="Schedule name">
-            <select id="startTime"></select>
-            <select id="endTime"></select>
-            <input type="number" id="interval" value="60" min="15" step="15" placeholder="Minutes">
-            <button onclick="addSchedule()">Add Schedule</button>
-        </div>
-
-        <div class="main-content">
-            <div class="activities-panel">
-                <div class="list-controls">
-                    <input type="text" id="newListName" placeholder="List name">
-                    <button onclick="addList()">Add List</button>
-                </div>
-                <div id="activityLists"></div>
-            </div>
-            
-            <div class="schedule-panel">
-                <h3>Daily Schedules</h3>
-                <div id="schedules"></div>
-            </div>
-        </div>
-    </div>
-
-    <script type="module" src="script.js"></script>
-</body>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schedule</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./main.jsx"></script>
+  </body>
 </html>
