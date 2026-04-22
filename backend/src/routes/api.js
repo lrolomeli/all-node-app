@@ -147,39 +147,4 @@ router.post('/api/calisthenics/progress', (req, res) => {
   res.json({ success: true });
 });
 
-router.get('/api/activities', (req, res) => {
-  res.json(persistence.loadActivitiesData());
-});
-
-router.post('/api/activities', sessionMiddleware, (req, res) => {
-  const activity = req.body;
-  if (!activity || !activity.name || !activity.name.trim()) {
-    return res.status(400).json({ error: 'Activity name is required' });
-  }
-  const activities = persistence.loadActivitiesData();
-  activities.push(activity);
-  persistence.saveActivitiesData(activities);
-  res.json({ success: true });
-});
-
-router.put('/api/activities/:id/complete', sessionMiddleware, (req, res) => {
-  const { id } = req.params;
-  const activities = persistence.loadActivitiesData();
-  const activity = activities.find((a) => a.id === id);
-  if (activity) {
-    activity.completed = true;
-    activity.completedDate = new Date().toISOString();
-    persistence.saveActivitiesData(activities);
-  }
-  res.json({ success: true });
-});
-
-router.delete('/api/activities/:id', sessionMiddleware, (req, res) => {
-  const { id } = req.params;
-  let activities = persistence.loadActivitiesData();
-  activities = activities.filter((a) => a.id !== id);
-  persistence.saveActivitiesData(activities);
-  res.json({ success: true });
-});
-
 module.exports = router;

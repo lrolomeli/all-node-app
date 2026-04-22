@@ -19,13 +19,9 @@ A unified Node.js application with multiple mini-apps for productivity, portfoli
 
 ### Productivity
 8. **Budget** (`/budget`) - Income, expenses, savings, and fun money tracking
-9. **Activities** (`/activities`) - Activity list with completion tracking
-
-### Fun Apps
-10. **Catify** (`/catify`) - Cat-themed page with images and links
 
 ### Family Health
-11. **Expediente Médico** (`/expediente`) - Roberto Lomelí's clinical record (historial, estudios, medicamentos, etc.)
+9. **Expediente Médico** (`/expediente`) - Roberto Lomelí's clinical record (historial, estudios, medicamentos, etc.)
 
 ## Project Structure
 
@@ -49,7 +45,6 @@ A unified Node.js application with multiple mini-apps for productivity, portfoli
 │   ├── checklist-state.json
 │   ├── maintenance-data.json
 │   ├── budget-data.json
-│   ├── activities-data.json
 │   ├── gym-media.json
 │   ├── gym-routine.csv       # Gym weekly routine (editable from /gym UI)
 │   └── invites.json          # Invite records (hashes only; see Authentication)
@@ -89,7 +84,7 @@ npm start
 Invites and sessions replace fixed passwords:
 
 - **Public access**: All pages load without logging in.
-- **Writes**: Mutating APIs (schedule, checklist, maintenance, budget, activities, gym media, …) need a **session** obtained by redeeming an **invite token**.
+- **Writes**: Mutating APIs (schedule, checklist, maintenance, budget, gym media, …) need a **session** obtained by redeeming an **invite token**.
 - **Invite tokens** are long random strings. Only a **SHA-256 hash** (plus optional pepper) is stored in `data/invites.json`.
 - **Sessions** live in server memory (`SESSION_TTL_MS`, default 24h) and in the browser as `localStorage.sessionToken`.
 

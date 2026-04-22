@@ -21,7 +21,6 @@ const files = {
   checklist: path.join(DATA_DIR, 'checklist-state.json'),
   maintenance: path.join(DATA_DIR, 'maintenance-data.json'),
   budget: path.join(DATA_DIR, 'budget-data.json'),
-  activities: path.join(DATA_DIR, 'activities-data.json'),
   gymMedia: path.join(DATA_DIR, 'gym-media.json'),
   gymRoutine: path.join(DATA_DIR, 'gym-routine.csv'),
   calisthenicsRutina: path.join(DATA_DIR, 'calisthenics-rutina.csv'),
@@ -53,13 +52,6 @@ module.exports = {
   },
   saveBudgetData(data) {
     writeJson(files.budget, data);
-  },
-
-  loadActivitiesData() {
-    return readJson(files.activities, []);
-  },
-  saveActivitiesData(data) {
-    writeJson(files.activities, data);
   },
 
   loadGymMedia() {
