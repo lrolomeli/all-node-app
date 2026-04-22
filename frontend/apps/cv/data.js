@@ -1,4 +1,8 @@
 import selfie from './assets/images/yo.jpg';
+import conti from './assets/images/conti.png';
+import ppg from './assets/images/PPG.png';
+import uag from './assets/images/uag.png';
+import iteso from './assets/images/iteso.png';
 
 export const me = 
   {
@@ -25,7 +29,7 @@ export const experience = [
     company: 'Continental Automotive',
     role: 'Software Engineer',
     dates: 'May 2022 — Aug 2024',
-    logo: './assets/images/conti.png',
+    logo: conti,
     bullets: [
       'Developed high-reliability software systems in C/C++ for real-time environments (FreeRTOS, OSEK).',
       'Applied system design and performance optimization to reduce failures related to energy consumption by 15%.',
@@ -37,7 +41,7 @@ export const experience = [
     company: 'Plasticos Plasa de Guadalajara',
     role: 'Technical Manager',
     dates: 'Jan 2020 — May 2022',
-    logo: './assets/images/PPG.png',
+    logo: ppg,
     bullets: [
       'Engineered automated data pipelines using Google Apps Script and Python to transform operational data into production-ready outputs.',
       'Maintained and optimized industrial machinery ensuring continuous production.',
@@ -52,14 +56,14 @@ export const education = [
     school: 'Universidad Autónoma de Guadalajara',
     degree: "Master's Degree in Computer Science",
     dates: 'May 2023 — May 2025',
-    logo: './assets/images/uag.png',
+    logo: uag,
     description: 'GPA: 9.7. Specialization in data-driven predictive systems using Industrial IoT.',
   },
   {
     school: 'ITESO — Instituto Tecnológico de Estudios Superiores de Occidente',
     degree: "Bachelor's Degree in Electronics Engineering",
     dates: 'Aug 2014 — Dec 2019',
-    logo: './assets/images/iteso.png',
+    logo: iteso,
     description: 'GPA: 8.1. Focus on Embedded Software, Control, and Communication Systems.',
   },
 ]
