@@ -1,6 +1,8 @@
+import selfie from '/cv/assets/images/yo.jpg';
+
 export const me = 
   {
-    logo: '/cv/assets/images/yo.jpg',
+    logo: selfie,
   }
 
 
