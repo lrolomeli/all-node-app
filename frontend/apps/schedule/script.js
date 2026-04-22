@@ -5,8 +5,24 @@ let schedules = [];
 // Load data from server
 async function loadData() {
     try {
+        // aqui al parecer esta obteniendo datos de la ruta api/data
+        // pero no encuentro dicha ruta
         const response = await fetch('/api/data');
+        // despues se obtienen los datos igualmente esperando a que el sistema haya terminado de enviar la informacion
+        // como un tipo de callback interrupcion donde me indica solamente cuando este lista la info
         const data = await response.json();
+        // esta linea no conozco como funciona me imagino que devolvera una u otra
+        // pareciera una comparacion bit a bit de tipo or
+        // sin embargo eso se haria de la siguiente manera res_var = X_var | Y_var.
+        // en lenguaje C para comprobar que dos cosas son positivas se hace asi if(X_var && Y_var)
+        // or if(X_var || Y_var) si cualquiera de las dos sentencias devuelven verdadero entonces
+        // el resultado es verdadero y de lo contrario es falso.
+        // en este caso la lista vacia o brackets probablemente devuelva falso y la respuesta sea
+        // siempre falso por lo que intuyo que puede tratarse de otra cosa.
+        // por ejemplo si la primer sentencia esta vacia mejor devuelve un elemento vacio en lugar de un error.
+        // o algo por el estilo.
+        // al parecer ya se lo que pasa se esta recibiendo el objeto data que es donde se encuentra la informacion
+        // que guardamos en nuestra base de datos.
         activityLists = data.activityLists || [];
         schedules = data.schedules || [];
         console.log('Loaded schedules:', schedules.length);
@@ -18,6 +34,14 @@ async function loadData() {
 
 // Save data to server
 async function saveData() {
+    // me imagino que esta haciendo uso de una api que 
+    // la cual a su vez hace uso del metodo post
+    // para la auth necesita el header
+    // necesito repasar el apartado del curso de autenticacion
+    // json stringify convierte el objeto de javascript en un formato para enviar serializado
+    // no entiendo para que enviar las actividades de la lista o los horarios
+    // porque no solamente autenticar y entonces permitir que se envien todo tipo de datos
+    
     try {
         await pinAuth.authenticatedFetch('/api/data', {
             method: 'POST',
@@ -54,6 +78,7 @@ function populateTimeSelects() {
 }
 
 function addSchedule() {
+    // obteniendo los valores del documento web. en este caso el nombre que le daras al horario
     const scheduleName = document.getElementById('scheduleName').value.trim();
     const startTime = parseInt(document.getElementById('startTime').value);
     const endTime = parseInt(document.getElementById('endTime').value);
@@ -72,9 +97,11 @@ function addSchedule() {
         interval,
         slots: []
     };
+    // se crea un objeto de js que despues sera guardado en formato json
     
     // Generate time slots
     let currentTime = startTime;
+    // se divide el tiempo en slots del tiempo que se especifico
     while (currentTime < endTime) {
         const nextTime = currentTime + interval;
         schedule.slots.push({
@@ -86,6 +113,7 @@ function addSchedule() {
         currentTime = nextTime;
     }
     
+    // ahora se anade el horario en los horarios guardados en ...
     schedules.push(schedule);
     document.getElementById('scheduleName').value = '';
     renderSchedules();
