@@ -54,17 +54,14 @@ A unified Node.js application with multiple mini-apps for productivity, portfoli
 │   ├── gym-routine.csv       # Gym weekly routine (editable from /gym UI)
 │   └── invites.json          # Invite records (hashes only; see Authentication)
 ├── scripts/
-│   ├── create-invite.js      # CLI: print a new invite token
-├── public/
+│   └── create-invite.js      # CLI: print a new invite token
+├── apps/                 # Dashboard mini-apps (schedule, checklist, …)
 │   ├── index.html            # Home hub
 │   ├── auth.js               # Client: invite modal + session (global pinAuth)
-│   ├── apps/                 # Dashboard mini-apps (schedule, checklist, …)
-│   ├── allp/                 # Portfolio (`/portfolio`); subpages in `pages/`
 │   ├── cv/                   # CV site; subpages in `pages/`
 │   ├── diet/
 │   ├── gym/                  # Includes routine.csv where used
-│   ├── expediente/           # Roberto Lomelí clinical record (synced via script)
-│   └── other/                # Catify; subpages in `pages/`
+│   └── expediente/           # Roberto Lomelí clinical record (synced via script)
 ├── Dockerfile
 ├── docker-compose.yml
 └── package.json
