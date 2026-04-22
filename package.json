@@ -1,14 +1,11 @@
 {
-  "name": "unified-node-app",
-  "version": "1.0.0",
-  "main": "src/index.js",
+  "name": "my-web-app",
+  "private": true,
   "scripts": {
-    "start": "node src/index.js",
-    "invite:create": "node scripts/create-invite.js"
-  },
-  "dependencies": {
-    "dotenv": "^17.2.3",
-    "express": "^4.18.2",
-    "express-rate-limit": "^8.2.1"
+    "start": "node backend/src/index.js",
+    "dev:backend": "node backend/src/index.js",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "invite:create": "node backend/scripts/create-invite.js"
   }
 }
