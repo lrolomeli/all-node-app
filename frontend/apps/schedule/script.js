@@ -19,7 +19,7 @@ async function loadData() {
 // Save data to server
 async function saveData() {
     try {
-        await fetch('/api/data', {
+        await pinAuth.authenticatedFetch('/api/data', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ activityLists, schedules })
