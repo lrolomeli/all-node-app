@@ -4,12 +4,11 @@ const session = require("express-session");
 const limiter = require('./middleware/rateLimiter');
 const { sessionMiddleware } = require("./middleware/auth");
 
-const authRoutes = require("./routes/auth.routes");
+const authRoutes = require("./routes/auth-routes");
 
 const bdg_r = require('./routes/budget-routes');
 const calis_r = require('./routes/calis-routes');
 const chkl_r = require('./routes/checklist-routes');
-const gym_r = require('./routes/gym-routes');
 const mntc_r = require('./routes/maintenance-routes');
 const sch_r = require('./routes/schedule-routes');
 
@@ -45,7 +44,6 @@ app.use('/api', sessionMiddleware);
 app.use('/api/budget', bdg_r);
 app.use('/api/calisthenics', calis_r);
 app.use('/api/checklist', chkl_r);
-app.use('/api/gym', gym_r);
 app.use('/api/maintenance', mntc_r);
 app.use('/api/schedule', sch_r);
 

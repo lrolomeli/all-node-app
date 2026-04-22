@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../../src/useAuth.js";
 import "./style.css";
 
 function App() {
+  const { checking } = useAuth();
   const [activityLists, setActivityLists] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [draggedActivity, setDraggedActivity] = useState(null);
@@ -16,7 +18,7 @@ function App() {
   // ================= API =================
   const loadData = async () => {
     try {
-      const res = await fetch("/api/data");
+      const res = await fetch("/api/schedule", { credentials: "include" });
       const data = await res.json();
       setActivityLists(data.activityLists || []);
       setSchedules(data.schedules || []);
@@ -27,9 +29,10 @@ function App() {
 
   const saveData = async (lists, scheds) => {
     try {
-      await fetch("/api/data", {
+      await fetch("/api/schedule", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ activityLists: lists, schedules: scheds }),
       });
     } catch (e) {
@@ -150,6 +153,8 @@ function App() {
   };
 
   // ================= UI =================
+  if (checking) return null;
+
   return (
     <div className="container">
       <h1>Activity Scheduler</h1>

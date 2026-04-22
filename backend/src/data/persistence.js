@@ -21,8 +21,6 @@ const files = {
   checklist: path.join(DATA_DIR, 'checklist-state.json'),
   maintenance: path.join(DATA_DIR, 'maintenance-data.json'),
   budget: path.join(DATA_DIR, 'budget-data.json'),
-  gymMedia: path.join(DATA_DIR, 'gym-media.json'),
-  gymRoutine: path.join(DATA_DIR, 'gym-routine.csv'),
   calisthenicsRutina: path.join(DATA_DIR, 'calisthenics-rutina.csv'),
   calisthenicsProgress: path.join(DATA_DIR, 'calisthenics-progress.json'),
 };
@@ -54,29 +52,11 @@ module.exports = {
     writeJson(files.budget, data);
   },
 
-  loadGymMedia() {
-    return readJson(files.gymMedia, {});
-  },
-  saveGymMedia(data) {
-    writeJson(files.gymMedia, data);
-  },
-
   loadChecklistState() {
     return readJson(files.checklist, {});
   },
   saveChecklistState(state) {
     fs.writeFileSync(files.checklist, JSON.stringify(state));
-  },
-
-  loadGymRoutine() {
-    try {
-      return fs.readFileSync(files.gymRoutine, 'utf8');
-    } catch {
-      return '';
-    }
-  },
-  saveGymRoutine(csvText) {
-    fs.writeFileSync(files.gymRoutine, csvText, 'utf8');
   },
 
   loadCalisthenicsRutina() {

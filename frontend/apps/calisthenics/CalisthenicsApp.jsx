@@ -39,11 +39,11 @@ export default function CalisthenicsApp() {
 
   async function init() {
     try {
-      const rutinaRes = await fetch('/api/calisthenics/rutina')
+      const rutinaRes = await fetch('/api/calisthenics/rutina', { credentials: 'include' })
       const csv = await rutinaRes.text()
       setSessions(parseRutina(csv))
 
-      const progressRes = await fetch('/api/calisthenics/progress')
+      const progressRes = await fetch('/api/calisthenics/progress', { credentials: 'include' })
       if (progressRes.ok) {
         const data = await progressRes.json()
         setLevel(data.level ?? 0)
@@ -61,6 +61,7 @@ export default function CalisthenicsApp() {
       await fetch('/api/calisthenics/progress', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ level: newLevel, currentSession: newSession }),
       })
     } catch {

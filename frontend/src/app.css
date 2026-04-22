@@ -100,3 +100,73 @@ body {
   .app-icon { font-size: 1.3em; margin-bottom: 2px; }
   .app-title { font-size: 0.55em; }
 }
+
+/* ── Login ── */
+.logout-btn {
+  margin-top: 8px;
+  padding: 4px 12px;
+  font-size: 0.75em;
+  background: none;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  color: #7f8c8d;
+  cursor: pointer;
+}
+.logout-btn:hover { border-color: #e74c3c; color: #e74c3c; }
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+}
+
+.login-form {
+  background: white;
+  border: 1px solid #e1e8ed;
+  border-radius: 14px;
+  padding: 36px 32px;
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-form h1 {
+  font-size: 1.4em;
+  font-weight: 400;
+  color: #2c3e50;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.login-form input {
+  padding: 10px 12px;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  font-size: 0.95em;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.login-form input:focus { border-color: #3498db; }
+
+.login-form button {
+  padding: 10px;
+  background: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.login-form button:hover:not(:disabled) { background: #3498db; }
+.login-form button:disabled { opacity: 0.6; cursor: default; }
+
+.login-error {
+  font-size: 0.82em;
+  color: #e74c3c;
+  text-align: center;
+}
