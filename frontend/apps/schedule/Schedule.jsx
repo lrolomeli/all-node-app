@@ -239,7 +239,6 @@ function App() {
             <div key={list.id} className="activity-list-group">
               <div className="list-group-header" onClick={() => toggleList(list.id)}>
                 <h4>{list.name}</h4>
-                <span className="collapse-arrow">{collapsedLists.has(list.id) ? "▶" : "▼"}</span>
                 <button
                   className="icon-btn icon-btn--danger"
                   onClick={(e) => { e.stopPropagation(); deleteList(list.id); }}
@@ -316,7 +315,6 @@ function App() {
             <div key={s.id} className="schedule-item">
               <div className="schedule-header" onClick={() => toggleSchedule(s.id)}>
                 <strong>{s.name}</strong>
-                <span className="collapse-arrow">{collapsedSchedules.has(s.id) ? "▶" : "▼"}</span>
                 <button className="btn btn-danger" onClick={(e) => { e.stopPropagation(); deleteSchedule(s.id); }}>Delete</button>
               </div>
               {!collapsedSchedules.has(s.id) && <div className="schedule-slots">
