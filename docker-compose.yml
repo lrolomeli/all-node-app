@@ -14,3 +14,5 @@ services:
     # porque Nginx le hablará por la red interna de Docker.
     expose:
       - "3000"
+    volumes:
+      - ./backend/data:/app/data
