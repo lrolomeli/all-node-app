@@ -7,15 +7,17 @@ function App() {
   const [activityLists, setActivityLists] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [draggedActivity, setDraggedActivity] = useState(null);
+  const [dragOverSlot, setDragOverSlot] = useState(null);
 
   const [scheduleName, setScheduleName] = useState("");
   const [startTime, setStartTime] = useState(480);
   const [endTime, setEndTime] = useState(840);
   const [interval, setIntervalValue] = useState(60);
-
   const [listName, setListName] = useState("");
+  const [editingActivity, setEditingActivity] = useState(null);
+  const [draggedFromSlot, setDraggedFromSlot] = useState(null);
 
-  // ================= API =================
+  // ── API ──
   const loadData = async () => {
     try {
       const res = await fetch("/api/schedule", { credentials: "include" });
@@ -40,11 +42,9 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  useEffect(() => { loadData(); }, []);
 
-  // ================= HELPERS =================
+  // ── Helpers ──
   const formatTime = (minutes) => {
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
@@ -58,15 +58,10 @@ function App() {
     }
   }
 
-  // ================= LISTS =================
+  // ── Lists ──
   const addList = () => {
     if (!listName.trim()) return;
-
-    const newLists = [
-      ...activityLists,
-      { id: Date.now(), name: listName, activities: [] },
-    ];
-
+    const newLists = [...activityLists, { id: Date.now(), name: listName, activities: [] }];
     setActivityLists(newLists);
     setListName("");
     saveData(newLists, schedules);
@@ -74,48 +69,53 @@ function App() {
 
   const addActivity = (listId, name) => {
     if (!name.trim()) return;
-
     const newLists = activityLists.map((l) =>
       l.id === listId
-        ? {
-            ...l,
-            activities: [...l.activities, { id: Date.now(), name }],
-          }
+        ? { ...l, activities: [...l.activities, { id: Date.now(), name }] }
         : l
     );
-
     setActivityLists(newLists);
     saveData(newLists, schedules);
   };
 
-  // ================= SCHEDULES =================
+  const deleteList = (listId) => {
+    const newLists = activityLists.filter((l) => l.id !== listId);
+    setActivityLists(newLists);
+    saveData(newLists, schedules);
+  };
+
+  const deleteActivity = (listId, activityId) => {
+    const newLists = activityLists.map((l) =>
+      l.id === listId
+        ? { ...l, activities: l.activities.filter((a) => a.id !== activityId) }
+        : l
+    );
+    setActivityLists(newLists);
+    saveData(newLists, schedules);
+  };
+
+  const updateActivity = (listId, activityId, newName) => {
+    if (!newName.trim()) return;
+    const newLists = activityLists.map((l) =>
+      l.id === listId
+        ? { ...l, activities: l.activities.map((a) => a.id === activityId ? { ...a, name: newName.trim() } : a) }
+        : l
+    );
+    setActivityLists(newLists);
+    saveData(newLists, schedules);
+  };
+
+  // ── Schedules ──
   const addSchedule = () => {
     if (!scheduleName.trim()) return;
-
-    const newSchedule = {
-      id: Date.now(),
-      name: scheduleName,
-      startTime,
-      endTime,
-      interval,
-      slots: [],
-    };
-
+    const newSchedule = { id: Date.now(), name: scheduleName, startTime, endTime, interval, slots: [] };
     let current = startTime;
-
     while (current < endTime) {
       const next = current + interval;
-      newSchedule.slots.push({
-        id: Date.now() + current,
-        startTime: current,
-        endTime: next,
-        activity: null,
-      });
+      newSchedule.slots.push({ id: Date.now() + current, startTime: current, endTime: next, activity: null });
       current = next;
     }
-
     const newSchedules = [...schedules, newSchedule];
-
     setSchedules(newSchedules);
     setScheduleName("");
     saveData(activityLists, newSchedules);
@@ -127,83 +127,118 @@ function App() {
     saveData(activityLists, newSchedules);
   };
 
-  // ================= DRAG & DROP =================
-  const handleDragStart = (activity) => {
-    setDraggedActivity(activity);
-  };
-
+  // ── Drag & Drop ──
   const handleDrop = (scheduleId, slotId) => {
     if (!draggedActivity) return;
 
-    const newSchedules = schedules.map((s) => {
+    let newSchedules = schedules.map((s) => {
       if (s.id !== scheduleId) return s;
-
-      return {
-        ...s,
-        slots: s.slots.map((slot) =>
-          slot.id === slotId
-            ? { ...slot, activity: draggedActivity.name }
-            : slot
-        ),
-      };
+      return { ...s, slots: s.slots.map((slot) => slot.id === slotId ? { ...slot, activity: draggedActivity.name } : slot) };
     });
 
+    if (draggedFromSlot) {
+      newSchedules = newSchedules.map((s) => {
+        if (s.id !== draggedFromSlot.scheduleId) return s;
+        return { ...s, slots: s.slots.map((slot) => slot.id === draggedFromSlot.slotId ? { ...slot, activity: null } : slot) };
+      });
+    }
+
+    setSchedules(newSchedules);
+    setDragOverSlot(null);
+    setDraggedFromSlot(null);
+    saveData(activityLists, newSchedules);
+  };
+
+  const clearSlot = (scheduleId, slotId) => {
+    const newSchedules = schedules.map((s) => {
+      if (s.id !== scheduleId) return s;
+      return { ...s, slots: s.slots.map((slot) => slot.id === slotId ? { ...slot, activity: null } : slot) };
+    });
     setSchedules(newSchedules);
     saveData(activityLists, newSchedules);
   };
 
-  // ================= UI =================
   if (checking) return null;
 
   return (
     <div className="container">
-      <h1>Activity Scheduler</h1>
+      <header className="app-header">
+        <a href="/" className="btn-home">← Home</a>
+        <h1>Activity Scheduler</h1>
+      </header>
 
-      {/* CONTROLS */}
-      <div className="controls">
-        <input
-          value={scheduleName}
-          onChange={(e) => setScheduleName(e.target.value)}
-          placeholder="Schedule name"
-        />
-
-        <select value={startTime} onChange={(e) => setStartTime(+e.target.value)}>
-          {timeOptions.map((t) => (
-            <option key={t} value={t}>{formatTime(t)}</option>
-          ))}
-        </select>
-
-        <select value={endTime} onChange={(e) => setEndTime(+e.target.value)}>
-          {timeOptions.map((t) => (
-            <option key={t} value={t}>{formatTime(t)}</option>
-          ))}
-        </select>
-
-        <input
-          type="number"
-          value={interval}
-          onChange={(e) => setIntervalValue(+e.target.value)}
-        />
-
-        <button onClick={addSchedule}>Add Schedule</button>
+      {/* Create schedule */}
+      <div className="card">
+        <p className="card-title">New Schedule</p>
+        <div className="form-grid">
+          <div className="field">
+            <label htmlFor="sched-name">Name</label>
+            <input
+              id="sched-name"
+              value={scheduleName}
+              onChange={(e) => setScheduleName(e.target.value)}
+              placeholder="e.g. Monday routine"
+              onKeyDown={(e) => e.key === "Enter" && addSchedule()}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="sched-start">Start</label>
+            <select id="sched-start" value={startTime} onChange={(e) => setStartTime(+e.target.value)}>
+              {timeOptions.map((t) => <option key={t} value={t}>{formatTime(t)}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <label htmlFor="sched-end">End</label>
+            <select id="sched-end" value={endTime} onChange={(e) => setEndTime(+e.target.value)}>
+              {timeOptions.map((t) => <option key={t} value={t}>{formatTime(t)}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <label htmlFor="sched-interval">Interval (min)</label>
+            <input
+              id="sched-interval"
+              type="number"
+              value={interval}
+              min={5}
+              max={240}
+              onChange={(e) => setIntervalValue(+e.target.value)}
+            />
+          </div>
+        </div>
+        <button className="btn btn-primary" onClick={addSchedule}>+ Create Schedule</button>
       </div>
 
-      <div className="main-content">
-        {/* ACTIVITIES */}
-        <div className="activities-panel">
-          <input
-            value={listName}
-            onChange={(e) => setListName(e.target.value)}
-            placeholder="List name"
-          />
-          <button onClick={addList}>Add List</button>
+      <div className="workspace">
+        {/* Activities panel */}
+        <div className="card">
+          <p className="card-title">Activities</p>
+          <div className="add-list-row">
+            <input
+              value={listName}
+              onChange={(e) => setListName(e.target.value)}
+              placeholder="List name"
+              onKeyDown={(e) => e.key === "Enter" && addList()}
+            />
+            <button className="btn btn-success btn-sm" onClick={addList}>Add</button>
+          </div>
+
+          {activityLists.length === 0 && (
+            <p className="empty-state">No lists yet. Create one above.</p>
+          )}
 
           {activityLists.map((list) => (
-            <div key={list.id}>
-              <h4>{list.name}</h4>
-
+            <div key={list.id} className="activity-list-group">
+              <div className="list-group-header">
+                <h4>{list.name}</h4>
+                <button
+                  className="icon-btn icon-btn--danger"
+                  onClick={() => deleteList(list.id)}
+                  title="Delete list"
+                >×</button>
+              </div>
               <input
-                placeholder="Add activity"
+                className="add-activity-input"
+                placeholder="Add activity (Enter)"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     addActivity(list.id, e.target.value);
@@ -211,46 +246,95 @@ function App() {
                   }
                 }}
               />
-
-              {list.activities.map((a) => (
-                <div
-                  key={a.id}
-                  draggable
-                  onDragStart={() => handleDragStart(a)}
-                  className="activity"
-                >
-                  {a.name}
-                </div>
-              ))}
+              <div className="activities-list">
+                {list.activities.map((a) =>
+                  editingActivity?.activityId === a.id ? (
+                    <div key={a.id} className="activity activity--editing">
+                      <input
+                        className="activity-edit-input"
+                        autoFocus
+                        defaultValue={a.name}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") { updateActivity(list.id, a.id, e.target.value); setEditingActivity(null); }
+                          if (e.key === "Escape") setEditingActivity(null);
+                        }}
+                        onBlur={(e) => { updateActivity(list.id, a.id, e.target.value); setEditingActivity(null); }}
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      key={a.id}
+                      draggable
+                      onDragStart={() => setDraggedActivity(a)}
+                      onDragEnd={() => setDraggedActivity(null)}
+                      className="activity"
+                    >
+                      <span className="activity-name">{a.name}</span>
+                      <div className="activity-actions">
+                        <button
+                          className="icon-btn"
+                          onClick={() => setEditingActivity({ listId: list.id, activityId: a.id })}
+                          title="Edit"
+                        >✎</button>
+                        <button
+                          className="icon-btn icon-btn--danger"
+                          onClick={() => deleteActivity(list.id, a.id)}
+                          title="Delete"
+                        >×</button>
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
             </div>
           ))}
         </div>
 
-        {/* SCHEDULES */}
-        <div className="schedule-panel">
-          <h3>Schedules</h3>
+        {/* Schedules panel */}
+        <div>
+          {schedules.length === 0 && (
+            <div className="card">
+              <p className="empty-state">No schedules yet. Create one above.</p>
+            </div>
+          )}
 
           {schedules.map((s) => (
             <div key={s.id} className="schedule-item">
-              <strong>{s.name}</strong>
-              <button onClick={() => deleteSchedule(s.id)}>Delete</button>
-
+              <div className="schedule-header">
+                <strong>{s.name}</strong>
+                <button className="btn btn-danger" onClick={() => deleteSchedule(s.id)}>Delete</button>
+              </div>
               <div className="schedule-slots">
                 {s.slots.map((slot) => (
                   <div
                     key={slot.id}
-                    className="time-slot"
-                    onDragOver={(e) => e.preventDefault()}
+                    className={`time-slot${dragOverSlot === slot.id ? " drag-over" : ""}`}
+                    onDragOver={(e) => { e.preventDefault(); setDragOverSlot(slot.id); }}
+                    onDragLeave={() => setDragOverSlot(null)}
                     onDrop={() => handleDrop(s.id, slot.id)}
                   >
-                    <span>
-                      {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
+                    <span className="time-label">
+                      {formatTime(slot.startTime)} – {formatTime(slot.endTime)}
                     </span>
-
-                    {slot.activity && (
-                      <div className="activity-assigned">
-                        {slot.activity}
+                    {slot.activity ? (
+                      <div
+                        className="activity-assigned"
+                        draggable
+                        onDragStart={() => {
+                          setDraggedActivity({ name: slot.activity });
+                          setDraggedFromSlot({ scheduleId: s.id, slotId: slot.id });
+                        }}
+                        onDragEnd={() => { setDraggedActivity(null); setDraggedFromSlot(null); }}
+                      >
+                        <span>{slot.activity}</span>
+                        <button
+                          className="icon-btn icon-btn--light"
+                          onClick={() => clearSlot(s.id, slot.id)}
+                          title="Remove"
+                        >×</button>
                       </div>
+                    ) : (
+                      <span className="empty-slot">Drop here</span>
                     )}
                   </div>
                 ))}

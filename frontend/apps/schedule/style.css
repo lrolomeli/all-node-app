@@ -1,231 +1,450 @@
+:root {
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --success: #10b981;
+  --danger: #f43f5e;
+  --danger-hover: #e11d48;
+  --bg: #f1f5f9;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --muted: #64748b;
+  --activity-bg: #ede9fe;
+  --activity-border: #c4b5fd;
+  --slot-hover: #eef2ff;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.06);
+}
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background: #f5f5f5;
-    padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
 }
 
+/* ── Layout ── */
 .container {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
 }
 
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
+/* ── Header ── */
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
-.controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    align-items: center;
+.btn-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
 }
 
-.controls select, .controls input, .controls button {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+.btn-home:hover {
+  color: var(--text);
+  border-color: #cbd5e1;
 }
 
-.controls button {
-    background: #007bff;
-    color: white;
-    cursor: pointer;
+.app-header h1 {
+  font-size: clamp(18px, 4vw, 24px);
+  font-weight: 700;
+  color: var(--text);
 }
 
-.controls button:hover {
-    background: #0056b3;
+/* ── Card ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
 }
 
-.main-content {
-    display: flex;
-    gap: 20px;
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 16px;
 }
 
-.activities-panel, .schedule-panel {
-    flex: 1;
+/* ── Create schedule form ── */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
-.activities-panel h3, .schedule-panel h3 {
-    margin-bottom: 10px;
-    color: #555;
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.list-controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
+.field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
 }
 
-.list-controls input, .list-controls button {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+.field input,
+.field select {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface-2);
+  outline: none;
+  transition: border-color .15s;
+  width: 100%;
 }
 
-.list-controls button {
-    background: #28a745;
-    color: white;
-    cursor: pointer;
+.field input:focus,
+.field select:focus {
+  border-color: var(--primary);
+  background: var(--surface);
 }
 
-.activity-list {
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 10px;
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  white-space: nowrap;
 }
 
-.list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+.btn:active { transform: scale(.97); }
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
 }
 
-.list-title {
-    font-weight: bold;
-    color: #333;
+.btn-primary:hover { background: var(--primary-hover); }
+
+.btn-success {
+  background: var(--success);
+  color: white;
 }
 
-.add-activity {
-    display: flex;
-    gap: 5px;
-    margin-bottom: 10px;
+.btn-success:hover { background: #059669; }
+
+.btn-danger {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  padding: 6px 12px;
+  font-size: 13px;
 }
 
-.add-activity input {
-    flex: 1;
-    padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+.btn-danger:hover {
+  background: var(--danger);
+  color: white;
 }
 
-.add-activity button {
-    padding: 5px 10px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.btn-sm {
+  padding: 7px 12px;
+  font-size: 13px;
+}
+
+.btn-block { width: 100%; }
+
+/* ── Workspace (two-column on tablet+) ── */
+.workspace {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .workspace {
+    grid-template-columns: 280px 1fr;
+    align-items: start;
+  }
+}
+
+/* ── Activities panel ── */
+.add-list-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.add-list-row input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  background: var(--surface-2);
+  outline: none;
+}
+
+.add-list-row input:focus { border-color: var(--primary); }
+
+.add-list-row .btn { width: 100%; }
+
+.activity-list-group {
+  margin-bottom: 16px;
+}
+
+.list-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.activity-list-group h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.add-activity-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface-2);
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.add-activity-input:focus {
+  border-color: var(--primary);
+  border-style: solid;
+  background: var(--surface);
 }
 
 .activities-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .activity {
-    background: #e3f2fd;
-    padding: 10px;
-    border-radius: 4px;
-    cursor: grab;
-    border: 1px solid #90caf9;
-    text-align: center;
-    position: relative;
+  background: var(--activity-bg);
+  border: 1px solid var(--activity-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  cursor: grab;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4c1d95;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: box-shadow .15s;
+  user-select: none;
+}
+
+.activity::before {
+  content: "⠿";
+  font-size: 16px;
+  color: #a78bfa;
+  flex-shrink: 0;
 }
 
 .activity:hover {
-    background: #bbdefb;
+  box-shadow: 0 2px 8px rgba(99,102,241,.2);
 }
 
-.activity.dragging {
-    opacity: 0.5;
+.activity:active { cursor: grabbing; }
+
+.activity-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.activity .edit-btn, .activity .delete-btn {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 12px;
-    padding: 2px 4px;
+.activity-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
 }
 
-.activity .delete-btn {
-    right: 20px;
-    color: #dc3545;
+.activity--editing {
+  background: var(--surface);
+  border-color: var(--primary);
+  cursor: default;
+  padding: 6px 8px;
 }
 
+.activity--editing::before { display: none; }
+
+.activity-edit-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  background: transparent;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+  transition: background .12s, color .12s;
+}
+
+.icon-btn:hover {
+  background: #e2e8f0;
+  color: var(--text);
+}
+
+.icon-btn--danger { color: var(--danger); }
+.icon-btn--danger:hover { background: #fee2e2; color: var(--danger-hover); }
+
+/* ── Schedules panel ── */
 .schedule-item {
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 15px;
-    background: #fafafa;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
 }
 
 .schedule-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
 }
 
-.schedule-title {
-    font-weight: bold;
-    color: #333;
-    font-size: 16px;
-}
-
-.delete-schedule {
-    background: #dc3545;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
+.schedule-header strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
 }
 
 .schedule-slots {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 .time-slot {
-    min-height: 50px;
-    border: 2px dashed #ddd;
-    border-radius: 4px;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #fafafa;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  min-height: 52px;
+  transition: background .1s;
 }
+
+.time-slot:last-child { border-bottom: none; }
+
+.time-slot:hover { background: var(--slot-hover); }
 
 .time-slot.drag-over {
-    border-color: #007bff;
-    background: #e3f2fd;
+  background: #eef2ff;
+  border-left: 3px solid var(--primary);
 }
 
-.time-slot .time-label {
-    font-weight: bold;
-    color: #666;
-    min-width: 80px;
+.time-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  min-width: 90px;
+  font-variant-numeric: tabular-nums;
 }
 
-.time-slot .activity-assigned {
-    background: #4caf50;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    flex: 1;
-    margin-left: 10px;
-    text-align: center;
+.activity-assigned {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--success);
+  color: white;
+  padding: 4px 6px 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: grab;
+}
+
+.activity-assigned:active { cursor: grabbing; }
+
+.icon-btn--light {
+  color: rgba(255,255,255,.8);
+  font-size: 18px;
+}
+
+.icon-btn--light:hover {
+  background: rgba(0,0,0,.15);
+  color: white;
+}
+
+.empty-slot {
+  color: var(--border);
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* ── Empty states ── */
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--muted);
+  font-size: 14px;
 }
