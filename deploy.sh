@@ -11,25 +11,11 @@ else
   echo "    backend/data not found, skipping backup"
 fi
 
+echo "==> Untracking data files so git pull won't delete them..."
+git rm --cached backend/data/*.json backend/data/*.csv 2>/dev/null || true
+
 echo "==> Pulling latest changes..."
 git pull
-
-echo "==> Restoring any data files removed by git..."
-if [ -d "$BACKUP_DIR" ]; then
-  mkdir -p backend/data
-  restored=0
-  for f in "$BACKUP_DIR"/*; do
-    fname=$(basename "$f")
-    if [ ! -f "backend/data/$fname" ]; then
-      cp "$f" "backend/data/$fname"
-      echo "    Restored: $fname"
-      restored=$((restored + 1))
-    fi
-  done
-  if [ "$restored" -eq 0 ]; then
-    echo "    All data files intact, nothing to restore"
-  fi
-fi
 
 echo "==> Building and starting containers..."
 docker compose up -d --build
