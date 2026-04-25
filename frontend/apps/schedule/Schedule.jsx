@@ -36,14 +36,18 @@ function App() {
 
   const saveData = async (lists, scheds) => {
     try {
-      await fetch("/api/schedule", {
+      const res = await fetch("/api/schedule", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ activityLists: lists, schedules: scheds }),
       });
+      if (!res.ok) {
+        const text = await res.text();
+        console.error(`[schedule] save failed ${res.status}:`, text);
+      }
     } catch (e) {
-      console.error(e);
+      console.error("[schedule] save error:", e);
     }
   };
 
