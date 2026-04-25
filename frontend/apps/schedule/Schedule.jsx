@@ -237,14 +237,12 @@ function App() {
 
           {activityLists.map((list) => (
             <div key={list.id} className="activity-list-group">
-              <div className="list-group-header">
-                <button className="icon-btn collapse-btn" onClick={() => toggleList(list.id)} title="Toggle">
-                  {collapsedLists.has(list.id) ? "▶" : "▼"}
-                </button>
+              <div className="list-group-header" onClick={() => toggleList(list.id)}>
                 <h4>{list.name}</h4>
+                <span className="collapse-arrow">{collapsedLists.has(list.id) ? "▶" : "▼"}</span>
                 <button
                   className="icon-btn icon-btn--danger"
-                  onClick={() => deleteList(list.id)}
+                  onClick={(e) => { e.stopPropagation(); deleteList(list.id); }}
                   title="Delete list"
                 >×</button>
               </div>
@@ -316,12 +314,10 @@ function App() {
 
           {schedules.map((s) => (
             <div key={s.id} className="schedule-item">
-              <div className="schedule-header">
-                <button className="icon-btn collapse-btn" onClick={() => toggleSchedule(s.id)} title="Toggle">
-                  {collapsedSchedules.has(s.id) ? "▶" : "▼"}
-                </button>
+              <div className="schedule-header" onClick={() => toggleSchedule(s.id)}>
                 <strong>{s.name}</strong>
-                <button className="btn btn-danger" onClick={() => deleteSchedule(s.id)}>Delete</button>
+                <span className="collapse-arrow">{collapsedSchedules.has(s.id) ? "▶" : "▼"}</span>
+                <button className="btn btn-danger" onClick={(e) => { e.stopPropagation(); deleteSchedule(s.id); }}>Delete</button>
               </div>
               {!collapsedSchedules.has(s.id) && <div className="schedule-slots">
                 {s.slots.map((slot) => (

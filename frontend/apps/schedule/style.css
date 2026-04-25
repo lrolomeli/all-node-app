@@ -233,6 +233,8 @@ body {
   margin-bottom: 8px;
   padding-bottom: 6px;
   border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
 }
 
 .list-group-header h4 { flex: 1; margin: 0; }
@@ -372,6 +374,8 @@ body {
   padding: 14px 16px;
   border-bottom: 1px solid var(--border);
   background: var(--surface-2);
+  cursor: pointer;
+  user-select: none;
 }
 
 .schedule-header strong { flex: 1; }
