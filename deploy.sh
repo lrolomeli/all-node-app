@@ -20,7 +20,7 @@ git pull
 echo "==> Building and starting containers..."
 docker compose up -d --build
 
-echo ""
+#echo ""
 echo "Deploy complete."
-echo "Backup saved at: $BACKUP_DIR"
-echo "To restore manually: cp -r $BACKUP_DIR/* backend/data/"
+#echo "Backup saved at: $BACKUP_DIR"
+#echo "To restore manually: cp -r $BACKUP_DIR/* backend/data/"
