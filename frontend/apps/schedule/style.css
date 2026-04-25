@@ -229,11 +229,13 @@ body {
 .list-group-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 6px;
   margin-bottom: 8px;
   padding-bottom: 6px;
   border-bottom: 1px solid var(--border);
 }
+
+.list-group-header h4 { flex: 1; margin: 0; }
 
 .activity-list-group h4 {
   font-size: 13px;
@@ -366,11 +368,13 @@ body {
 .schedule-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   padding: 14px 16px;
   border-bottom: 1px solid var(--border);
   background: var(--surface-2);
 }
+
+.schedule-header strong { flex: 1; }
 
 .schedule-header strong {
   font-size: 15px;

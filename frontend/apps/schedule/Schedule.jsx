@@ -16,6 +16,11 @@ function App() {
   const [listName, setListName] = useState("");
   const [editingActivity, setEditingActivity] = useState(null);
   const [draggedFromSlot, setDraggedFromSlot] = useState(null);
+  const [collapsedLists, setCollapsedLists] = useState(new Set());
+  const [collapsedSchedules, setCollapsedSchedules] = useState(new Set());
+
+  const toggleList = (id) => setCollapsedLists((prev) => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
+  const toggleSchedule = (id) => setCollapsedSchedules((prev) => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
 
   // ── API ──
   const loadData = async () => {
@@ -229,6 +234,9 @@ function App() {
           {activityLists.map((list) => (
             <div key={list.id} className="activity-list-group">
               <div className="list-group-header">
+                <button className="icon-btn collapse-btn" onClick={() => toggleList(list.id)} title="Toggle">
+                  {collapsedLists.has(list.id) ? "▶" : "▼"}
+                </button>
                 <h4>{list.name}</h4>
                 <button
                   className="icon-btn icon-btn--danger"
@@ -236,56 +244,60 @@ function App() {
                   title="Delete list"
                 >×</button>
               </div>
-              <input
-                className="add-activity-input"
-                placeholder="Add activity (Enter)"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    addActivity(list.id, e.target.value);
-                    e.target.value = "";
-                  }
-                }}
-              />
-              <div className="activities-list">
-                {list.activities.map((a) =>
-                  editingActivity?.activityId === a.id ? (
-                    <div key={a.id} className="activity activity--editing">
-                      <input
-                        className="activity-edit-input"
-                        autoFocus
-                        defaultValue={a.name}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") { updateActivity(list.id, a.id, e.target.value); setEditingActivity(null); }
-                          if (e.key === "Escape") setEditingActivity(null);
-                        }}
-                        onBlur={(e) => { updateActivity(list.id, a.id, e.target.value); setEditingActivity(null); }}
-                      />
-                    </div>
-                  ) : (
-                    <div
-                      key={a.id}
-                      draggable
-                      onDragStart={() => setDraggedActivity(a)}
-                      onDragEnd={() => setDraggedActivity(null)}
-                      className="activity"
-                    >
-                      <span className="activity-name">{a.name}</span>
-                      <div className="activity-actions">
-                        <button
-                          className="icon-btn"
-                          onClick={() => setEditingActivity({ listId: list.id, activityId: a.id })}
-                          title="Edit"
-                        >✎</button>
-                        <button
-                          className="icon-btn icon-btn--danger"
-                          onClick={() => deleteActivity(list.id, a.id)}
-                          title="Delete"
-                        >×</button>
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
+              {!collapsedLists.has(list.id) && (
+                <>
+                  <input
+                    className="add-activity-input"
+                    placeholder="Add activity (Enter)"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        addActivity(list.id, e.target.value);
+                        e.target.value = "";
+                      }
+                    }}
+                  />
+                  <div className="activities-list">
+                    {list.activities.map((a) =>
+                      editingActivity?.activityId === a.id ? (
+                        <div key={a.id} className="activity activity--editing">
+                          <input
+                            className="activity-edit-input"
+                            autoFocus
+                            defaultValue={a.name}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") { updateActivity(list.id, a.id, e.target.value); setEditingActivity(null); }
+                              if (e.key === "Escape") setEditingActivity(null);
+                            }}
+                            onBlur={(e) => { updateActivity(list.id, a.id, e.target.value); setEditingActivity(null); }}
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          key={a.id}
+                          draggable
+                          onDragStart={() => setDraggedActivity(a)}
+                          onDragEnd={() => setDraggedActivity(null)}
+                          className="activity"
+                        >
+                          <span className="activity-name">{a.name}</span>
+                          <div className="activity-actions">
+                            <button
+                              className="icon-btn"
+                              onClick={() => setEditingActivity({ listId: list.id, activityId: a.id })}
+                              title="Edit"
+                            >✎</button>
+                            <button
+                              className="icon-btn icon-btn--danger"
+                              onClick={() => deleteActivity(list.id, a.id)}
+                              title="Delete"
+                            >×</button>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>
@@ -301,10 +313,13 @@ function App() {
           {schedules.map((s) => (
             <div key={s.id} className="schedule-item">
               <div className="schedule-header">
+                <button className="icon-btn collapse-btn" onClick={() => toggleSchedule(s.id)} title="Toggle">
+                  {collapsedSchedules.has(s.id) ? "▶" : "▼"}
+                </button>
                 <strong>{s.name}</strong>
                 <button className="btn btn-danger" onClick={() => deleteSchedule(s.id)}>Delete</button>
               </div>
-              <div className="schedule-slots">
+              {!collapsedSchedules.has(s.id) && <div className="schedule-slots">
                 {s.slots.map((slot) => (
                   <div
                     key={slot.id}
@@ -338,7 +353,7 @@ function App() {
                     )}
                   </div>
                 ))}
-              </div>
+              </div>}
             </div>
           ))}
         </div>
