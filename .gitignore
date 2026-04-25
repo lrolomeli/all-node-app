@@ -4,3 +4,5 @@ node_modules/
 public/assets/
 dist/
 backend/data/*.json
+backend/data/*.csv
+backend/data_backup_*/
