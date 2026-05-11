@@ -143,6 +143,28 @@ export default function GastosApp() {
     }
   }
 
+  async function deposit() {
+    const amount = parseFloat(display)
+    if (isNaN(amount) || amount <= 0) return
+    const next = { ...data }
+    next.balance += amount
+    next.transactions.push({
+      id: nextId(),
+      type: 'deposit',
+      amount,
+      description: description.trim() || 'Depósito',
+      date: new Date().toISOString(),
+    })
+    try {
+      await save(next)
+      setData(next)
+      setDisplay('0')
+      setDescription('')
+    } catch {
+      alert('Error al guardar en el servidor')
+    }
+  }
+
   async function resetBalance() {
     if (!confirm('¿Reiniciar saldo a $0?')) return
     const next = { balance: 0, lastMonday: new Date().toISOString(), transactions: [] }
@@ -229,7 +251,8 @@ export default function GastosApp() {
           <button className="num-btn" onClick={() => appendDigit('.')}>.</button>
           <button className="num-btn del-btn" onClick={deleteLast}>⌫</button>
           <button className="num-btn clear-btn" onClick={clearDisplay}>C</button>
-          <button className="enter-btn" onClick={spend}>GASTAR</button>
+          <button className="action-btn deposit-btn" onClick={deposit}>AGREGAR</button>
+          <button className="action-btn spend-btn" onClick={spend}>GASTAR</button>
         </div>
       </div>
 
