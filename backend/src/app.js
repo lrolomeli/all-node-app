@@ -11,6 +11,7 @@ const calis_r = require('./routes/calis-routes');
 const chkl_r = require('./routes/checklist-routes');
 const mntc_r = require('./routes/maintenance-routes');
 const sch_r = require('./routes/schedule-routes');
+const gastos_r = require('./routes/gastos-routes');
 
 const app = express();
 
@@ -46,5 +47,6 @@ app.use('/api/calisthenics', calis_r);
 app.use('/api/checklist', chkl_r);
 app.use('/api/maintenance', mntc_r);
 app.use('/api/schedule', sch_r);
+app.use('/api/gastos', gastos_r);
 
 module.exports = app;

@@ -2,7 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const DATA_DIR = path.join(__dirname,'../..','data');
 
-console.log(DATA_DIR);
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
 
 function readJson(file, fallback) {
   try {
@@ -23,6 +25,7 @@ const files = {
   budget: path.join(DATA_DIR, 'budget-data.json'),
   calisthenicsRutina: path.join(DATA_DIR, 'calisthenics-rutina.csv'),
   calisthenicsProgress: path.join(DATA_DIR, 'calisthenics-progress.json'),
+  gastos: path.join(DATA_DIR, 'gastos-data.json'),
 };
 
 module.exports = {
@@ -72,5 +75,12 @@ module.exports = {
   },
   saveCalisthenicsProgress(data) {
     writeJson(files.calisthenicsProgress, data);
+  },
+
+  loadGastosData() {
+    return readJson(files.gastos, { balance: 1750, lastMonday: null, transactions: [] });
+  },
+  saveGastosData(data) {
+    writeJson(files.gastos, data);
   },
 };

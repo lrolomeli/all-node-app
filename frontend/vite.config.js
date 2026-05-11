@@ -7,7 +7,7 @@ const cleanUrls = () => ({
   configureServer(server) {
     server.middlewares.use((req, res, next) => {
       // Redirección física para asegurar que el navegador cargue los assets correctamente
-      if (req.url === '/apps/diet' || req.url === '/apps/schedule' || req.url === '/apps/checklist' || req.url === '/apps/budget' || req.url === '/apps/cv' || req.url === '/apps/calisthenics' || req.url === '/apps/maintenance') {
+      if (req.url === '/apps/diet' || req.url === '/apps/schedule' || req.url === '/apps/checklist' || req.url === '/apps/budget' || req.url === '/apps/cv' || req.url === '/apps/calisthenics' || req.url === '/apps/maintenance' || req.url === '/apps/gastos') {
         res.statusCode = 301;
         res.setHeader('Location', `${req.url}/`);
         res.end();
@@ -36,6 +36,7 @@ export default defineConfig({
         checklist: resolve(__dirname, 'apps/checklist/index.html'),
         schedule: resolve(__dirname, 'apps/schedule/index.html'),
         diet: resolve(__dirname, 'apps/diet/index.html'),
+        gastos: resolve(__dirname, 'apps/gastos/index.html'),
       },
     },
   },
