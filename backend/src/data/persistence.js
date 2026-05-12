@@ -70,6 +70,10 @@ module.exports = {
     }
   },
 
+  saveCalisthenicsRutina(csv) {
+    fs.writeFileSync(files.calisthenicsRutina, csv, 'utf8');
+  },
+
   loadCalisthenicsProgress() {
     return readJson(files.calisthenicsProgress, { level: 0, currentSession: 1 });
   },

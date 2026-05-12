@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import LevelNav from './components/LevelNav.jsx'
 import SessionView from './components/SessionView.jsx'
+import RoutineEditor from './components/RoutineEditor.jsx'
 import { parseRutina } from './utils.js'
 
 function checkedKey(level, session) {
@@ -27,6 +28,7 @@ export default function CalisthenicsApp() {
   const [checked, setChecked] = useState(new Set())
   const [ready, setReady] = useState(false)
   const [error, setError] = useState(null)
+  const [mode, setMode] = useState('view')
 
   useEffect(() => {
     init()
@@ -96,6 +98,26 @@ export default function CalisthenicsApp() {
     await saveProgress(level, next)
   }
 
+  async function handleSaveEdit(modifiedSessions) {
+    try {
+      const res = await fetch('/api/calisthenics/rutina', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ sessions: modifiedSessions }),
+      })
+      if (!res.ok) throw new Error()
+      setMode('view')
+      await init()
+    } catch {
+      setError('No se pudo guardar la rutina.')
+    }
+  }
+
+  function handleCancelEdit() {
+    setMode('view')
+  }
+
   if (error) {
     return (
       <div className="cal-state-screen">
@@ -116,6 +138,18 @@ export default function CalisthenicsApp() {
     )
   }
 
+  if (mode === 'edit') {
+    return (
+      <div className="cal-app">
+        <header className="cal-header">
+          <h1 className="cal-title">Calistenia</h1>
+          <span className="cal-session-badge">Editando</span>
+        </header>
+        <RoutineEditor sessions={sessions} onSave={handleSaveEdit} onCancel={handleCancelEdit} />
+      </div>
+    )
+  }
+
   const sessionExercises = sessions[currentSession - 1] || []
   const allChecked = sessionExercises.length > 0 && checked.size === sessionExercises.length
 
@@ -126,6 +160,9 @@ export default function CalisthenicsApp() {
         <span className="cal-session-badge">
           {currentSession} / {sessions.length}
         </span>
+        <button className="cal-edit-btn" onClick={() => setMode('edit')}>
+          Editar
+        </button>
       </header>
 
       <LevelNav level={level} onChange={handleLevelChange} />

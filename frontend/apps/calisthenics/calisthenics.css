@@ -280,3 +280,128 @@ body {
   color: #ccc;
   cursor: pointer;
 }
+
+/* ── Edit button in header ── */
+.cal-edit-btn {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cal-edit-btn:hover {
+  background: #2a2a2a;
+  color: #e8e8e8;
+}
+
+/* ── Routine Editor ── */
+.cal-editor {
+  padding: 1rem;
+}
+
+.cal-editor-session {
+  margin-bottom: 1.5rem;
+}
+
+.cal-editor-session-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #94a3b8;
+}
+
+.cal-editor-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  padding: 6px 8px;
+  background: #161616;
+  border: 1px solid #222;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.cal-editor-idx {
+  width: 20px;
+  font-size: 0.75rem;
+  color: #555;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.cal-editor-select {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #e8e8e8;
+  font-size: 0.75rem;
+  padding: 4px 6px;
+  width: 110px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.cal-editor-input {
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #e8e8e8;
+  font-size: 0.75rem;
+  padding: 4px 6px;
+  flex: 1;
+  min-width: 60px;
+}
+
+.cal-editor-input-sm {
+  max-width: 70px;
+}
+
+.cal-editor-input:focus,
+.cal-editor-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+/* ── Editor action buttons ── */
+.cal-editor-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.cal-btn-save {
+  padding: 0.6rem 2rem;
+  background: #16a34a;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cal-btn-save:hover {
+  background: #15803d;
+}
+
+.cal-btn-cancel {
+  padding: 0.6rem 2rem;
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 10px;
+  color: #ccc;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cal-btn-cancel:hover {
+  background: #2a2a2a;
+}
