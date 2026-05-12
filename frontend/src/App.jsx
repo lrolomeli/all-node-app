@@ -10,6 +10,7 @@ const APPS = [
   { href: '/apps/calisthenics',  icon: '🤸', title: 'Calistenia' },
   { href: '/apps/budget',        icon: '💰', title: 'Budget' },
   { href: '/apps/gastos',        icon: '💳', title: 'Gastos' },
+  { href: '/apps/room-monitor',  icon: '🌡️', title: 'Room Monitor' },
 ]
 
 export default function App() {
