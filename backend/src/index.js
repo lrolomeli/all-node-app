@@ -1,4 +1,10 @@
 const app = require('./app');
+const cron = require('node-cron');
+const gastosCron = require('./cron/gastos-cron');
+
+gastosCron.backfill();
+
+cron.schedule('0 0 * * *', () => gastosCron.run());
 
 const PORT = Number(process.env.PORT) || 3000;
 const server = app.listen(PORT, () => {

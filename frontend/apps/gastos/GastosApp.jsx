@@ -3,28 +3,20 @@ import { useAuth } from '../../src/useAuth.js'
 
 const WEEKLY_AMOUNT = 1750
 
-function getMondaysSince(lastDateStr) {
-  if (!lastDateStr) return []
-  const mondays = []
-  const last = new Date(lastDateStr)
-  last.setHours(0, 0, 0, 0)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const cursor = new Date(last)
-  cursor.setDate(cursor.getDate() + 1)
-  while (cursor <= today) {
-    if (cursor.getDay() === 1) mondays.push(new Date(cursor))
-    cursor.setDate(cursor.getDate() + 1)
-  }
-  return mondays
-}
-
 function fmt(n) {
   return '$' + Math.abs(parseFloat(n || 0)).toFixed(2)
 }
 
-function nextId() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6)
+function api(action, body) {
+  return fetch('/api/gastos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ action, ...body }),
+  }).then(r => {
+    if (!r.ok) throw new Error('Error al guardar')
+    return r.json()
+  })
 }
 
 export default function GastosApp() {
@@ -45,26 +37,6 @@ export default function GastosApp() {
         return r.json()
       })
       .then(saved => {
-        const mondays = getMondaysSince(saved.lastMonday)
-        if (mondays.length > 0) {
-          saved.balance += mondays.length * WEEKLY_AMOUNT
-          saved.lastMonday = new Date().toISOString()
-          for (const m of mondays) {
-            saved.transactions.push({
-              id: nextId(),
-              type: 'deposit',
-              amount: WEEKLY_AMOUNT,
-              description: 'Depósito semanal',
-              date: m.toISOString(),
-            })
-          }
-          fetch('/api/gastos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify(saved),
-          })
-        }
         setData(saved)
         setLoading(false)
       })
@@ -73,16 +45,6 @@ export default function GastosApp() {
         setLoading(false)
       })
   }, [checking])
-
-  async function save(next) {
-    const r = await fetch('/api/gastos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(next),
-    })
-    if (!r.ok) throw new Error('Error al guardar')
-  }
 
   function appendDigit(d) {
     setDisplay(prev => {
@@ -109,17 +71,8 @@ export default function GastosApp() {
       alert('No tienes suficiente saldo disponible')
       return
     }
-    const next = { ...data }
-    next.balance -= amount
-    next.transactions.push({
-      id: nextId(),
-      type: 'expense',
-      amount,
-      description: description.trim() || 'Gasto',
-      date: new Date().toISOString(),
-    })
     try {
-      await save(next)
+      const next = await api('spend', { amount, description })
       setData(next)
       setDisplay('0')
       setDescription('')
@@ -130,13 +83,11 @@ export default function GastosApp() {
 
   async function deleteTransaction(id) {
     const tx = data.transactions.find(t => t.id === id)
-    if (!tx || tx.type !== 'expense') return
-    if (!confirm('¿Reembolsar este gasto?')) return
-    const next = { ...data }
-    next.balance += tx.amount
-    next.transactions = next.transactions.filter(t => t.id !== id)
+    if (!tx) return
+    const msg = tx.type === 'expense' ? '¿Reembolsar este gasto?' : '¿Deshacer este depósito?'
+    if (!confirm(msg)) return
     try {
-      await save(next)
+      const next = await api('refund', { transactionId: id })
       setData(next)
     } catch {
       alert('Error al guardar en el servidor')
@@ -146,17 +97,8 @@ export default function GastosApp() {
   async function deposit() {
     const amount = parseFloat(display)
     if (isNaN(amount) || amount <= 0) return
-    const next = { ...data }
-    next.balance += amount
-    next.transactions.push({
-      id: nextId(),
-      type: 'deposit',
-      amount,
-      description: description.trim() || 'Depósito',
-      date: new Date().toISOString(),
-    })
     try {
-      await save(next)
+      const next = await api('deposit', { amount, description })
       setData(next)
       setDisplay('0')
       setDescription('')
@@ -167,9 +109,8 @@ export default function GastosApp() {
 
   async function resetBalance() {
     if (!confirm('¿Reiniciar saldo a $0?')) return
-    const next = { balance: 0, lastMonday: new Date().toISOString(), transactions: [] }
     try {
-      await save(next)
+      const next = await api('reset')
       setData(next)
     } catch {
       alert('Error al guardar en el servidor')
@@ -210,7 +151,7 @@ export default function GastosApp() {
     )
   }
 
-  const recentTransactions = data.transactions.filter(t => t.type === 'expense').reverse().slice(0, 50)
+  const recentTransactions = [...data.transactions].reverse().slice(0, 50)
   const balanceClass = data.balance < 0 ? 'negative' : data.balance < 100 ? 'warning' : ''
 
   return (
@@ -263,17 +204,21 @@ export default function GastosApp() {
       {showHistory && (
         <div className="history">
           {recentTransactions.length === 0 ? (
-            <div className="history-empty">Aún no hay gastos registrados</div>
+            <div className="history-empty">Aún no hay movimientos registrados</div>
           ) : (
-            recentTransactions.map(tx => (
-              <div key={tx.id} className="history-item" onClick={() => deleteTransaction(tx.id)} title="Click para reembolsar">
-                <div className="history-info">
-                  <span className="history-desc">{tx.description}</span>
-                  <span className="history-date">{new Date(tx.date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}</span>
+            recentTransactions.map(tx => {
+              const sign = tx.type === 'expense' ? '-' : '+'
+              const cls = tx.type === 'expense' ? 'history-item' : 'history-item history-deposit'
+              return (
+                <div key={tx.id} className={cls} onClick={() => deleteTransaction(tx.id)} title={tx.type === 'expense' ? 'Click para reembolsar' : 'Click para deshacer'}>
+                  <div className="history-info">
+                    <span className="history-desc">{tx.description}</span>
+                    <span className="history-date">{new Date(tx.date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })}</span>
+                  </div>
+                  <span className="history-amount">{sign}{fmt(tx.amount)}</span>
                 </div>
-                <span className="history-amount">-{fmt(tx.amount)}</span>
-              </div>
-            ))
+              )
+            })
           )}
         </div>
       )}

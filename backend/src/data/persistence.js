@@ -82,7 +82,7 @@ module.exports = {
   },
 
   loadGastosData() {
-    return readJson(files.gastos, { balance: 1750, lastMonday: null, transactions: [] });
+    return readJson(files.gastos, { balance: 0, startDate: null, transactions: [], paidMondays: [] });
   },
   saveGastosData(data) {
     writeJson(files.gastos, data);
