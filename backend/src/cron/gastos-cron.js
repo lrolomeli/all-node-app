@@ -14,7 +14,6 @@ function nextId() {
 function getMondaysBetween(from, to) {
   const mondays = [];
   const cursor = new Date(from);
-  cursor.setDate(cursor.getDate() + 1);
   while (cursor <= to) {
     if (cursor.getDay() === 1) {
       mondays.push(new Date(cursor));
@@ -54,7 +53,6 @@ function backfill() {
     data.startDate = todayStr();
     persistence.saveGastosData(data);
     console.log('[gastos-cron] startDate set to ' + data.startDate);
-    return;
   }
 
   const start = new Date(data.startDate);
