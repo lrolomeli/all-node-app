@@ -1,9 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import RequireAuth from '../../src/requireAuth.jsx'
 import ShoppingListApp from './ShoppingListApp.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ShoppingListApp />
+    <RequireAuth><ShoppingListApp /></RequireAuth>
   </StrictMode>,
 )
