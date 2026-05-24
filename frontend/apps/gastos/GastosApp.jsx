@@ -4,7 +4,8 @@ import { useAuth } from '../../src/useAuth.js'
 const WEEKLY_AMOUNT = 1750
 
 function fmt(n) {
-  return '$' + Math.abs(parseFloat(n || 0)).toFixed(2)
+  const v = parseFloat(n || 0)
+  return (v < 0 ? '-$' : '$') + Math.abs(v).toFixed(2)
 }
 
 function api(action, body) {

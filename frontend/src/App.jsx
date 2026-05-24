@@ -3,7 +3,7 @@ import Login from './Login.jsx'
 
 const APPS = [
   { href: '/apps/schedule',      icon: '📅', title: 'Schedule' },
-  { href: '/apps/checklist',     icon: '✅', title: 'Checklist' },
+  // { href: '/apps/checklist',     icon: '✅', title: 'Checklist' },
   { href: '/apps/maintenance',   icon: '🔧', title: 'Maintenance' },
   { href: '/apps/cv',            icon: '📄', title: 'CV' },
   { href: '/apps/diet',          icon: '🥗', title: 'Diet' },
