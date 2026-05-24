@@ -4,7 +4,7 @@ const gastosCron = require('./cron/gastos-cron');
 
 gastosCron.backfill();
 
-cron.schedule('0 0 * * *', () => gastosCron.run());
+cron.schedule('0 0 * * *', () => gastosCron.run(), { timezone: 'America/Mexico_City' });
 
 const PORT = Number(process.env.PORT) || 3000;
 const server = app.listen(PORT, () => {
