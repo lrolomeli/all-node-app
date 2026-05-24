@@ -1,0 +1,143 @@
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f7f7f7;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.back-home {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.btn-home {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 20px;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.btn-home:hover { background: #0056b3; }
+
+h1 {
+  margin-top: 60px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.sl-container {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.sl-input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.sl-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+}
+
+.sl-input:focus {
+  border-color: #007bff;
+}
+
+.sl-add-btn {
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.sl-add-btn:hover {
+  background: #0056b3;
+}
+
+.sl-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sl-empty {
+  text-align: center;
+  color: #999;
+  padding: 30px 0;
+  font-size: 15px;
+}
+
+.sl-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.sl-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.sl-text {
+  flex: 1;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.sl-edit-input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  font-size: 15px;
+  outline: none;
+}
+
+.sl-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.sl-icon-btn:hover {
+  background: #f0f0f0;
+}
+
+.sl-del-btn {
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+.sl-del-btn:hover {
+  opacity: 1;
+}

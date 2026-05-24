@@ -11,6 +11,7 @@ const APPS = [
   { href: '/apps/budget',        icon: '💰', title: 'Budget' },
   { href: '/apps/gastos',        icon: '💳', title: 'Gastos' },
   { href: '/apps/room-monitor',  icon: '🌡️', title: 'Room Monitor' },
+  { href: '/apps/shopping-list', icon: '🛒', title: 'Shopping List' },
 ]
 
 export default function App() {

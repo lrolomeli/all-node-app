@@ -12,6 +12,7 @@ const chkl_r = require('./routes/checklist-routes');
 const mntc_r = require('./routes/maintenance-routes');
 const sch_r = require('./routes/schedule-routes');
 const gastos_r = require('./routes/gastos-routes');
+const shopping_r = require('./routes/shopping-list-routes');
 
 const app = express();
 
@@ -48,5 +49,6 @@ app.use('/api/checklist', chkl_r);
 app.use('/api/maintenance', mntc_r);
 app.use('/api/schedule', sch_r);
 app.use('/api/gastos', gastos_r);
+app.use('/api/shopping-list', shopping_r);
 
 module.exports = app;

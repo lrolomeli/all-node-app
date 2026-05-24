@@ -7,7 +7,7 @@ const cleanUrls = () => ({
   configureServer(server) {
     server.middlewares.use((req, res, next) => {
       // Redirección física para asegurar que el navegador cargue los assets correctamente
-      if (req.url === '/apps/diet' || req.url === '/apps/schedule' || req.url === '/apps/checklist' || req.url === '/apps/budget' || req.url === '/apps/cv' || req.url === '/apps/calisthenics' || req.url === '/apps/maintenance' || req.url === '/apps/gastos' || req.url === '/apps/room-monitor') {
+      if (req.url === '/apps/diet' || req.url === '/apps/schedule' || req.url === '/apps/checklist' || req.url === '/apps/budget' || req.url === '/apps/cv' || req.url === '/apps/calisthenics' || req.url === '/apps/maintenance' || req.url === '/apps/gastos' || req.url === '/apps/room-monitor' || req.url === '/apps/shopping-list') {
         res.statusCode = 301;
         res.setHeader('Location', `${req.url}/`);
         res.end();
@@ -38,6 +38,7 @@ export default defineConfig({
         diet: resolve(__dirname, 'apps/diet/index.html'),
         gastos: resolve(__dirname, 'apps/gastos/index.html'),
         'room-monitor': resolve(__dirname, 'apps/room-monitor/index.html'),
+        'shopping-list': resolve(__dirname, 'apps/shopping-list/index.html'),
       },
     },
   },
