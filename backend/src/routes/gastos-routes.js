@@ -19,7 +19,6 @@ router.post('/', (req, res) => {
     case 'spend': {
       const amt = parseFloat(amount);
       if (isNaN(amt) || amt <= 0) return res.status(400).json({ error: 'Invalid amount' });
-      if (amt > data.balance) return res.status(400).json({ error: 'Insufficient balance' });
       data.balance -= amt;
       data.transactions.push({
         id: nextId(),

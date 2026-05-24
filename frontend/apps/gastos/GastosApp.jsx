@@ -67,10 +67,6 @@ export default function GastosApp() {
   async function spend() {
     const amount = parseFloat(display)
     if (isNaN(amount) || amount <= 0) return
-    if (amount > data.balance) {
-      alert('No tienes suficiente saldo disponible')
-      return
-    }
     try {
       const next = await api('spend', { amount, description })
       setData(next)
