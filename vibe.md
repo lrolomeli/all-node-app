@@ -13,7 +13,7 @@ backend/src/
   app.js              # Express setup, mounts routes
   index.js            # HTTP server (port 3000)
   data/persistence.js # JSON file read/write helpers
-  routes/             # One file per app (budget-routes.js, gastos-routes.js...)
+  routes/             # One file per app (gastos-routes.js, schedule-routes.js...)
   middleware/auth.js  # sessionMiddleware (checks req.session.user)
 frontend/
   vite.config.js      # MPA entry points + proxy to :3000
@@ -47,7 +47,6 @@ frontend/
 | schedule | yes | JSON |
 | checklist | yes | JSON |
 | maintenance | yes | SQLite |
-| budget | yes | JSON |
 | calisthenics | yes | JSON |
 | diet | no | localStorage |
 | cv | no | none |

@@ -7,7 +7,6 @@ const { sessionMiddleware } = require("./middleware/auth");
 const authRoutes = require("./routes/auth-routes");
 const sensorRoutes = require('./routes/sensor-routes');
 
-const bdg_r = require('./routes/budget-routes');
 const calis_r = require('./routes/calis-routes');
 const chkl_r = require('./routes/checklist-routes');
 const mntc_r = require('./routes/maintenance-routes');
@@ -46,7 +45,6 @@ app.use('/api', sessionMiddleware);
 // =========================
 // 🔒 PROTECTED ROUTES
 // =========================
-app.use('/api/budget', bdg_r);
 app.use('/api/calisthenics', calis_r);
 app.use('/api/checklist', chkl_r);
 app.use('/api/maintenance', mntc_r);

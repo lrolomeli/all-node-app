@@ -21,7 +21,6 @@ function writeJson(file, data) {
 const files = {
   schedule: path.join(DATA_DIR, 'schedule-data.json'),
   checklist: path.join(DATA_DIR, 'checklist-state.json'),
-  budget: path.join(DATA_DIR, 'budget-data.json'),
   calisthenicsRutina: path.join(DATA_DIR, 'calisthenics-rutina.csv'),
   calisthenicsProgress: path.join(DATA_DIR, 'calisthenics-progress.json'),
   shoppingList: path.join(DATA_DIR, 'shopping-list.json'),
@@ -40,18 +39,6 @@ module.exports = {
   },
   saveChecklistState(state) {
     fs.writeFileSync(files.checklist, JSON.stringify(state));
-  },
-
-  loadBudgetData() {
-    return readJson(files.budget, {
-      income: [],
-      expenses: [],
-      savings: [],
-      funMoney: [],
-    });
-  },
-  saveBudgetData(data) {
-    writeJson(files.budget, data);
   },
 
   loadCalisthenicsRutina() {

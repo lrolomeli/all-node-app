@@ -8,7 +8,6 @@ const APPS = [
   { href: '/apps/cv',            icon: '📄', title: 'CV' },
   { href: '/apps/diet',          icon: '🥗', title: 'Diet' },
   { href: '/apps/calisthenics',  icon: '🤸', title: 'Calistenia' },
-  { href: '/apps/budget',        icon: '💰', title: 'Budget' },
   { href: '/apps/gastos',        icon: '💳', title: 'Gastos' },
   { href: '/apps/room-monitor',  icon: '🌡️', title: 'Room Monitor' },
   { href: '/apps/shopping-list', icon: '🛒', title: 'Shopping List' },
