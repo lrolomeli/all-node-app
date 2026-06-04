@@ -10,6 +10,7 @@ services:
   backend:
     build: ./backend
     restart: unless-stopped
-    network_mode: host
+    expose:
+      - "3000"
     volumes:
       - ./backend/data:/app/data
