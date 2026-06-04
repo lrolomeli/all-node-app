@@ -46,9 +46,10 @@ frontend/
 |-------|------|-------------|
 | schedule | yes | JSON |
 | checklist | yes | JSON |
-| maintenance | yes | JSON |
+| maintenance | yes | SQLite |
 | budget | yes | JSON |
 | calisthenics | yes | JSON |
 | diet | no | localStorage |
 | cv | no | none |
-| gastos | yes | JSON |
+| gastos | yes | SQLite |
+| room-monitor | yes | SQLite |

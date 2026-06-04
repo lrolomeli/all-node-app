@@ -1,59 +1,77 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react';
+import LiveGauge from './components/LiveGauge';
+import LineChart24h from './components/LineChart24h';
+import DailyStats from './components/DailyStats';
+import MonthHeatmap from './components/MonthHeatmap';
+import TrendAnalysis from './components/TrendAnalysis';
 
-const SENSOR_API = '/api/sensors'
-
-const FALLBACK = [
-  { temperature: 42, humidity: 99.9, status: 'success', unit: 'celsius', msg: 'Does anyone have a towel?' },
-  { temperature: 666, humidity: 0, status: 'success', unit: 'celsius', msg: 'The sensor has ascended to hell' },
-  { temperature: -17, humidity: 100, status: 'success', unit: 'celsius', msg: 'Welcome to the Arctic, enjoy the ice' },
-  { temperature: 100, humidity: 0, status: 'success', unit: 'celsius', msg: 'Perfect weather for boiling pasta' },
-  { temperature: 30, humidity: 110, status: 'success', unit: 'celsius', msg: 'It rained. Indoors. Somehow.' },
-  { temperature: 500, humidity: 1, status: 'success', unit: 'fahrenheit', msg: 'Sensor is now a toaster' },
-]
-
-function randomFallback() {
-  return FALLBACK[Math.floor(Math.random() * FALLBACK.length)]
-}
+const TABS = [
+  { id: 'live', label: 'Live' },
+  { id: '24h', label: '24h' },
+  { id: 'stats', label: 'Stats' },
+  { id: 'month', label: 'Month' },
+  { id: 'trends', label: 'Trends' },
+];
 
 export default function RoomMonitor() {
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [showingFallback, setShowingFallback] = useState(false)
-  const gotRealData = useRef(false)
+  const [tab, setTab] = useState('live');
+  const [liveData, setLiveData] = useState(null);
+  const [liveLoading, setLiveLoading] = useState(true);
+  const [history24h, setHistory24h] = useState(null);
+  const [dailyStats, setDailyStats] = useState(null);
+  const [heatmapData, setHeatmapData] = useState(null);
+  const [trendData, setTrendData] = useState(null);
 
-  const getSensorData = useCallback(async (isRetry) => {
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 3000)
+  const fetchLive = useCallback(async () => {
     try {
-      if (isRetry) setLoading(true)
-      const response = await fetch(SENSOR_API, { signal: controller.signal })
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-
-      const result = await response.json()
-      gotRealData.current = true
-      setData(result)
-      setShowingFallback(false)
+      const res = await fetch('/api/sensors/current');
+      if (res.ok) setLiveData(await res.json());
     } catch (err) {
-      console.error('Sensor fetch failed:', err)
-      if (!gotRealData.current) {
-        const fb = randomFallback()
-        setData(fb)
-        setShowingFallback(true)
-      }
+      console.error('Live fetch failed:', err);
     } finally {
-      clearTimeout(timeout)
-      setLoading(false)
+      setLiveLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    getSensorData(false)
-    const interval = setInterval(() => getSensorData(false), 60000)
-    return () => clearInterval(interval)
-  }, [getSensorData])
+    fetchLive();
+    const interval = setInterval(fetchLive, 60000);
+    return () => clearInterval(interval);
+  }, [fetchLive]);
+
+  useEffect(() => {
+    if (tab === '24h') {
+      fetch('/api/sensors/history?range=24h')
+        .then(r => r.ok ? r.json() : [])
+        .then(setHistory24h);
+    }
+  }, [tab]);
+
+  useEffect(() => {
+    if (tab === 'stats') {
+      const today = new Date().toISOString().slice(0, 10);
+      fetch(`/api/sensors/stats?date=${today}`)
+        .then(r => r.json())
+        .then(setDailyStats);
+    }
+  }, [tab]);
+
+  useEffect(() => {
+    if (tab === 'month') {
+      const month = new Date().toISOString().slice(0, 7);
+      fetch(`/api/sensors/heatmap?month=${month}`)
+        .then(r => r.json())
+        .then(setHeatmapData);
+    }
+  }, [tab]);
+
+  useEffect(() => {
+    if (tab === 'trends') {
+      fetch('/api/sensors/trends?days=30')
+        .then(r => r.json())
+        .then(setTrendData);
+    }
+  }, [tab]);
 
   return (
     <div className="rm-container">
@@ -62,44 +80,21 @@ export default function RoomMonitor() {
         <h1>Room Monitor</h1>
       </div>
 
-      {loading && !data && (
-        <div className="rm-loading">
-          <div className="rm-spinner" />
-          <p>Connecting to sensor...</p>
-        </div>
-      )}
+      <div className="rm-tabs">
+        {TABS.map(t => (
+          <button key={t.id} className={`rm-tab ${tab === t.id ? 'rm-tab-active' : ''}`} onClick={() => setTab(t.id)}>
+            {t.label}
+          </button>
+        ))}
+      </div>
 
-      {data && (
-        <>
-          <div className="rm-cards">
-            <div className="rm-card rm-card-temp">
-              <div className="rm-card-label">Temperature</div>
-              <div className="rm-card-value">
-                {Number(data.temperature).toFixed(1)}<span className="rm-card-unit">°{data.unit === 'celsius' ? 'C' : 'F'}</span>
-              </div>
-            </div>
-            <div className="rm-card rm-card-humidity">
-              <div className="rm-card-label">Humidity</div>
-              <div className="rm-card-value">
-                {Number(data.humidity).toFixed(1)}<span className="rm-card-unit">%</span>
-              </div>
-            </div>
-          </div>
-
-          {showingFallback && (
-            <div className="rm-fallback-banner">
-              ⚠ Offline — showing fake readings
-            </div>
-          )}
-
-          {showingFallback && (
-            <div className="rm-fallback">
-              <p>{data.msg}</p>
-              <button className="rm-retry" onClick={() => getSensorData(true)}>Try again</button>
-            </div>
-          )}
-        </>
-      )}
+      <div className="rm-content">
+        {tab === 'live' && <LiveGauge data={liveData} loading={liveLoading} />}
+        {tab === '24h' && <LineChart24h data={history24h} />}
+        {tab === 'stats' && <DailyStats stats={dailyStats} />}
+        {tab === 'month' && <MonthHeatmap data={heatmapData} />}
+        {tab === 'trends' && <TrendAnalysis data={trendData} />}
+      </div>
     </div>
-  )
+  );
 }

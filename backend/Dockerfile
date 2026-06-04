@@ -1,6 +1,5 @@
 FROM node:18-alpine
 WORKDIR /app
-# Instalamos solo dependencias de producción
 COPY package*.json ./
 RUN npm install --production
 COPY . .

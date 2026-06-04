@@ -1,67 +1,55 @@
 const { Router } = require('express');
-const persistence = require('../data/persistence');
+const gastos = require('../db/gastos');
 
 const router = Router();
 
-function nextId() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-}
-
 router.get('/', (req, res) => {
-  res.json(persistence.loadGastosData());
+  res.json(gastos.getSummary());
+});
+
+router.get('/monthly', (req, res) => {
+  const month = req.query.month || new Date().toISOString().slice(0, 7);
+  const spending = gastos.getMonthlySpending(month);
+  const categories = gastos.getCategoryBreakdown(month);
+  res.json({ month, spending, categories });
+});
+
+router.get('/range', (req, res) => {
+  const { start, end } = req.query;
+  if (!start || !end) return res.status(400).json({ error: 'start and end required' });
+  const data = gastos.getSpendingByDateRange(start, end);
+  res.json(data);
 });
 
 router.post('/', (req, res) => {
-  const { action, amount, description, transactionId } = req.body || {};
-  const data = persistence.loadGastosData();
+  const { action, amount, description, transactionId, startDate, date: paidDate, amount: paidAmount } = req.body || {};
 
   switch (action) {
     case 'spend': {
       const amt = parseFloat(amount);
       if (isNaN(amt) || amt <= 0) return res.status(400).json({ error: 'Invalid amount' });
-      data.balance -= amt;
-      data.transactions.push({
-        id: nextId(),
-        type: 'expense',
-        amount: amt,
-        description: (description || '').trim() || 'Gasto',
-        date: new Date().toISOString(),
-      });
-      break;
+      return res.json(gastos.spend(amt, (description || '').trim() || 'Gasto'));
     }
     case 'deposit': {
       const amt = parseFloat(amount);
       if (isNaN(amt) || amt <= 0) return res.status(400).json({ error: 'Invalid amount' });
-      data.balance += amt;
-      data.transactions.push({
-        id: nextId(),
-        type: 'deposit',
-        amount: amt,
-        description: (description || '').trim() || 'Depósito',
-        date: new Date().toISOString(),
-      });
-      break;
+      return res.json(gastos.deposit(amt, (description || '').trim() || 'Depósito'));
     }
     case 'refund': {
-      const tx = data.transactions.find(t => t.id === transactionId);
-      if (!tx) return res.status(400).json({ error: 'Invalid transaction' });
-      if (tx.type === 'expense') data.balance += tx.amount;
-      else if (tx.type === 'deposit') data.balance -= tx.amount;
-      else return res.status(400).json({ error: 'Invalid transaction type' });
-      data.transactions = data.transactions.filter(t => t.id !== transactionId);
-      break;
+      if (!transactionId) return res.status(400).json({ error: 'transactionId required' });
+      const result = gastos.refund(transactionId);
+      if (!result) return res.status(400).json({ error: 'Invalid transaction' });
+      return res.json(result);
     }
     case 'reset':
-      data.balance = 0;
-      data.transactions = [];
-      data.paidMondays = [];
-      break;
+      return res.json(gastos.reset());
+    case 'setStartDate':
+      return res.json(gastos.setStartDate(startDate));
+    case 'addPaidMonday':
+      return res.json(gastos.addPaidMonday(paidDate, paidAmount || 0));
     default:
       return res.status(400).json({ error: 'Unknown action' });
   }
-
-  persistence.saveGastosData(data);
-  res.json(data);
 });
 
 module.exports = router;

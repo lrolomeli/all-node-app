@@ -1,10 +1,18 @@
 const { Router } = require('express');
-const persistence = require('../data/persistence');
+const maintenance = require('../db/maintenance');
 
 const router = Router();
 
 router.get('/', (req, res) => {
-  res.json(persistence.loadMaintenanceData());
+  res.json(maintenance.getAll());
+});
+
+router.get('/stats', (req, res) => {
+  const { type, start, end, month } = req.query;
+  if (type) return res.json(maintenance.getByType(type));
+  if (start && end) return res.json(maintenance.getByDateRange(start, end));
+  if (month) return res.json(maintenance.getMonthlyCount(month));
+  res.json(maintenance.getCountByType());
 });
 
 router.post('/', (req, res) => {
@@ -12,18 +20,12 @@ router.post('/', (req, res) => {
   if (!record || !record.itemType || !record.itemName || !record.date || !record.time || !record.description) {
     return res.status(400).json({ error: 'Invalid data' });
   }
-  const records = persistence.loadMaintenanceData();
-  records.push(record);
-  persistence.saveMaintenanceData(records);
-  res.json({ success: true });
+  res.json(maintenance.add(record));
 });
 
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  let records = persistence.loadMaintenanceData();
-  records = records.filter((r) => r.id !== id);
-  persistence.saveMaintenanceData(records);
-  res.json({ success: true });
+  res.json(maintenance.remove(id));
 });
 
 module.exports = router;

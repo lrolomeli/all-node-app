@@ -21,11 +21,9 @@ function writeJson(file, data) {
 const files = {
   schedule: path.join(DATA_DIR, 'schedule-data.json'),
   checklist: path.join(DATA_DIR, 'checklist-state.json'),
-  maintenance: path.join(DATA_DIR, 'maintenance-data.json'),
   budget: path.join(DATA_DIR, 'budget-data.json'),
   calisthenicsRutina: path.join(DATA_DIR, 'calisthenics-rutina.csv'),
   calisthenicsProgress: path.join(DATA_DIR, 'calisthenics-progress.json'),
-  gastos: path.join(DATA_DIR, 'gastos-data.json'),
   shoppingList: path.join(DATA_DIR, 'shopping-list.json'),
 };
 
@@ -37,11 +35,11 @@ module.exports = {
     writeJson(files.schedule, data);
   },
 
-  loadMaintenanceData() {
-    return readJson(files.maintenance, []);
+  loadChecklistState() {
+    return readJson(files.checklist, {});
   },
-  saveMaintenanceData(data) {
-    writeJson(files.maintenance, data);
+  saveChecklistState(state) {
+    fs.writeFileSync(files.checklist, JSON.stringify(state));
   },
 
   loadBudgetData() {
@@ -54,13 +52,6 @@ module.exports = {
   },
   saveBudgetData(data) {
     writeJson(files.budget, data);
-  },
-
-  loadChecklistState() {
-    return readJson(files.checklist, {});
-  },
-  saveChecklistState(state) {
-    fs.writeFileSync(files.checklist, JSON.stringify(state));
   },
 
   loadCalisthenicsRutina() {
@@ -80,13 +71,6 @@ module.exports = {
   },
   saveCalisthenicsProgress(data) {
     writeJson(files.calisthenicsProgress, data);
-  },
-
-  loadGastosData() {
-    return readJson(files.gastos, { balance: 0, startDate: null, transactions: [], paidMondays: [] });
-  },
-  saveGastosData(data) {
-    writeJson(files.gastos, data);
   },
 
   loadShoppingListData() {

@@ -5,6 +5,7 @@ const limiter = require('./middleware/rateLimiter');
 const { sessionMiddleware } = require("./middleware/auth");
 
 const authRoutes = require("./routes/auth-routes");
+const sensorRoutes = require('./routes/sensor-routes');
 
 const bdg_r = require('./routes/budget-routes');
 const calis_r = require('./routes/calis-routes');
@@ -35,6 +36,7 @@ app.use(session({
 // ✅ PUBLIC ROUTES
 // =========================
 app.use('/api/auth', authRoutes);
+app.use('/api/sensors', sensorRoutes);
 
 // =========================
 // 🔒 DEFAULT DENY

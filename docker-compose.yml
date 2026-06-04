@@ -16,3 +16,4 @@ services:
       - "3000"
     volumes:
       - ./backend/data:/app/data
+      - ./backend/src/db:/app/src/db

@@ -49,7 +49,6 @@ export default defineConfig({
       usePolling: true, // Forza a revisar cambios en el disco
     },
     proxy: {
-      '/api/sensors': { target: 'http://192.168.100.239', changeOrigin: true },
       '/api': 'http://localhost:3000',
       '/auth': 'http://localhost:3000',
       '/auth.js': 'http://localhost:3000',
