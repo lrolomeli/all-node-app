@@ -3,17 +3,16 @@ version: '3.8'
 services:
   frontend:
     build: ./frontend
+    restart: unless-stopped
     ports:
-      - "80:80"  # Exponemos el puerto 80 al mundo
+      - "3000:80"
     depends_on:
       - backend
 
   backend:
     build: ./backend
-    # NO es necesario exponer el puerto 3000 al mundo (ports)
-    # porque Nginx le hablará por la red interna de Docker.
+    restart: unless-stopped
     expose:
       - "3000"
     volumes:
       - ./backend/data:/app/data
-      - ./backend/src/db:/app/src/db
