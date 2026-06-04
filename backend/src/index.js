@@ -12,7 +12,7 @@ const ESP_PORT = Number(process.env.ESP_PORT) || 80;
 function pollSensor() {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('ESP timeout')), 5000);
-    http.get(`http://${ESP_HOST}:${ESP_PORT}`, (res) => {
+    http.get(`http://${ESP_HOST}:${ESP_PORT}/api/sensors`, (res) => {
       let data = '';
       res.on('data', (chunk) => (data += chunk));
       res.on('end', () => {
