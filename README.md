@@ -14,8 +14,7 @@ A unified Node.js application with multiple mini-apps for productivity, portfoli
 5. **Professional CV** (`/cv`) - Bootstrap-styled professional resume with navigation
 
 ### Health & Fitness Apps
-6. **Diet Tracker** (`/diet`) - Spanish diet plan tracker with checkboxes and local storage persistence
-7. **Gym Routine** (`/gym`) - Weekly workout routine with muscle group exercises, external links, and optional saved media (API)
+6. **Calisthenics** (`/calisthenics`) - Workout routine tracker with progressive levels
 
 ### Productivity
 8. **Gastos** (`/gastos`) - Weekly expense tracker with automatic Monday deposits
@@ -56,8 +55,7 @@ A unified Node.js application with multiple mini-apps for productivity, portfoli
 │   ├── index.html            # Home hub
 │   ├── auth.js               # Client: invite modal + session (global pinAuth)
 │   ├── cv/                   # CV site; subpages in `pages/`
-│   ├── diet/
-│   ├── gym/                  # Includes routine.csv where used
+│   ├── calisthenics/         # Workout routine tracker
 │   └── expediente/           # Roberto Lomelí clinical record (synced via script)
 ├── Dockerfile
 ├── docker-compose.yml

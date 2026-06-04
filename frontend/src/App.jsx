@@ -6,7 +6,6 @@ const APPS = [
   // { href: '/apps/checklist',     icon: '✅', title: 'Checklist' },
   { href: '/apps/maintenance',   icon: '🔧', title: 'Maintenance' },
   { href: '/apps/cv',            icon: '📄', title: 'CV' },
-  { href: '/apps/diet',          icon: '🥗', title: 'Diet' },
   { href: '/apps/calisthenics',  icon: '🤸', title: 'Calistenia' },
   { href: '/apps/gastos',        icon: '💳', title: 'Gastos' },
   { href: '/apps/room-monitor',  icon: '🌡️', title: 'Room Monitor' },
