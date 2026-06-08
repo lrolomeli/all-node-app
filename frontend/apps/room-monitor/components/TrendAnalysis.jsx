@@ -6,12 +6,10 @@ Chart.register(...registerables);
 export default function TrendAnalysis({ data }) {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
-
-  if (!data || !data.daily || data.daily.length === 0) {
-    return <div className="rm-chart-empty">No trend data available</div>;
-  }
+  const hasData = data && data.daily && data.daily.length > 0;
 
   useEffect(() => {
+    if (!hasData) return;
     if (chartRef.current) chartRef.current.destroy();
 
     const labels = data.daily.map(d => {
@@ -84,7 +82,11 @@ export default function TrendAnalysis({ data }) {
     });
 
     return () => { if (chartRef.current) chartRef.current.destroy(); };
-  }, [data]);
+  }, [hasData, data]);
+
+  if (!hasData) {
+    return <div className="rm-chart-empty">No trend data available</div>;
+  }
 
   const anomalyCount = (data.anomalies || []).length;
 

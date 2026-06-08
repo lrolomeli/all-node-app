@@ -285,6 +285,52 @@ body {
 }
 .rm-anomaly-dev { color: #ff6b6b; font-weight: 600; }
 
+.rm-range-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 3px;
+  justify-content: center;
+}
+.rm-range-btn {
+  flex: 1;
+  padding: 6px 0;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.8em;
+  cursor: pointer;
+  border-radius: 7px;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.rm-range-btn:hover { color: rgba(255,255,255,0.8); }
+.rm-range-active {
+  background: rgba(255,255,255,0.15);
+  color: white;
+}
+
+.rm-date-row {
+  margin-bottom: 12px;
+  text-align: center;
+}
+.rm-date-input {
+  padding: 8px 14px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  font-size: 0.9em;
+  font-family: inherit;
+  outline: none;
+  color-scheme: dark;
+}
+.rm-date-input:focus {
+  border-color: #6c63ff;
+}
+
 @media (max-width: 480px) {
   body { padding: 12px; }
   .rm-gauge-value { font-size: 2.2em; }

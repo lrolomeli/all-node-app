@@ -36,6 +36,7 @@ app.use(session({
 // =========================
 app.use('/api/auth', authRoutes);
 app.use('/api/sensors', sensorRoutes);
+app.use('/api/shopping-list', shopping_r);
 
 // =========================
 // 🔒 DEFAULT DENY
@@ -50,6 +51,5 @@ app.use('/api/checklist', chkl_r);
 app.use('/api/maintenance', mntc_r);
 app.use('/api/schedule', sch_r);
 app.use('/api/gastos', gastos_r);
-app.use('/api/shopping-list', shopping_r);
 
 module.exports = app;

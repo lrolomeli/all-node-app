@@ -1,6 +1,8 @@
 const { Router } = require('express');
 const persistence = require('../data/persistence');
 
+const LIST_PASSWORD = process.env.SHOPPING_LIST_PASSWORD || 'hermosos';
+
 const router = Router();
 
 function nextId() {
@@ -12,7 +14,12 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { action, id, text } = req.body || {};
+  const { action, id, text, password } = req.body || {};
+
+  if (password !== LIST_PASSWORD) {
+    return res.status(401).json({ error: 'Invalid password' });
+  }
+
   const data = persistence.loadShoppingListData();
 
   switch (action) {

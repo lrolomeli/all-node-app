@@ -13,14 +13,25 @@ const TABS = [
   { id: 'trends', label: 'Trends' },
 ];
 
+const RANGES = [
+  { id: '1h', label: '1h' },
+  { id: '6h', label: '6h' },
+  { id: '12h', label: '12h' },
+  { id: '24h', label: '24h' },
+  { id: '7d', label: '7d' },
+  { id: '30d', label: '30d' },
+];
+
 export default function RoomMonitor() {
   const [tab, setTab] = useState('live');
   const [liveData, setLiveData] = useState(null);
   const [liveLoading, setLiveLoading] = useState(true);
-  const [history24h, setHistory24h] = useState(null);
+  const [historyData, setHistoryData] = useState(null);
   const [dailyStats, setDailyStats] = useState(null);
   const [heatmapData, setHeatmapData] = useState(null);
   const [trendData, setTrendData] = useState(null);
+  const [range, setRange] = useState('24h');
+  const [statsDate, setStatsDate] = useState(() => new Date().toISOString().slice(0, 10));
 
   const fetchLive = useCallback(async () => {
     try {
@@ -41,20 +52,19 @@ export default function RoomMonitor() {
 
   useEffect(() => {
     if (tab === '24h') {
-      fetch('/api/sensors/history?range=24h')
+      fetch(`/api/sensors/history?range=${range}`)
         .then(r => r.ok ? r.json() : [])
-        .then(setHistory24h);
+        .then(setHistoryData);
     }
-  }, [tab]);
+  }, [tab, range]);
 
   useEffect(() => {
     if (tab === 'stats') {
-      const today = new Date().toISOString().slice(0, 10);
-      fetch(`/api/sensors/stats?date=${today}`)
+      fetch(`/api/sensors/stats?date=${statsDate}`)
         .then(r => r.json())
         .then(setDailyStats);
     }
-  }, [tab]);
+  }, [tab, statsDate]);
 
   useEffect(() => {
     if (tab === 'month') {
@@ -90,8 +100,29 @@ export default function RoomMonitor() {
 
       <div className="rm-content">
         {tab === 'live' && <LiveGauge data={liveData} loading={liveLoading} />}
-        {tab === '24h' && <LineChart24h data={history24h} />}
-        {tab === 'stats' && <DailyStats stats={dailyStats} />}
+
+        {tab === '24h' && (
+          <>
+            <div className="rm-range-bar">
+              {RANGES.map(r => (
+                <button key={r.id} className={`rm-range-btn ${range === r.id ? 'rm-range-active' : ''}`} onClick={() => setRange(r.id)}>
+                  {r.label}
+                </button>
+              ))}
+            </div>
+            <LineChart24h data={historyData} />
+          </>
+        )}
+
+        {tab === 'stats' && (
+          <>
+            <div className="rm-date-row">
+              <input type="date" className="rm-date-input" value={statsDate} onChange={e => setStatsDate(e.target.value)} />
+            </div>
+            <DailyStats stats={dailyStats} />
+          </>
+        )}
+
         {tab === 'month' && <MonthHeatmap data={heatmapData} />}
         {tab === 'trends' && <TrendAnalysis data={trendData} />}
       </div>

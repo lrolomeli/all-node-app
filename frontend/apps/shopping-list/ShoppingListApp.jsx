@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
-import { useAuth } from '../../src/useAuth.js'
 import './shopping-list.css'
+
+let _password = ''
 
 function api(action, body) {
   return fetch('/api/shopping-list', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ action, ...body }),
+    body: JSON.stringify({ action, password: _password, ...body }),
   }).then(r => {
     if (!r.ok) throw new Error('Error')
     return r.json()
@@ -15,15 +16,16 @@ function api(action, body) {
 }
 
 export default function ShoppingListApp() {
-  const { checking } = useAuth()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [unlocked, setUnlocked] = useState(false)
+  const [pw, setPw] = useState('')
+  const [pwError, setPwError] = useState('')
   const [text, setText] = useState('')
   const [editingId, setEditingId] = useState(null)
   const [editText, setEditText] = useState('')
 
   useEffect(() => {
-    if (checking) return
     fetch('/api/shopping-list', { credentials: 'include' })
       .then(r => r.json())
       .then(d => {
@@ -31,7 +33,15 @@ export default function ShoppingListApp() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-  }, [checking])
+  }, [])
+
+  function unlock() {
+    if (!pw.trim()) return
+    _password = pw.trim()
+    setPw('')
+    setPwError('')
+    setUnlocked(true)
+  }
 
   async function addItem() {
     const trimmed = text.trim()
@@ -41,7 +51,9 @@ export default function ShoppingListApp() {
       setData(next)
       setText('')
     } catch {
-      alert('Error saving')
+      alert('Contraseña incorrecta')
+      setUnlocked(false)
+      _password = ''
     }
   }
 
@@ -50,17 +62,21 @@ export default function ShoppingListApp() {
       const next = await api('toggle', { id })
       setData(next)
     } catch {
-      alert('Error saving')
+      alert('Contraseña incorrecta')
+      setUnlocked(false)
+      _password = ''
     }
   }
 
   async function removeItem(id) {
-    if (!confirm('Remove this item?')) return
+    if (!confirm('¿Eliminar este elemento?')) return
     try {
       const next = await api('remove', { id })
       setData(next)
     } catch {
-      alert('Error saving')
+      alert('Contraseña incorrecta')
+      setUnlocked(false)
+      _password = ''
     }
   }
 
@@ -76,7 +92,9 @@ export default function ShoppingListApp() {
       const next = await api('edit', { id, text: trimmed })
       setData(next)
     } catch {
-      alert('Error saving')
+      alert('Contraseña incorrecta')
+      setUnlocked(false)
+      _password = ''
     }
     setEditingId(null)
   }
@@ -85,7 +103,7 @@ export default function ShoppingListApp() {
     setEditingId(null)
   }
 
-  if (checking || loading) return null
+  if (loading) return null
 
   const uncheckedItems = data.items.filter(item => !item.checked)
 
@@ -97,30 +115,47 @@ export default function ShoppingListApp() {
 
       <h1>Shopping List</h1>
 
-      <div className="sl-input-row">
-        <input
-          type="text"
-          className="sl-input"
-          placeholder="Add item..."
-          value={text}
-          onChange={e => setText(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter') addItem() }}
-        />
-        <button className="sl-add-btn" onClick={addItem}>Add</button>
-      </div>
+      {!unlocked ? (
+        <div className="sl-unlock">
+          <input
+            type="password"
+            className="sl-input"
+            placeholder="Contraseña para editar"
+            value={pw}
+            onChange={e => { setPw(e.target.value); setPwError('') }}
+            onKeyDown={e => { if (e.key === 'Enter') unlock() }}
+          />
+          <button className="sl-add-btn" onClick={unlock}>Desbloquear</button>
+          {pwError && <div className="sl-error">{pwError}</div>}
+        </div>
+      ) : (
+        <div className="sl-input-row">
+          <input
+            type="text"
+            className="sl-input"
+            placeholder="Agregar artículo..."
+            value={text}
+            onChange={e => setText(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') addItem() }}
+          />
+          <button className="sl-add-btn" onClick={addItem}>Agregar</button>
+        </div>
+      )}
 
       <div className="sl-list">
         {uncheckedItems.length === 0 ? (
-          <div className="sl-empty">No items yet</div>
+          <div className="sl-empty">Sin artículos aún</div>
         ) : (
           uncheckedItems.map(item => (
             <div key={item.id} className="sl-item">
-              <input
-                type="checkbox"
-                className="sl-checkbox"
-                checked={false}
-                onChange={() => toggleItem(item.id)}
-              />
+              {unlocked && (
+                <input
+                  type="checkbox"
+                  className="sl-checkbox"
+                  checked={false}
+                  onChange={() => toggleItem(item.id)}
+                />
+              )}
               {editingId === item.id ? (
                 <input
                   type="text"
@@ -137,8 +172,12 @@ export default function ShoppingListApp() {
               ) : (
                 <span className="sl-text">{item.text}</span>
               )}
-              <button className="sl-icon-btn" onClick={() => startEdit(item)} title="Edit">✏️</button>
-              <button className="sl-icon-btn sl-del-btn" onClick={() => removeItem(item.id)} title="Remove">🗑️</button>
+              {unlocked && (
+                <>
+                  <button className="sl-icon-btn" onClick={() => startEdit(item)} title="Editar">✏️</button>
+                  <button className="sl-icon-btn sl-del-btn" onClick={() => removeItem(item.id)} title="Eliminar">🗑️</button>
+                </>
+              )}
             </div>
           ))
         )}

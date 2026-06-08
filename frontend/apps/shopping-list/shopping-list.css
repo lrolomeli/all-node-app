@@ -44,6 +44,19 @@ h1 {
   margin-bottom: 20px;
 }
 
+.sl-unlock {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+
+.sl-error {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
 .sl-input {
   flex: 1;
   padding: 10px 14px;
