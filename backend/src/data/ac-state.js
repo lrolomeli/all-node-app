@@ -45,7 +45,8 @@ function get() {
   return state;
 }
 
-function merge(partial = {}) {
+/* Calcula el estado resultante de aplicar `partial` SIN modificar ni persistir. */
+function preview(partial = {}) {
   const next = { ...state };
 
   for (const field of BOOL_FIELDS) {
@@ -63,7 +64,12 @@ function merge(partial = {}) {
   if (SWING_V_RAW[partial.swing_v] !== undefined) next.swing_v = partial.swing_v;
   if (SWING_H_RAW[partial.swing_h] !== undefined) next.swing_h = partial.swing_h;
 
-  state = next;
+  return next;
+}
+
+/* Fija y persiste el estado (solo tras confirmar el ESP). */
+function commit(next) {
+  state = { ...next };
   persistence.saveAcState(state);
   return state;
 }
@@ -88,21 +94,21 @@ function serialize() {
   };
 }
 
-function toEspParams() {
+function toEspParams(target = state) {
   return {
-    power: state.power ? 'on' : 'off',
-    temp: state.temp,
-    mode: state.mode,
-    fan: state.fan,
-    swing_v: state.swing_v,
-    swing_h: state.swing_h,
-    turbo: state.turbo ? 1 : 0,
-    quiet: state.quiet ? 1 : 0,
-    sleep: state.sleep ? 1 : 0,
-    health: state.health ? 1 : 0,
+    power: target.power ? 'on' : 'off',
+    temp: target.temp,
+    mode: target.mode,
+    fan: target.fan,
+    swing_v: target.swing_v,
+    swing_h: target.swing_h,
+    turbo: target.turbo ? 1 : 0,
+    quiet: target.quiet ? 1 : 0,
+    sleep: target.sleep ? 1 : 0,
+    health: target.health ? 1 : 0,
   };
 }
 
 load();
 
-module.exports = { DEFAULTS, get, load, merge, serialize, toEspParams };
+module.exports = { DEFAULTS, get, load, preview, commit, serialize, toEspParams };

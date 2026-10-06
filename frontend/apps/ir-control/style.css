@@ -61,9 +61,15 @@ body {
   border: 1px solid rgba(243, 156, 18, 0.25);
 }
 
+.ir-banner-dirty {
+  color: #f39c12;
+  background: rgba(243, 156, 18, 0.12);
+  border: 1px solid rgba(243, 156, 18, 0.35);
+}
+
 .ir-ac { display: flex; flex-direction: column; gap: 14px; }
 
-.ir-power-row { display: flex; justify-content: center; }
+.ir-power-row { display: flex; justify-content: center; gap: 12px; }
 .ir-power {
   display: flex;
   align-items: center;
@@ -86,7 +92,43 @@ body {
   background: rgba(46, 204, 113, 0.12);
   box-shadow: 0 0 18px rgba(46, 204, 113, 0.25);
 }
+.ir-power-off {
+  color: #ff6b6b;
+  border-color: rgba(255, 71, 87, 0.5);
+  background: rgba(255, 71, 87, 0.12);
+  box-shadow: 0 0 18px rgba(255, 71, 87, 0.2);
+}
 .ir-power:disabled { opacity: 0.5; cursor: default; }
+
+.ir-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+.ir-apply,
+.ir-discard {
+  flex: 1;
+  padding: 14px 0;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ir-apply {
+  border: none;
+  background: rgba(108, 99, 255, 0.75);
+  color: white;
+}
+.ir-apply:hover:not(:disabled) { background: rgba(108, 99, 255, 0.95); }
+.ir-discard {
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.75);
+}
+.ir-discard:hover:not(:disabled) { background: rgba(255,255,255,0.14); color: white; }
+.ir-apply:disabled,
+.ir-discard:disabled { opacity: 0.4; cursor: default; }
 
 .ir-card {
   background: rgba(255,255,255,0.06);

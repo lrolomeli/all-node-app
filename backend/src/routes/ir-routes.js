@@ -17,10 +17,10 @@ router.get('/status', (req, res) => {
 
 router.all('/ac/set', async (req, res) => {
   const partial = { ...(req.query || {}), ...(req.body || {}) };
-  acState.merge(partial);
+  const candidate = acState.preview(partial);
 
   try {
-    const query = buildQuery(acState.toEspParams());
+    const query = buildQuery(acState.toEspParams(candidate));
     await espRequest(`/api/ac/set?${query}`);
   } catch (err) {
     return res.status(503).json({
@@ -31,6 +31,7 @@ router.all('/ac/set', async (req, res) => {
     });
   }
 
+  acState.commit(candidate);
   res.json({ ok: true, state: acState.serialize() });
 });
 

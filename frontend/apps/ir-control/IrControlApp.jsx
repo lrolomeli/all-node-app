@@ -1,10 +1,15 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const DEFAULT_AC = {
   power: false, temp: 24, mode: 'cool', fan: 'med',
   swing_v: 'off', swing_h: 'middle',
   turbo: false, quiet: false, sleep: false, health: false,
 };
+
+const FIELDS = [
+  'power', 'temp', 'mode', 'fan', 'swing_v', 'swing_h',
+  'turbo', 'quiet', 'sleep', 'health',
+];
 
 const MODES = [
   { v: 'auto', l: 'Auto' }, { v: 'cool', l: 'Cool' }, { v: 'dry', l: 'Dry' },
@@ -53,21 +58,28 @@ function mapState(state) {
   };
 }
 
+function sameState(a, b) {
+  return FIELDS.every((field) => a[field] === b[field]);
+}
+
 export default function IrControlApp() {
-  const [ac, setAc] = useState(DEFAULT_AC);
+  const [applied, setApplied] = useState(DEFAULT_AC);
+  const [draft, setDraft] = useState(DEFAULT_AC);
   const [hasState, setHasState] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
-  const acRef = useRef(ac);
-  acRef.current = ac;
+  const [notice, setNotice] = useState('');
 
-  const fetchStatus = useCallback(async () => {
+  const dirty = !sameState(draft, applied);
+
+  const load = useCallback(async () => {
     try {
       const res = await fetch('/api/ir/status', { credentials: 'include' });
       const data = await res.json();
       const mapped = mapState(data);
       if (mapped) {
-        setAc(mapped);
+        setApplied(mapped);
+        setDraft(mapped);
         setHasState(true);
       }
     } catch (err) {
@@ -76,40 +88,57 @@ export default function IrControlApp() {
   }, []);
 
   useEffect(() => {
-    fetchStatus();
-    const interval = setInterval(fetchStatus, 20000);
-    return () => clearInterval(interval);
-  }, [fetchStatus]);
+    load();
+  }, [load]);
 
-  const sendAc = async (partial) => {
-    const next = { ...acRef.current, ...partial };
-    setAc(next);
+  const updateDraft = (partial) => {
+    setDraft((d) => ({ ...d, ...partial }));
+    setError('');
+    setNotice('');
+  };
+
+  const adjustTemp = (delta) => {
+    setDraft((d) => ({ ...d, temp: Math.min(30, Math.max(16, d.temp + delta)) }));
+    setError('');
+    setNotice('');
+  };
+
+  const applyDraft = async () => {
     setSending(true);
     setError('');
+    setNotice('');
     try {
       const res = await fetch('/api/ir/ac/set', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(partial),
+        body: JSON.stringify(draft),
       });
       const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data.error || 'error');
+      if (!res.ok || !data.ok) {
+        throw new Error(data.detail || data.error || 'error');
+      }
       const mapped = mapState(data.state);
-      if (mapped) setAc(mapped);
+      if (mapped) {
+        setApplied(mapped);
+        setDraft(mapped);
+      }
       setHasState(true);
+      setNotice('Aplicado');
     } catch (err) {
-      setError('No se pudo enviar el comando al aire');
-      fetchStatus();
+      setError(`No se pudo enviar: ${err.message}`);
     } finally {
       setSending(false);
     }
   };
 
-  const adjustTemp = (delta) => {
-    const temp = Math.min(30, Math.max(16, acRef.current.temp + delta));
-    if (temp !== acRef.current.temp) sendAc({ temp });
+  const discard = () => {
+    setDraft(applied);
+    setError('');
+    setNotice('');
   };
+
+  const anySending = sending;
 
   return (
     <div className="ir-container">
@@ -119,26 +148,36 @@ export default function IrControlApp() {
       </div>
 
       {error && <div className="ir-banner ir-banner-err">{error}</div>}
+      {notice && !error && <div className="ir-banner ir-banner-ok">{notice}</div>}
+      {dirty && !sending && <div className="ir-banner ir-banner-dirty">Cambios sin aplicar</div>}
       {!hasState && <div className="ir-banner ir-banner-warn">Sin estado previo del aire; se usarán valores por defecto.</div>}
 
       <div className="ir-ac">
         <div className="ir-power-row">
           <button
-            className={`ir-power ${ac.power ? 'ir-power-on' : ''}`}
-            onClick={() => sendAc({ power: !ac.power })}
-            disabled={sending}
+            className={`ir-power ${draft.power ? 'ir-power-on' : ''}`}
+            onClick={() => updateDraft({ power: true })}
+            disabled={anySending}
           >
             <span className="ir-power-icon">⏻</span>
-            {ac.power ? 'Encendido' : 'Apagado'}
+            Encender
+          </button>
+          <button
+            className={`ir-power ${!draft.power ? 'ir-power-off' : ''}`}
+            onClick={() => updateDraft({ power: false })}
+            disabled={anySending}
+          >
+            <span className="ir-power-icon">⭘</span>
+            Apagar
           </button>
         </div>
 
         <div className="ir-card">
           <div className="ir-card-title">Temperatura</div>
           <div className="ir-temp">
-            <button className="ir-temp-btn" onClick={() => adjustTemp(-1)} disabled={sending || ac.temp <= 16}>−</button>
-            <span className="ir-temp-value">{ac.temp}°C</span>
-            <button className="ir-temp-btn" onClick={() => adjustTemp(1)} disabled={sending || ac.temp >= 30}>+</button>
+            <button className="ir-temp-btn" onClick={() => adjustTemp(-1)} disabled={anySending || draft.temp <= 16}>−</button>
+            <span className="ir-temp-value">{draft.temp}°C</span>
+            <button className="ir-temp-btn" onClick={() => adjustTemp(1)} disabled={anySending || draft.temp >= 30}>+</button>
           </div>
         </div>
 
@@ -148,9 +187,9 @@ export default function IrControlApp() {
             {MODES.map((m) => (
               <button
                 key={m.v}
-                className={`ir-seg-btn ${ac.mode === m.v ? 'ir-seg-active' : ''}`}
-                onClick={() => sendAc({ mode: m.v })}
-                disabled={sending}
+                className={`ir-seg-btn ${draft.mode === m.v ? 'ir-seg-active' : ''}`}
+                onClick={() => updateDraft({ mode: m.v })}
+                disabled={anySending}
               >
                 {m.l}
               </button>
@@ -164,9 +203,9 @@ export default function IrControlApp() {
             {FANS.map((f) => (
               <button
                 key={f.v}
-                className={`ir-seg-btn ${ac.fan === f.v ? 'ir-seg-active' : ''}`}
-                onClick={() => sendAc({ fan: f.v })}
-                disabled={sending}
+                className={`ir-seg-btn ${draft.fan === f.v ? 'ir-seg-active' : ''}`}
+                onClick={() => updateDraft({ fan: f.v })}
+                disabled={anySending}
               >
                 {f.l}
               </button>
@@ -180,9 +219,9 @@ export default function IrControlApp() {
             {SWINGS_V.map((s) => (
               <button
                 key={s.v}
-                className={`ir-seg-btn ${ac.swing_v === s.v ? 'ir-seg-active' : ''}`}
-                onClick={() => sendAc({ swing_v: s.v })}
-                disabled={sending}
+                className={`ir-seg-btn ${draft.swing_v === s.v ? 'ir-seg-active' : ''}`}
+                onClick={() => updateDraft({ swing_v: s.v })}
+                disabled={anySending}
               >
                 {s.l}
               </button>
@@ -196,9 +235,9 @@ export default function IrControlApp() {
             {SWINGS_H.map((s) => (
               <button
                 key={s.v}
-                className={`ir-seg-btn ${ac.swing_h === s.v ? 'ir-seg-active' : ''}`}
-                onClick={() => sendAc({ swing_h: s.v })}
-                disabled={sending}
+                className={`ir-seg-btn ${draft.swing_h === s.v ? 'ir-seg-active' : ''}`}
+                onClick={() => updateDraft({ swing_h: s.v })}
+                disabled={anySending}
               >
                 {s.l}
               </button>
@@ -212,9 +251,9 @@ export default function IrControlApp() {
             {TOGGLES.map((t) => (
               <button
                 key={t.v}
-                className={`ir-seg-btn ${ac[t.v] ? 'ir-seg-active' : ''}`}
-                onClick={() => sendAc({ [t.v]: !ac[t.v] })}
-                disabled={sending}
+                className={`ir-seg-btn ${draft[t.v] ? 'ir-seg-active' : ''}`}
+                onClick={() => updateDraft({ [t.v]: !draft[t.v] })}
+                disabled={anySending}
               >
                 {t.l}
               </button>
@@ -222,7 +261,14 @@ export default function IrControlApp() {
           </div>
         </div>
 
-        {sending && <div className="ir-sending">Enviando…</div>}
+        <div className="ir-actions">
+          <button className="ir-apply" onClick={applyDraft} disabled={!dirty || sending}>
+            {sending ? 'Enviando…' : 'Aplicar'}
+          </button>
+          <button className="ir-discard" onClick={discard} disabled={!dirty || sending}>
+            Descartar
+          </button>
+        </div>
       </div>
     </div>
   );

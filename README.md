@@ -21,7 +21,7 @@ A unified Node.js application with multiple mini-apps for productivity, portfoli
 
 ### IoT
 9. **Room Monitor** (`/room-monitor`) - Real-time temperature and humidity with historical charts
-10. **IR Control** (`/ir-control`) - Control the air conditioner and TV through the ESP32 IR emitter
+10. **IR Control** (`/ir-control`) - Control the air conditioner through the ESP32 IR emitter. You edit the full state locally and press **Aplicar** to send it as one absolute IR command; the backend keeps the canonical state (only commits it if the ESP acknowledges) and retries once on transient failures.
 
 ### Family Health
 9. **Expediente Médico** (`/expediente`) - Roberto Lomelí's clinical record (historial, estudios, medicamentos, etc.)
@@ -117,6 +117,10 @@ PORT=3000
 INVITE_PEPPER=change_me_to_something_long_and_random
 # Session lifetime in ms (default 86400000 = 24h)
 SESSION_TTL_MS=86400000
+# ESP32 host for the IR control / room monitor (default 192.168.100.239)
+ESP_HOST=192.168.100.239
+# ESP32 HTTP port (default 80)
+ESP_PORT=80
 ```
 
 ### Managing invites over HTTP (optional)
