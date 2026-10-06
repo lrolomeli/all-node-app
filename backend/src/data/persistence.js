@@ -24,6 +24,7 @@ const files = {
   calisthenicsRutina: path.join(DATA_DIR, 'calisthenics-rutina.csv'),
   calisthenicsProgress: path.join(DATA_DIR, 'calisthenics-progress.json'),
   shoppingList: path.join(DATA_DIR, 'shopping-list.json'),
+  acState: path.join(DATA_DIR, 'ac-state.json'),
 };
 
 module.exports = {
@@ -65,5 +66,12 @@ module.exports = {
   },
   saveShoppingListData(data) {
     writeJson(files.shoppingList, data);
+  },
+
+  loadAcState() {
+    return readJson(files.acState, null);
+  },
+  saveAcState(data) {
+    writeJson(files.acState, data);
   },
 };

@@ -1,11 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { TV_BUTTONS } from './tv-codes';
-
-const TABS = [
-  { id: 'ac', label: 'Aire' },
-  { id: 'tv', label: 'TV' },
-  { id: 'frames', label: 'Tramas' },
-];
 
 const DEFAULT_AC = {
   power: false, temp: 24, mode: 'cool', fan: 'med',
@@ -61,14 +54,10 @@ function mapState(state) {
 }
 
 export default function IrControlApp() {
-  const [tab, setTab] = useState('ac');
   const [ac, setAc] = useState(DEFAULT_AC);
   const [hasState, setHasState] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
-  const [notice, setNotice] = useState('');
-  const [frames, setFrames] = useState([]);
-  const [framesError, setFramesError] = useState('');
   const acRef = useRef(ac);
   acRef.current = ac;
 
@@ -86,32 +75,11 @@ export default function IrControlApp() {
     }
   }, []);
 
-  const fetchFrames = useCallback(async () => {
-    try {
-      const res = await fetch('/api/ir/list', { credentials: 'include' });
-      if (!res.ok) throw new Error('bad status');
-      setFrames(await res.json());
-      setFramesError('');
-    } catch (err) {
-      setFramesError('No se pudieron cargar las tramas');
-    }
-  }, []);
-
   useEffect(() => {
-    if (tab === 'ac') fetchStatus();
-    if (tab === 'frames') fetchFrames();
-  }, [tab, fetchStatus, fetchFrames]);
-
-  useEffect(() => {
-    if (tab !== 'ac') return;
+    fetchStatus();
     const interval = setInterval(fetchStatus, 20000);
     return () => clearInterval(interval);
-  }, [tab, fetchStatus]);
-
-  const flash = (message) => {
-    setNotice(message);
-    setTimeout(() => setNotice(''), 2500);
-  };
+  }, [fetchStatus]);
 
   const sendAc = async (partial) => {
     const next = { ...acRef.current, ...partial };
@@ -123,7 +91,7 @@ export default function IrControlApp() {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(next),
+        body: JSON.stringify(partial),
       });
       const data = await res.json();
       if (!res.ok || !data.ok) throw new Error(data.error || 'error');
@@ -135,23 +103,6 @@ export default function IrControlApp() {
       fetchStatus();
     } finally {
       setSending(false);
-    }
-  };
-
-  const sendCoded = async (path, body, okMessage) => {
-    setError('');
-    try {
-      const res = await fetch(path, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      const data = await res.json();
-      if (!res.ok || data.ok === false) throw new Error(data.error || 'error');
-      flash(okMessage);
-    } catch (err) {
-      setError('No se pudo enviar el comando IR');
     }
   };
 
@@ -167,174 +118,112 @@ export default function IrControlApp() {
         <h1>IR Control</h1>
       </div>
 
-      <div className="ir-tabs">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            className={`ir-tab ${tab === t.id ? 'ir-tab-active' : ''}`}
-            onClick={() => setTab(t.id)}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
       {error && <div className="ir-banner ir-banner-err">{error}</div>}
-      {notice && <div className="ir-banner ir-banner-ok">{notice}</div>}
+      {!hasState && <div className="ir-banner ir-banner-warn">Sin estado previo del aire; se usarán valores por defecto.</div>}
 
-      {tab === 'ac' && (
-        <div className="ir-ac">
-          {!hasState && <div className="ir-banner ir-banner-warn">Sin estado previo del aire; se usarán valores por defecto.</div>}
-
-          <div className="ir-power-row">
-            <button
-              className={`ir-power ${ac.power ? 'ir-power-on' : ''}`}
-              onClick={() => sendAc({ power: !ac.power })}
-              disabled={sending}
-            >
-              <span className="ir-power-icon">⏻</span>
-              {ac.power ? 'Encendido' : 'Apagado'}
-            </button>
-          </div>
-
-          <div className="ir-card">
-            <div className="ir-card-title">Temperatura</div>
-            <div className="ir-temp">
-              <button className="ir-temp-btn" onClick={() => adjustTemp(-1)} disabled={sending || ac.temp <= 16}>−</button>
-              <span className="ir-temp-value">{ac.temp}°C</span>
-              <button className="ir-temp-btn" onClick={() => adjustTemp(1)} disabled={sending || ac.temp >= 30}>+</button>
-            </div>
-          </div>
-
-          <div className="ir-card">
-            <div className="ir-card-title">Modo</div>
-            <div className="ir-seg">
-              {MODES.map((m) => (
-                <button
-                  key={m.v}
-                  className={`ir-seg-btn ${ac.mode === m.v ? 'ir-seg-active' : ''}`}
-                  onClick={() => sendAc({ mode: m.v })}
-                  disabled={sending}
-                >
-                  {m.l}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="ir-card">
-            <div className="ir-card-title">Ventilador</div>
-            <div className="ir-seg">
-              {FANS.map((f) => (
-                <button
-                  key={f.v}
-                  className={`ir-seg-btn ${ac.fan === f.v ? 'ir-seg-active' : ''}`}
-                  onClick={() => sendAc({ fan: f.v })}
-                  disabled={sending}
-                >
-                  {f.l}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="ir-card">
-            <div className="ir-card-title">Swing vertical</div>
-            <div className="ir-seg ir-seg-wrap">
-              {SWINGS_V.map((s) => (
-                <button
-                  key={s.v}
-                  className={`ir-seg-btn ${ac.swing_v === s.v ? 'ir-seg-active' : ''}`}
-                  onClick={() => sendAc({ swing_v: s.v })}
-                  disabled={sending}
-                >
-                  {s.l}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="ir-card">
-            <div className="ir-card-title">Swing horizontal</div>
-            <div className="ir-seg ir-seg-wrap">
-              {SWINGS_H.map((s) => (
-                <button
-                  key={s.v}
-                  className={`ir-seg-btn ${ac.swing_h === s.v ? 'ir-seg-active' : ''}`}
-                  onClick={() => sendAc({ swing_h: s.v })}
-                  disabled={sending}
-                >
-                  {s.l}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="ir-card">
-            <div className="ir-card-title">Funciones</div>
-            <div className="ir-seg ir-seg-wrap">
-              {TOGGLES.map((t) => (
-                <button
-                  key={t.v}
-                  className={`ir-seg-btn ${ac[t.v] ? 'ir-seg-active' : ''}`}
-                  onClick={() => sendAc({ [t.v]: !ac[t.v] })}
-                  disabled={sending}
-                >
-                  {t.l}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {sending && <div className="ir-sending">Enviando…</div>}
+      <div className="ir-ac">
+        <div className="ir-power-row">
+          <button
+            className={`ir-power ${ac.power ? 'ir-power-on' : ''}`}
+            onClick={() => sendAc({ power: !ac.power })}
+            disabled={sending}
+          >
+            <span className="ir-power-icon">⏻</span>
+            {ac.power ? 'Encendido' : 'Apagado'}
+          </button>
         </div>
-      )}
 
-      {tab === 'tv' && (
-        <div className="ir-tv">
-          <p className="ir-hint">
-            Configura los códigos NEC en <code>tv-codes.js</code>. Los botones sin código están deshabilitados.
-          </p>
-          <div className="ir-tv-grid">
-            {TV_BUTTONS.map((b) => {
-              const ready = b.addr != null && b.cmd != null;
-              return (
-                <button
-                  key={b.label}
-                  className="ir-tv-btn"
-                  disabled={!ready || sending}
-                  onClick={() => sendCoded('/api/ir/nec', { addr: b.addr, cmd: b.cmd }, `${b.label} enviado`)}
-                >
-                  {b.label}
-                </button>
-              );
-            })}
+        <div className="ir-card">
+          <div className="ir-card-title">Temperatura</div>
+          <div className="ir-temp">
+            <button className="ir-temp-btn" onClick={() => adjustTemp(-1)} disabled={sending || ac.temp <= 16}>−</button>
+            <span className="ir-temp-value">{ac.temp}°C</span>
+            <button className="ir-temp-btn" onClick={() => adjustTemp(1)} disabled={sending || ac.temp >= 30}>+</button>
           </div>
         </div>
-      )}
 
-      {tab === 'frames' && (
-        <div className="ir-frames">
-          {framesError && <div className="ir-banner ir-banner-err">{framesError}</div>}
-          <button className="ir-refresh" onClick={fetchFrames}>Actualizar</button>
-          {frames.length === 0 && !framesError && <div className="ir-empty">No hay tramas guardadas</div>}
-          {frames.map((f) => (
-            <div key={f.name} className="ir-frame-row">
-              <div className="ir-frame-info">
-                <span className="ir-frame-name">{f.name}</span>
-                <span className="ir-frame-meta">{f.len} entradas{f.hasState ? ' · con estado' : ''}</span>
-              </div>
+        <div className="ir-card">
+          <div className="ir-card-title">Modo</div>
+          <div className="ir-seg">
+            {MODES.map((m) => (
               <button
-                className="ir-frame-send"
+                key={m.v}
+                className={`ir-seg-btn ${ac.mode === m.v ? 'ir-seg-active' : ''}`}
+                onClick={() => sendAc({ mode: m.v })}
                 disabled={sending}
-                onClick={() => sendCoded('/api/ir/send', { name: f.name }, `Trama ${f.name} enviada`)}
               >
-                Enviar
+                {m.l}
               </button>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      )}
+
+        <div className="ir-card">
+          <div className="ir-card-title">Ventilador</div>
+          <div className="ir-seg">
+            {FANS.map((f) => (
+              <button
+                key={f.v}
+                className={`ir-seg-btn ${ac.fan === f.v ? 'ir-seg-active' : ''}`}
+                onClick={() => sendAc({ fan: f.v })}
+                disabled={sending}
+              >
+                {f.l}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="ir-card">
+          <div className="ir-card-title">Swing vertical</div>
+          <div className="ir-seg ir-seg-wrap">
+            {SWINGS_V.map((s) => (
+              <button
+                key={s.v}
+                className={`ir-seg-btn ${ac.swing_v === s.v ? 'ir-seg-active' : ''}`}
+                onClick={() => sendAc({ swing_v: s.v })}
+                disabled={sending}
+              >
+                {s.l}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="ir-card">
+          <div className="ir-card-title">Swing horizontal</div>
+          <div className="ir-seg ir-seg-wrap">
+            {SWINGS_H.map((s) => (
+              <button
+                key={s.v}
+                className={`ir-seg-btn ${ac.swing_h === s.v ? 'ir-seg-active' : ''}`}
+                onClick={() => sendAc({ swing_h: s.v })}
+                disabled={sending}
+              >
+                {s.l}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="ir-card">
+          <div className="ir-card-title">Funciones</div>
+          <div className="ir-seg ir-seg-wrap">
+            {TOGGLES.map((t) => (
+              <button
+                key={t.v}
+                className={`ir-seg-btn ${ac[t.v] ? 'ir-seg-active' : ''}`}
+                onClick={() => sendAc({ [t.v]: !ac[t.v] })}
+                disabled={sending}
+              >
+                {t.l}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {sending && <div className="ir-sending">Enviando…</div>}
+      </div>
     </div>
   );
 }
