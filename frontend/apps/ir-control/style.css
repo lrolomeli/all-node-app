@@ -100,35 +100,32 @@ body {
 }
 .ir-power:disabled { opacity: 0.5; cursor: default; }
 
-.ir-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 4px;
+.ir-send-bar {
+  margin-bottom: 14px;
 }
-.ir-apply,
-.ir-discard {
-  flex: 1;
-  padding: 14px 0;
+.ir-send {
+  display: block;
+  width: 100%;
+  padding: 15px 0;
+  border: none;
   border-radius: 14px;
+  background: rgba(108, 99, 255, 0.8);
+  color: white;
   font-family: inherit;
-  font-size: 1em;
+  font-size: 1.05em;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.15s;
 }
-.ir-apply {
-  border: none;
-  background: rgba(108, 99, 255, 0.75);
-  color: white;
+.ir-send:hover:not(:disabled) { background: rgba(108, 99, 255, 1); }
+.ir-send:disabled { opacity: 0.45; cursor: default; }
+.ir-send-hint {
+  margin-top: 8px;
+  text-align: center;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.78em;
+  line-height: 1.4;
 }
-.ir-apply:hover:not(:disabled) { background: rgba(108, 99, 255, 0.95); }
-.ir-discard {
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.06);
-  color: rgba(255,255,255,0.75);
-}
-.ir-discard:hover:not(:disabled) { background: rgba(255,255,255,0.14); color: white; }
-.ir-apply:disabled,
-.ir-discard:disabled { opacity: 0.4; cursor: default; }
 
 .ir-card {
   background: rgba(255,255,255,0.06);

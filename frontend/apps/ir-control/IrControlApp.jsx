@@ -124,18 +124,12 @@ export default function IrControlApp() {
         setDraft(mapped);
       }
       setHasState(true);
-      setNotice('Aplicado');
+      setNotice('Comando enviado');
     } catch (err) {
       setError(`No se pudo enviar: ${err.message}`);
     } finally {
       setSending(false);
     }
-  };
-
-  const discard = () => {
-    setDraft(applied);
-    setError('');
-    setNotice('');
   };
 
   const anySending = sending;
@@ -151,6 +145,13 @@ export default function IrControlApp() {
       {notice && !error && <div className="ir-banner ir-banner-ok">{notice}</div>}
       {dirty && !sending && <div className="ir-banner ir-banner-dirty">Cambios sin aplicar</div>}
       {!hasState && <div className="ir-banner ir-banner-warn">Sin estado previo del aire; se usarán valores por defecto.</div>}
+
+      <div className="ir-send-bar">
+        <button className="ir-send" onClick={applyDraft} disabled={sending}>
+          {sending ? 'Enviando…' : 'Enviar'}
+        </button>
+        <p className="ir-send-hint">El IR es de solo envío: si el equipo no respondió, vuelve a pulsar Enviar.</p>
+      </div>
 
       <div className="ir-ac">
         <div className="ir-power-row">
@@ -261,14 +262,6 @@ export default function IrControlApp() {
           </div>
         </div>
 
-        <div className="ir-actions">
-          <button className="ir-apply" onClick={applyDraft} disabled={!dirty || sending}>
-            {sending ? 'Enviando…' : 'Aplicar'}
-          </button>
-          <button className="ir-discard" onClick={discard} disabled={!dirty || sending}>
-            Descartar
-          </button>
-        </div>
       </div>
     </div>
   );
