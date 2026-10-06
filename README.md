@@ -21,6 +21,7 @@ A unified Node.js application with multiple mini-apps for productivity, portfoli
 
 ### IoT
 9. **Room Monitor** (`/room-monitor`) - Real-time temperature and humidity with historical charts
+10. **IR Control** (`/ir-control`) - Control the air conditioner and TV through the ESP32 IR emitter
 
 ### Family Health
 9. **Expediente Médico** (`/expediente`) - Roberto Lomelí's clinical record (historial, estudios, medicamentos, etc.)

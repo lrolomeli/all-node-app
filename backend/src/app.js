@@ -6,6 +6,7 @@ const { sessionMiddleware } = require("./middleware/auth");
 
 const authRoutes = require("./routes/auth-routes");
 const sensorRoutes = require('./routes/sensor-routes');
+const irRoutes = require('./routes/ir-routes');
 
 const calis_r = require('./routes/calis-routes');
 const chkl_r = require('./routes/checklist-routes');
@@ -51,5 +52,6 @@ app.use('/api/checklist', chkl_r);
 app.use('/api/maintenance', mntc_r);
 app.use('/api/schedule', sch_r);
 app.use('/api/gastos', gastos_r);
+app.use('/api/ir', irRoutes);
 
 module.exports = app;

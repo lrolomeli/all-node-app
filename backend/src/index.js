@@ -4,33 +4,13 @@ const gastosCron = require('./cron/gastos-cron');
 const sensors = require('./db/sensors');
 const gastos = require('./db/gastos');
 const maintenance = require('./db/maintenance');
-const http = require('http');
+const { espRequest } = require('./esp');
 
-const ESP_HOST = process.env.ESP_HOST || '192.168.100.239';
-const ESP_PORT = Number(process.env.ESP_PORT) || 80;
-
-function pollSensor() {
-  return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => reject(new Error('ESP timeout')), 5000);
-    http.get(`http://${ESP_HOST}:${ESP_PORT}/api/sensors`, (res) => {
-      let data = '';
-      res.on('data', (chunk) => (data += chunk));
-      res.on('end', () => {
-        clearTimeout(timeout);
-        try {
-          const parsed = JSON.parse(data);
-          sensors.insertReading(parsed.temperature, parsed.humidity, parsed.unit || 'celsius', new Date().toISOString(), 'auto');
-          console.log(`[sensor] stored: ${parsed.temperature}°${parsed.unit || 'celsius'}, ${parsed.humidity}%`);
-          resolve(parsed);
-        } catch {
-          reject(new Error('Invalid ESP response'));
-        }
-      });
-    }).on('error', (err) => {
-      clearTimeout(timeout);
-      reject(err);
-    });
-  });
+async function pollSensor() {
+  const parsed = await espRequest('/api/sensors');
+  sensors.insertReading(parsed.temperature, parsed.humidity, parsed.unit || 'celsius', new Date().toISOString(), 'auto');
+  console.log(`[sensor] stored: ${parsed.temperature}°${parsed.unit || 'celsius'}, ${parsed.humidity}%`);
+  return parsed;
 }
 
 async function start() {

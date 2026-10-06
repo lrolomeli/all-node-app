@@ -9,6 +9,7 @@ const APPS = [
   { href: '/apps/calisthenics',  icon: '🤸', title: 'Calistenia' },
   { href: '/apps/gastos',        icon: '💳', title: 'Gastos' },
   { href: '/apps/room-monitor',  icon: '🌡️', title: 'Room Monitor' },
+  { href: '/apps/ir-control',    icon: '🎛️', title: 'IR Control' },
   { href: '/apps/shopping-list', icon: '🛒', title: 'Shopping List' },
 ]
 

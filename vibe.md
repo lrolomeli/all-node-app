@@ -51,3 +51,4 @@ frontend/
 | cv | no | none |
 | gastos | yes | SQLite |
 | room-monitor | yes | SQLite |
+| ir-control | yes | ESP32 (IR) |
