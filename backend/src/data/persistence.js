@@ -25,6 +25,8 @@ const files = {
   calisthenicsProgress: path.join(DATA_DIR, 'calisthenics-progress.json'),
   shoppingList: path.join(DATA_DIR, 'shopping-list.json'),
   acState: path.join(DATA_DIR, 'ac-state.json'),
+  climateConfig: path.join(DATA_DIR, 'climate-config.json'),
+  climateLog: path.join(DATA_DIR, 'climate-log.json'),
 };
 
 module.exports = {
@@ -73,5 +75,19 @@ module.exports = {
   },
   saveAcState(data) {
     writeJson(files.acState, data);
+  },
+
+  loadClimateConfig() {
+    return readJson(files.climateConfig, null);
+  },
+  saveClimateConfig(data) {
+    writeJson(files.climateConfig, data);
+  },
+
+  loadClimateLog() {
+    return readJson(files.climateLog, []);
+  },
+  saveClimateLog(data) {
+    writeJson(files.climateLog, data);
   },
 };

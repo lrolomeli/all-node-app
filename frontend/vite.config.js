@@ -7,7 +7,7 @@ const cleanUrls = () => ({
   configureServer(server) {
     server.middlewares.use((req, res, next) => {
       // Redirección física para asegurar que el navegador cargue los assets correctamente
-      if (req.url === '/apps/schedule' || req.url === '/apps/checklist' || req.url === '/apps/cv' || req.url === '/apps/calisthenics' || req.url === '/apps/maintenance' || req.url === '/apps/gastos' || req.url === '/apps/room-monitor' || req.url === '/apps/shopping-list' || req.url === '/apps/ir-control') {
+      if (req.url === '/apps/schedule' || req.url === '/apps/checklist' || req.url === '/apps/cv' || req.url === '/apps/calisthenics' || req.url === '/apps/maintenance' || req.url === '/apps/gastos' || req.url === '/apps/room-monitor' || req.url === '/apps/shopping-list' || req.url === '/apps/ir-control' || req.url === '/apps/climate') {
         res.statusCode = 301;
         res.setHeader('Location', `${req.url}/`);
         res.end();
@@ -38,6 +38,7 @@ export default defineConfig({
         'room-monitor': resolve(__dirname, 'apps/room-monitor/index.html'),
         'shopping-list': resolve(__dirname, 'apps/shopping-list/index.html'),
         'ir-control': resolve(__dirname, 'apps/ir-control/index.html'),
+        climate: resolve(__dirname, 'apps/climate/index.html'),
       },
     },
   },

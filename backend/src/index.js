@@ -1,6 +1,7 @@
 const app = require('./app');
 const cron = require('node-cron');
 const gastosCron = require('./cron/gastos-cron');
+const climate = require('./automation/climate');
 const sensors = require('./db/sensors');
 const gastos = require('./db/gastos');
 const maintenance = require('./db/maintenance');
@@ -23,6 +24,14 @@ async function start() {
 
   pollSensor().catch(() => console.log('[sensor] initial poll failed, will retry'));
   cron.schedule('*/5 * * * *', () => pollSensor().catch((err) => console.log('[sensor] poll failed:', err.message)));
+
+  cron.schedule('* * * * *', async () => {
+    const cfg = climate.getConfig();
+    if (cfg.enabled && cfg.humidity.enabled) {
+      await pollSensor().catch((err) => console.log('[climate] sensor poll failed:', err.message));
+    }
+    await climate.tick().catch((err) => console.log('[climate] tick failed:', err.message));
+  });
 
   const PORT = Number(process.env.PORT) || 3000;
   const server = app.listen(PORT, () => {

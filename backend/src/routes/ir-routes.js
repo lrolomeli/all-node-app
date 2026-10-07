@@ -1,15 +1,9 @@
 const { Router } = require('express');
-const { espRequest } = require('../esp');
 const acState = require('../data/ac-state');
+const { applyAcState } = require('../services/ac');
+const climate = require('../automation/climate');
 
 const router = Router();
-
-function buildQuery(params) {
-  return Object.entries(params)
-    .filter(([, value]) => value !== undefined && value !== null && value !== '')
-    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-    .join('&');
-}
 
 router.get('/status', (req, res) => {
   res.json(acState.serialize());
@@ -17,11 +11,9 @@ router.get('/status', (req, res) => {
 
 router.all('/ac/set', async (req, res) => {
   const partial = { ...(req.query || {}), ...(req.body || {}) };
-  const candidate = acState.preview(partial);
 
   try {
-    const query = buildQuery(acState.toEspParams(candidate));
-    await espRequest(`/api/ac/set?${query}`);
+    await applyAcState(partial);
   } catch (err) {
     return res.status(503).json({
       ok: false,
@@ -31,7 +23,7 @@ router.all('/ac/set', async (req, res) => {
     });
   }
 
-  acState.commit(candidate);
+  climate.noteManualOverride();
   res.json({ ok: true, state: acState.serialize() });
 });
 
