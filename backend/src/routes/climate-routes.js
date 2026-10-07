@@ -3,20 +3,17 @@ const climate = require('../automation/climate');
 
 const router = Router();
 
-router.get('/config', (req, res) => {
-  res.json(climate.getConfig());
-});
-
-router.post('/config', (req, res) => {
-  if (!req.body || typeof req.body !== 'object') {
-    return res.status(400).json({ error: 'Invalid config' });
-  }
-  const config = climate.saveConfig(req.body);
-  res.json({ ok: true, config });
-});
-
 router.get('/status', (req, res) => {
   res.json(climate.status());
+});
+
+router.post('/enabled', (req, res) => {
+  const { enabled } = req.body || {};
+  if (typeof enabled !== 'boolean') {
+    return res.status(400).json({ error: 'enabled must be a boolean' });
+  }
+  const value = climate.setEnabled(enabled);
+  res.json({ ok: true, enabled: value, status: climate.status() });
 });
 
 router.get('/log', (req, res) => {
