@@ -30,6 +30,20 @@ function AtRoutine({ routine }) {
 
 function RampRoutine({ routine }) {
   const end = routine.endAction === 'off' ? 'y apagar' : 'y mantener';
+  if (routine.adaptive) {
+    return (
+      <li className="cl-rule">
+        <div className="cl-rule-head">
+          <span className="cl-rule-name">{routine.name}</span>
+          <span className="cl-rule-time">{routine.start}–{routine.end}</span>
+        </div>
+        <div className="cl-rule-detail">
+          {daysText(routine.days)} · objetivo {routine.fromTemp}° a {routine.toTemp}° durante la noche
+          {' '}(+1° cada {routine.stepMinutes} min). El setpoint se ajusta solo según la temperatura real, {end}
+        </div>
+      </li>
+    );
+  }
   return (
     <li className="cl-rule">
       <div className="cl-rule-head">
@@ -99,6 +113,7 @@ export default function ClimateApp() {
 
   const sensor = status.sensor;
   const ac = status.ac;
+  const control = status.control;
 
   return (
     <div className="cl-container">
@@ -136,6 +151,25 @@ export default function ClimateApp() {
           )}
         </div>
       </div>
+
+      {control && (
+        <div className="cl-card">
+          <div className="cl-card-title">Control en vivo</div>
+          <div className="cl-control">
+            <div className="cl-control-row"><span>Objetivo del cuarto</span><b>{control.targetTemp}°C</b></div>
+            <div className="cl-control-row"><span>Temperatura real</span><b>{control.roomTemp == null ? '—' : `${control.roomTemp}°C`}</b></div>
+            <div className="cl-control-row">
+              <span>Ritmo</span>
+              <b>{control.slope > 0 ? '+' : ''}{control.slope} °C/min</b>
+            </div>
+            <div className="cl-control-row">
+              <span>Setpoint del AC</span>
+              <b>{control.setpoint}°C · Fan {FAN_LABELS[control.fan] || control.fan}</b>
+            </div>
+          </div>
+          <div className="cl-rule-detail">{control.reason}</div>
+        </div>
+      )}
 
       <div className="cl-card">
         <div className="cl-card-title">Qué hace por ti</div>

@@ -121,6 +121,8 @@ SESSION_TTL_MS=86400000
 ESP_HOST=192.168.100.239
 # ESP32 HTTP port (default 80)
 ESP_PORT=80
+# Timezone used to interpret Climate automation schedules (default America/Mexico_City)
+CLIMATE_TZ=America/Mexico_City
 ```
 
 ### Managing invites over HTTP (optional)

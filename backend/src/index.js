@@ -27,7 +27,7 @@ async function start() {
 
   cron.schedule('* * * * *', async () => {
     const cfg = climate.getConfig();
-    if (cfg.enabled && cfg.humidity.enabled) {
+    if (cfg.enabled) {
       await pollSensor().catch((err) => console.log('[climate] sensor poll failed:', err.message));
     }
     await climate.tick().catch((err) => console.log('[climate] tick failed:', err.message));
