@@ -1,7 +1,0 @@
-node_modules/
-dist/
-.env
-*.log
-backend/data/*.json
-backend/data/*.csv
-backend/data/*.db

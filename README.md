@@ -26,12 +26,11 @@ frontend/               # Landing (Vite + React). Única app que se compila y de
 legacy/                 # Apps archivadas (no se compilan ni despliegan)
   frontend/apps/        # schedule, calisthenics, cv, gastos, maintenance, checklist, shopping-list
   backend/              # rutas/DB de esas apps
-room-automation/        # App de aire (se moverá a su propio repo)
-  backend/              # Express: sensores, IR, climate, temporizador
-  frontend/             # UI (Vite + React)
-  docker-compose.yml
 docker-compose.yml      # Solo la landing
 ```
+
+> Room Automation ya vive en su propio repo:
+> https://github.com/lrolomeli/room-automation
 
 ## Desarrollo
 
@@ -56,6 +55,5 @@ Sirve la landing en `http://localhost:3000`.
 
 ## Room Automation
 
-Ver [`room-automation/README.md`](room-automation/README.md). Es un proyecto
-independiente con su propio backend y `docker-compose.yml`, pensado para
-extraerse a su propio repositorio.
+Proyecto independiente (backend + frontend + `docker-compose.yml`) extraído a su
+propio repositorio: https://github.com/lrolomeli/room-automation
