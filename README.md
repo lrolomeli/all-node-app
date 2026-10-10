@@ -11,6 +11,7 @@ es un `<a class="service-card" href="...">` con su icono SVG inline.
 
 - **Room Automation** — `https://ra.luisrlp.com`
 - **Movies** — `https://movies.luisrlp.com`
+- **Photos** — `https://photos.luisrlp.com`
 - **Fut** — `https://fut.luisrlp.com`
 - **Mantenimientos** — documento en la nube
 - **CV / Portafolio** — `https://cv.luisrlp.com`
