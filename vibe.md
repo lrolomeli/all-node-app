@@ -9,11 +9,11 @@ build y sin backend: solo enlaces a los servicios. Las apps viejas viven en
 - **Deploy:** Docker + Nginx (copia estática, sin etapa de build)
 
 ## Estructura
-La página es vertical: nav sticky → hero → bento grid (1 tile por app) → carrusel → footer.
+La página es vertical: nav sticky → hero → secciones por app (zig-zag image+link) → carrusel → footer.
 ```
 frontend/                 # landing (lo único que se despliega)
-  index.html              # nav + hero + bento + carrusel + SVG inline (← editar aquí)
-  styles.css              # tema oscuro, bento grid, carrusel CSS, reveal
+  index.html              # nav + hero + secciones + carrusel + SVG inline (← editar aquí)
+  styles.css              # tema oscuro, secciones zig-zag, carrusel CSS, reveal
   app.js                  # IntersectionObserver (reveal + nav activo), año
   nginx.conf, Dockerfile
 legacy/                   # apps archivadas (no se compilan)
@@ -27,6 +27,7 @@ Room Automation vive en su propio repo: https://github.com/lrolomeli/room-automa
 ## Convenciones
 - Sin dependencias ni bundler: se edita directamente `frontend/index.html`.
 - Iconos como SVG inline (no emoji, sin librería).
+- Al tocar `styles.css`/`app.js` súbelo el `?v=` en `index.html` (el HTML va `no-cache`, los assets con caché larga).
 - Carrusel con animación CSS pura (se pausa al hover/foco; respeta `prefers-reduced-motion`).
 - Reveal on scroll: `.reveal` se oculta solo con la clase `.js` (sin JS el contenido se ve igual).
 - Tipografía vía Google Fonts (Sora + Inter).

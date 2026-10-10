@@ -19,8 +19,8 @@ es un `<a class="service-card" href="...">` con su icono SVG inline.
 
 ```
 frontend/               # Landing estática (única cosa que se despliega)
-  index.html            # ← edita aquí los enlaces/servicios y textos (nav, hero, bento, carrusel)
-  styles.css            # Estilos (tema oscuro, bento grid, carrusel CSS, reveal)
+  index.html            # ← edita aquí los enlaces/servicios y textos
+  styles.css            # Estilos (tema oscuro, secciones zig-zag, arte CSS, carrusel, reveal)
   app.js                # JS vanilla: reveal on scroll, nav activo, año
   nginx.conf
   Dockerfile            # Nginx + copia de archivos (sin build)
@@ -32,6 +32,10 @@ docker-compose.yml      # Solo la landing
 
 > Room Automation ya vive en su propio repo:
 > https://github.com/lrolomeli/room-automation
+
+> **Caché:** el HTML se sirve con `no-cache`, y CSS/JS con caché larga. Al editar
+> `styles.css` o `app.js`, sube el `?v=` en las etiquetas `<link>`/`<script>` de
+> `index.html` (p. ej. `?v=4`) para forzar la recarga.
 
 ## Desarrollo
 
