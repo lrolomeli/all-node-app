@@ -1,11 +1,13 @@
 # luisrlp-web
 
 Página web personal que enlaza a los distintos servicios y proyectos. Es una
-landing estática (React + Vite, servida por Nginx): no tiene backend ni login.
+landing **estática en HTML/CSS/JS puro**, servida por Nginx: sin framework, sin
+build y sin backend.
 
 ## Servicios
 
-Los enlaces se editan en [`frontend/src/services.js`](frontend/src/services.js):
+Los enlaces están en [`frontend/index.html`](frontend/index.html). Cada tarjeta
+es un `<a class="service-card" href="...">` con su icono SVG inline.
 
 - **Room Automation** — `https://ra.luisrlp.com` (monitor + control IR + automatización del aire)
 - **Movies** — `https://movies.luisrlp.com`
@@ -16,13 +18,11 @@ Los enlaces se editan en [`frontend/src/services.js`](frontend/src/services.js):
 ## Estructura
 
 ```
-frontend/               # Landing (Vite + React). Única app que se compila y despliega.
-  src/
-    App.jsx             # Landing
-    services.js         # ← edita aquí los enlaces/servicios
-    app.css
+frontend/               # Landing estática (única cosa que se despliega)
+  index.html            # ← edita aquí los enlaces/servicios y textos
+  styles.css            # Estilos (tema oscuro + carrusel CSS)
   nginx.conf
-  Dockerfile
+  Dockerfile            # Nginx + copia de archivos (sin build)
 legacy/                 # Apps archivadas (no se compilan ni despliegan)
   frontend/apps/        # schedule, calisthenics, cv, gastos, maintenance, checklist, shopping-list
   backend/              # rutas/DB de esas apps
@@ -34,16 +34,13 @@ docker-compose.yml      # Solo la landing
 
 ## Desarrollo
 
-```bash
-npm install --prefix frontend
-npm run dev            # http://localhost:5173
-```
-
-## Build
+Solo necesitas un servidor estático:
 
 ```bash
-npm run build          # genera frontend/dist
+npm run dev            # python3 -m http.server 5173 --directory frontend
 ```
+
+Abre `http://localhost:5173`.
 
 ## Deploy (Docker)
 

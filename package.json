@@ -2,8 +2,8 @@
   "name": "luisrlp-web",
   "private": true,
   "scripts": {
-    "dev": "npm run dev --prefix frontend",
-    "build": "npm run build --prefix frontend",
-    "preview": "npm run preview --prefix frontend"
+    "dev": "python3 -m http.server 5173 --directory frontend",
+    "serve": "docker compose up -d --build",
+    "stop": "docker compose down"
   }
 }
