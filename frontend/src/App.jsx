@@ -1,54 +1,43 @@
-import { useState, useEffect } from 'react'
-import Login from './Login.jsx'
-
-const APPS = [
-  { href: '/apps/schedule',      icon: '📅', title: 'Schedule' },
-  // { href: '/apps/checklist',     icon: '✅', title: 'Checklist' },
-  { href: '/apps/maintenance',   icon: '🔧', title: 'Maintenance' },
-  { href: '/apps/cv',            icon: '📄', title: 'CV' },
-  { href: '/apps/calisthenics',  icon: '🤸', title: 'Calistenia' },
-  { href: '/apps/gastos',        icon: '💳', title: 'Gastos' },
-  { href: '/apps/room-monitor',  icon: '🌡️', title: 'Room Monitor' },
-  { href: '/apps/ir-control',    icon: '🎛️', title: 'IR Control' },
-  { href: '/apps/climate',       icon: '🌡️', title: 'Climate' },
-  { href: '/apps/shopping-list', icon: '🛒', title: 'Shopping List' },
-]
+import { SERVICES } from './services.js'
 
 export default function App() {
-  const [user, setUser] = useState(null)
-  const [checking, setChecking] = useState(true)
-
-  useEffect(() => {
-    fetch('/api/auth/me', { credentials: 'include' })
-      .then(r => (r.ok ? r.json() : null))
-      .then(data => { if (data?.user) setUser(data.user) })
-      .finally(() => setChecking(false))
-  }, [])
-
-  async function handleLogout() {
-    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
-    setUser(null)
-  }
-
-  if (checking) return null
-
-  if (!user) return <Login onLogin={() => setUser({ username: 'admin' })} />
-
   return (
-    <div className="hub">
-      <div className="hub-header">
-        <h1>Apps</h1>
-        <p>Select an application</p>
-        <button className="logout-btn" onClick={handleLogout}>Logout</button>
-      </div>
-      <div className="apps-grid">
-        {APPS.map(({ href, icon, title }) => (
-          <a key={href} href={href} className="app-card">
-            <span className="app-icon">{icon}</span>
-            <span className="app-title">{title}</span>
-          </a>
-        ))}
-      </div>
+    <div className="landing">
+      <div className="bg-glow bg-glow-1" />
+      <div className="bg-glow bg-glow-2" />
+      <div className="bg-glow bg-glow-3" />
+
+      <main className="landing-inner">
+        <header className="landing-header">
+          <span className="landing-eyebrow">luisrlp.com</span>
+          <h1>Luis RLP</h1>
+          <p>Servicios y proyectos</p>
+        </header>
+
+        <nav className="services" aria-label="Servicios">
+          {SERVICES.map((service) => (
+            <a
+              key={service.id}
+              className="service-card"
+              href={service.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ '--accent': service.accent }}
+            >
+              <span className="service-icon" aria-hidden="true">{service.icon}</span>
+              <span className="service-body">
+                <span className="service-title">{service.title}</span>
+                <span className="service-desc">{service.description}</span>
+              </span>
+              <span className="service-arrow" aria-hidden="true">→</span>
+            </a>
+          ))}
+        </nav>
+
+        <footer className="landing-footer">
+          © {new Date().getFullYear()} Luis RLP
+        </footer>
+      </main>
     </div>
   )
 }

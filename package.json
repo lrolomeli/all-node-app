@@ -1,11 +1,9 @@
 {
-  "name": "my-web-app",
+  "name": "luisrlp-web",
   "private": true,
   "scripts": {
-    "start": "node backend/src/index.js",
-    "dev:backend": "node backend/src/index.js",
-    "dev:frontend": "npm run dev --prefix frontend",
+    "dev": "npm run dev --prefix frontend",
     "build": "npm run build --prefix frontend",
-    "invite:create": "node backend/scripts/create-invite.js"
+    "preview": "npm run preview --prefix frontend"
   }
 }

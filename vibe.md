@@ -1,54 +1,49 @@
-# all-node-app
+# luisrlp-web
 
-React 18 MPA + Express 4 backend. No TypeScript, no router (native `<a>` navigation).
+Landing estática (React 18 + Vite, servida por Nginx). Sin backend ni login:
+solo enlaces a los servicios. Las apps viejas viven en `legacy/` y Room
+Automation (aire) quedó como subproyecto en `room-automation/`.
 
 ## Stack
-- **Frontend:** React 18, Vite 5 (MPA mode), plain CSS
-- **Backend:** Express 4, express-session, JSON file persistence
-- **Entry:** `frontend/index.html` → hub
+- **Landing:** React 18, Vite 5, plain CSS (`frontend/`)
+- **Room Automation:** React 18 + Vite (`room-automation/frontend`) + Express 4 (`room-automation/backend`)
+- **Deploy:** Docker + Nginx
 
-## Structure
+## Estructura
 ```
-backend/src/
-  app.js              # Express setup, mounts routes
-  index.js            # HTTP server (port 3000)
-  data/persistence.js # JSON file read/write helpers
-  routes/             # One file per app (gastos-routes.js, schedule-routes.js...)
-  middleware/auth.js  # sessionMiddleware (checks req.session.user)
-frontend/
-  vite.config.js      # MPA entry points + proxy to :3000
-  src/App.jsx         # Hub: app grid, login
-  src/useAuth.js      # Hook: fetches /api/auth/me
-  apps/{name}/        # Each mini-app = separate Vite entry
-    index.html
-    main.jsx
-    {Name}App.jsx
-    style.css
+frontend/                 # landing (único build desplegado)
+  src/App.jsx             # landing
+  src/services.js         # ← enlaces/servicios (editar aquí)
+  src/app.css
+  vite.config.js, nginx.conf, Dockerfile
+legacy/                   # apps archivadas (no se compilan)
+  frontend/apps/{schedule,calisthenics,cv,gastos,maintenance,checklist,shopping-list}
+  backend/{routes,db,cron,data,scripts}
+room-automation/          # app de aire (se extraerá a su repo)
+  backend/src/{app,index,esp,services,data,automation,db,routes,middleware}
+  frontend/src/{ClimateApp,views,components}
+  docker-compose.yml
+docker-compose.yml        # landing
 ```
 
-## Add a new mini-app
-1. Create `frontend/apps/{name}/` with `index.html`, `main.jsx`, `{Name}App.jsx`, `style.css`
-2. Register entry in `vite.config.js` `rollupOptions.input`
-3. Add clean URL redirect in `vite.config.js` `cleanUrls` middleware
-4. Add link in `frontend/src/App.jsx` `APPS` array
-5. If backend needed: create route in `backend/src/routes/`, add persistence in `persistence.js`, mount in `app.js`
-6. Update `frontend/nginx.conf` rewrite rule
+## Convenciones
+- Plain CSS (sin Tailwind ni módulos). Reset global en cada `app.css`/`style.css`.
+- Landing: API pública, sin auth. Editar enlaces en `frontend/src/services.js`.
+- Room Automation: `/api/sensors` público; el resto con sesión.
+- Vite dev proxy `/api → http://localhost:3000` (solo room-automation).
 
-## Conventions
-- Plain CSS (no Tailwind, no modules), global reset `*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }`
-- `useAuth()` hook at top of component for auth-required apps
-- API calls use `fetch('/api/{name}', { credentials: 'include' })`
-- Backend routes follow GET = load, POST = save, DELETE = remove pattern
-- JSON persistence default: `{ balance: 1750, lastMonday: null, transactions: [] }`
+## Comandos
+```bash
+npm run dev --prefix frontend      # landing
+npm run build --prefix frontend
+docker compose up -d --build       # landing en :3000
+
+docker compose up -d --build       # room-automation (desde room-automation/, :8080)
+```
 
 ## Apps
-| Route | Auth | Persistence |
-|-------|------|-------------|
-| schedule | yes | JSON |
-| checklist | yes | JSON |
-| maintenance | yes | SQLite |
-| calisthenics | yes | JSON |
-| cv | no | none |
-| gastos | yes | SQLite |
-| room-monitor | yes | SQLite |
-| ir-control | yes | ESP32 (IR) |
+| App | Ubicación | Estado |
+|-----|-----------|--------|
+| landing | `frontend/` | activa |
+| room-automation | `room-automation/` | activa (a extraer) |
+| schedule, calisthenics, cv, gastos, maintenance, checklist, shopping-list | `legacy/` | archivadas |

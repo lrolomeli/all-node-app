@@ -8,10 +8,18 @@ export default defineConfig({
   build: {
     outDir: resolve(__dirname, 'dist'),
     emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+      },
+    },
   },
   server: {
     host: true,
     port: 5173,
     watch: { usePolling: true },
+    proxy: {
+      '/api': 'http://localhost:3000',
+    },
   },
 })

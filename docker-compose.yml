@@ -4,13 +4,3 @@ services:
     restart: unless-stopped
     ports:
       - "3000:80"
-    depends_on:
-      - backend
-
-  backend:
-    build: ./backend
-    restart: unless-stopped
-    expose:
-      - "3000"
-    volumes:
-      - ./backend/data:/app/data

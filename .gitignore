@@ -5,4 +5,9 @@ public/assets/
 dist/
 backend/data/*.json
 backend/data/*.csv
+room-automation/backend/data/*.json
+room-automation/backend/data/*.csv
+room-automation/backend/data/*.db
+legacy/backend/data/*.json
+legacy/backend/data/*.csv
 backend/data_backup_*/
