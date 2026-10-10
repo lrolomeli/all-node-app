@@ -19,8 +19,9 @@ es un `<a class="service-card" href="...">` con su icono SVG inline.
 
 ```
 frontend/               # Landing estática (única cosa que se despliega)
-  index.html            # ← edita aquí los enlaces/servicios y textos
-  styles.css            # Estilos (tema oscuro + carrusel CSS)
+  index.html            # ← edita aquí los enlaces/servicios y textos (nav, hero, bento, carrusel)
+  styles.css            # Estilos (tema oscuro, bento grid, carrusel CSS, reveal)
+  app.js                # JS vanilla: reveal on scroll, nav activo, año
   nginx.conf
   Dockerfile            # Nginx + copia de archivos (sin build)
 legacy/                 # Apps archivadas (no se compilan ni despliegan)
