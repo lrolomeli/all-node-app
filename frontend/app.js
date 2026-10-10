@@ -49,4 +49,32 @@
       spy.observe(target);
     });
   }
+
+  // Menú móvil (hamburguesa).
+  var nav = document.querySelector('.nav');
+  var navToggle = document.querySelector('.nav-toggle');
+  var navLinks = document.getElementById('nav-links');
+
+  if (nav && navToggle && navLinks) {
+    var setNav = function (open) {
+      nav.classList.toggle('nav--open', open);
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      navToggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+    };
+
+    navToggle.addEventListener('click', function () {
+      setNav(!nav.classList.contains('nav--open'));
+    });
+
+    navLinks.addEventListener('click', function (event) {
+      if (event.target.closest('a')) setNav(false);
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && nav.classList.contains('nav--open')) {
+        setNav(false);
+        navToggle.focus();
+      }
+    });
+  }
 })();

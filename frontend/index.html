@@ -11,14 +11,17 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css?v=3" />
+    <link rel="stylesheet" href="./styles.css?v=4" />
     <script>document.documentElement.classList.add('js');</script>
   </head>
   <body>
     <header class="nav">
       <div class="nav-inner">
         <a class="nav-brand" href="#top">Luis <span>RLP</span></a>
-        <nav class="nav-links" aria-label="Secciones">
+        <button class="nav-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-links">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg>
+        </button>
+        <nav class="nav-links" id="nav-links" aria-label="Secciones">
           <a class="nav-link" href="#room-automation">Room</a>
           <a class="nav-link" href="#movies">Movies</a>
           <a class="nav-link" href="#fut">Fut</a>
@@ -37,6 +40,13 @@
           <span class="hero-eyebrow">luisrlp.com</span>
           <h1>Servicios y proyectos</h1>
           <p>Un punto de acceso a todo lo que estoy construyendo.</p>
+          <div class="hero-actions">
+            <a class="hero-pill" style="--accent:#7c5cff" href="https://ra.luisrlp.com" target="_blank" rel="noopener noreferrer">Room Automation</a>
+            <a class="hero-pill" style="--accent:#f5576c" href="https://movies.luisrlp.com" target="_blank" rel="noopener noreferrer">Movies</a>
+            <a class="hero-pill" style="--accent:#22c55e" href="https://fut.luisrlp.com" target="_blank" rel="noopener noreferrer">Fut</a>
+            <a class="hero-pill" style="--accent:#f59e0b" href="https://docs.google.com/" target="_blank" rel="noopener noreferrer">Mantenimientos</a>
+            <a class="hero-pill" style="--accent:#3b9dff" href="https://cv.luisrlp.com" target="_blank" rel="noopener noreferrer">CV</a>
+          </div>
         </div>
         <a class="scroll-cue" href="#room-automation">
           Desliza
@@ -270,6 +280,6 @@
       © <span id="year">2026</span> Luis RLP
     </footer>
 
-    <script src="./app.js?v=3" defer></script>
+    <script src="./app.js?v=4" defer></script>
   </body>
 </html>
